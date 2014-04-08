@@ -1,0 +1,3 @@
+[submodule "firehose/hbc"]
+	path = firehose/hbc
+	url = git://github.com/twitter/hbc.git
