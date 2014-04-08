@@ -1,0 +1,4 @@
+OH Negative
+TX Positive
+CA Negative
+MN Neutral
