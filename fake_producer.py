@@ -11,6 +11,7 @@ def randCoord():
 
 @app.route('/')
 def main():
+    # TODO: Make it buffered? That's probably how the backend will work...
     return randCoord()
 
 
