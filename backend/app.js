@@ -4,6 +4,12 @@ var app = require('express')()
 
 server.listen(80);
 
+app.options('/', function(req, res){ 
+    console.log("writing headers only"); 
+    res.header("Access-Control-Allow-Origin", "*"); 
+    res.end(''); 
+});
+
 app.get('/', function (req, res) {
   res.sendfile(__dirname + '/index.html');
 });
