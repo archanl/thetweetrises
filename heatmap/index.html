@@ -25,7 +25,9 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=visualization"></script>
     <script src="https://rawgit.com/LearnBoost/socket.io-client/master/socket.io.js"></script>
     <script>
-// Adding 500 Data Points
+
+var hostname = "ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
+
 var map, pointArray, pointArrayNeg, heatmap;
 
 var data = [
@@ -128,7 +130,7 @@ function initializeHeatmap() {
 }
 
 function initializeSocket() {
-    var socket = io.connect("http://localhost:1337");
+    var socket = io.connect(hostname);
     socket.on("newPoint", addPoint);
 }
 
