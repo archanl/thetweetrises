@@ -16,7 +16,7 @@ io.sockets.on('connection', function (socket) {
       emotion: randomEmotion()
     };
 
-    socket.emit('newPoint', np);
+    socket.volatile.emit('newPoint', np);
   };
 
   setInterval(f, 100);
