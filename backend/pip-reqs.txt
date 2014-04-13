@@ -1,1 +1,4 @@
 redis
+requests
+requests_oauthlib
+
