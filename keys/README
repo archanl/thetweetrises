@@ -1,1 +1,5 @@
+domain: ec2-54-187-28-208.us-west-2.compute.amazonaws.com
+user: root
+ssh -i [path to key] user@domain
+
 TODO: Remove this securely (ie purge repo) after we open source this
