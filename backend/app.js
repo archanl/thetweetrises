@@ -9,9 +9,32 @@ app.get('/', function (req, res) {
 });
 
 io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
+  var f = function() {
+    var np =  {
+      latitude: randomLat(),
+      longitude: randomLong(),
+      emotion: randomEmotion()
+    };
+
+    socket.emit('newPoint', np);
+  };
+
+  setInterval(f, 100);
 });
 
+var minLat = 29.482843,
+    maxLat = 48.972145,
+    minLong = -123.119431,
+    maxLong = -76.010060;
+    
+function randomLat() {
+    return Math.random() * (maxLat - minLat) + minLat;
+}
+
+function randomLong() {
+  return Math.random() * (maxLong - minLong) + minLong;
+}
+
+function randomEmotion() {
+  return (Math.random() > 0.66) ? 1 : 0;
+}
