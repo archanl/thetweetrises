@@ -2,4 +2,9 @@ domain: ec2-54-187-28-208.us-west-2.compute.amazonaws.com
 user: root
 ssh -i [path to key] user@domain
 
+go to /home/ubuntu/thetweetrises
+backend runs from backend folder
+run to find pid for node server: ps aux | grep node 
+kill node server: kill -9 [insert pid here]
+
 TODO: Remove this securely (ie purge repo) after we open source this
