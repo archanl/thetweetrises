@@ -11,7 +11,7 @@ app.options('/', function(req, res){
 });
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '../heatmap/index.html');
+  res.sendfile(__dirname + '/index.html');
 });
 
 io.sockets.on('connection', function (socket) {
