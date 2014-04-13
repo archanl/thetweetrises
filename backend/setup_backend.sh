@@ -10,4 +10,4 @@ apt-get install nodejs
 
 npm install socket.io express
 
-pip install redis
+pip install -r pip-reqs.txt
