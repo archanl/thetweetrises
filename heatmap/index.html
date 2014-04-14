@@ -23,7 +23,7 @@
       }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=visualization"></script>
-    <script src="https://rawgit.com/LearnBoost/socket.io-client/master/socket.io.js"></script>
+    <script src="http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com/socket.io/socket.io.js"></script>
     <script>
 
 var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
@@ -136,6 +136,7 @@ function initializeSocket() {
 
 function addPoint(data) {
     console.log("adding point");
+    console.log(data);
 
 }
 
