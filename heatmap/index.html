@@ -95,8 +95,8 @@ function initializeHeatmap() {
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
-  var pointArray = new google.maps.MVCArray(data);
-  var pointArrayNeg = new google.maps.MVCArray(dataNeg);
+  pointArray = new google.maps.MVCArray(data);
+  pointArrayNeg = new google.maps.MVCArray(dataNeg);
 
   heatmap = new google.maps.visualization.HeatmapLayer({
     data: pointArray
@@ -135,8 +135,17 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
-    console.log("adding point");
-    console.log(data);
+    // console.log(data);
+    var emotion = data.emotion;
+    var lat = data.latitude;
+    var lng = data.longitude;
+    
+    if (emotion == 0) {
+        pointArray.push(new google.maps.LatLng(lat, lng));
+    }
+    else {
+        pointArrayNeg.push(new google.maps.LatLng(lat, lng));
+    }
 
 }
 
