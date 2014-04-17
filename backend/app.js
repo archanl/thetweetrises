@@ -1,6 +1,7 @@
 var app = require('express')()
   , server = require('http').createServer(app)
-  , io = require('socket.io').listen(server);
+  , io = require('socket.io').listen(server)
+  , path = require('path');
 
 server.listen(80);
 
@@ -27,21 +28,23 @@ app.options('/', function(req, res){
 });
 
 app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/index.html');
+  res.sendfile(path.resolve('../heatmap/index.html'));
 });
 
 io.sockets.on('connection', function (socket) {
   var f = function() {
+    /*
     var np =  {
       latitude: randomLat(),
       longitude: randomLong(),
       emotion: randomEmotion()
     };
+    */
 
-    socket.volatile.emit('newPoint', np);
+    socket.volatile.emit('newPoint', randomPoint());
   };
 
-  setInterval(f, 100);
+  setInterval(f, 20);
 });
 
 var minLat = 29.482843,
@@ -60,3 +63,23 @@ function randomLong() {
 function randomEmotion() {
   return (Math.random() > 0.66) ? 1 : 0;
 }
+
+function randomPoint() {
+  var lat = Math.random(),
+      lng = Math.random(),
+      emo = Math.random();
+
+  emo = lng > .6 ?
+        (emo > .9 ? 1 : 0) :
+        (emo > .7 ? 0 : 1);
+
+  lat = lat * (maxLat - minLat) + minLat;
+  lng = lng * (maxLong - minLong) + minLong;
+
+  return {
+    latitude: lat,
+    longitude: lng,
+    emotion: emo
+  }
+}
+
