@@ -195,7 +195,7 @@ function changeRadiusLarger() {
 function switchMode(){
     heatmap.setMap(heatmap.getMap() ? null : map);
     heatmapNeg.setMap(heatmapNeg.getMap() ? null : map);
-    OHIO.setMap(map);
+    OHIO.setMap(OHIO.getMap() ? null : map);
 }
 
 function changeOpacity() {
