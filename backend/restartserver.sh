@@ -1,0 +1,3 @@
+./killserver.sh
+./startserver.sh
+

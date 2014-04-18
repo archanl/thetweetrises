@@ -2,11 +2,26 @@ import sys
 import redis
 import requests
 from requests_oauthlib import OAuth1
+import logging
+import signal
+
+# Log everything, and send it to stderr.
+logging.basicConfig(level=logging.DEBUG)
 
 MAXQUEUESIZE = 10000
 QUEUE_KEY = 'tweet_queue'
 
+def signal_handler(signum = None, frame = None):
+    logging.debug("Received signal " + str(signum))
+    logging.debug("Stopping tweet streamer.")
+    exit(0)
+
 def main():
+    logging.debug("Starting tweet streamer.")
+
+    for sig in [signal.SIGTERM, signal.SIGINT, signal.SIGHUP, signal.SIGQUIT]:
+        signal.signal(sig, signal_handler)
+
     r = redis.Redis('localhost')
 
     oauth = OAuth1('ZZQMKjtL8kewgk4001jF8krqx',                             # API Key
@@ -20,16 +35,15 @@ def main():
                      auth=oauth, stream=True)
 
     while True:
-        #try:
-        if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
-            tweet = next_tweet(t)
-            while "delete" in tweet[:10]:
+        try:
+            if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
                 tweet = next_tweet(t)
-            r.lpush(QUEUE_KEY, tweet)
+                while "delete" in tweet[:10]:
+                    tweet = next_tweet(t)
+                r.lpush(QUEUE_KEY, tweet)
 
-
-        #except Exception as e:
-        #    sys.stderr.write(str(e) + '\n')
+        except Exception as e:
+            logging.debug("Something awful happened!")
 
 def next_tweet(t):
     tweet = ""
