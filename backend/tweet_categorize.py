@@ -19,30 +19,26 @@ def main():
 
 # def consume(r):
     while True:
-        #try:
-        # print r.brpop(QUEUE_KEY)[1]
-        tweet = json.loads(r.blpop(QUEUE_KEY)[1])
+        if r.llen(SENTIMENT_KEY) >= MAX_SENTIMENTS:
+            r.rpop(SENTIMENT_KEY)
+            continue
+
+        tweet = json.loads(r.brpop(QUEUE_KEY)[1])
+
         if tweet['geo'] is None:
             # No geo data? IGNORE!
             continue
-        text = tweet['text']
+
         coordinates = tweet['geo']['coordinates']
         sentiment = TextBlob(tweet['text']).sentiment.polarity
+        if sentiment != 0:
+            # Jsonify tweet with sentiment and store in redis
+            d = {'sentiment' : sentiment, \
+                 'latitude' : coordinates[0], \
+                 'longitude' : coordinates[1] }
+            j = json.dumps(d)
 
-        # Jsonify tweet with sentiment and store in redis
-        d = {'text' : text, \
-             'sentiment' : sentiment, \
-             'latitude' : coordinates[0], \
-             'longitude' : coordinates[1] }
-        j = json.dumps(d)
-
-        if r.llen(SENTIMENT_KEY) > MAX_SENTIMENTS:
-            r.blpop(SENTIMENT_KEY)
-
-        r.rpush(SENTIMENT_KEY, str(j))
-
-        #except Exception as e:
-        #    sys.stderr.write(str(e) + '\n')
+            r.lpush(SENTIMENT_KEY, str(j))
 
 if __name__ == '__main__':
     main()

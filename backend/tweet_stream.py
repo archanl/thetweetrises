@@ -25,7 +25,7 @@ def main():
             tweet = next_tweet(t)
             while "delete" in tweet[:10]:
                 tweet = next_tweet(t)
-            r.rpush(QUEUE_KEY, tweet)
+            r.lpush(QUEUE_KEY, tweet)
 
 
         #except Exception as e:
