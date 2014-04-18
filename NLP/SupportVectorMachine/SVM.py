@@ -100,7 +100,7 @@ if __name__ == "__main__":
 	positive_counter = 0
 	negative_counter = 0
 	# A debug limit for the number of positive and negative tweets
-	upto = 5000
+	upto = 10000
 	do_debug_limit = True 
 
 	for line in go_training_data:
@@ -218,7 +218,8 @@ if __name__ == "__main__":
 	assert False'''
 
 	print "Fitting data..."
-	classifier = SklearnClassifier(SVC(kernel='linear'), sparse=False).train(train)
+	#classifier = SklearnClassifier(SVC(kernel='linear'), sparse=False).train(train)
+	classifier = SklearnClassifier(SVC(kernel='linear')).train(train)
 	print "Data fitted!"
 	#clf = linear_model.SGDClassifier()
 	# Default linear_model.SGDClassifier settings:
