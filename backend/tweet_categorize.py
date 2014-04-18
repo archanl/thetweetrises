@@ -30,10 +30,12 @@ def main():
             continue
 
         coordinates = tweet['geo']['coordinates']
+        # tweetText = tweet['text']
         sentiment = TextBlob(tweet['text']).sentiment.polarity
         if sentiment != 0:
             # Jsonify tweet with sentiment and store in redis
             d = {'sentiment' : sentiment, \
+                 # 'tweet' : tweetText, \
                  'latitude' : coordinates[0], \
                  'longitude' : coordinates[1] }
             j = json.dumps(d)
