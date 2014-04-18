@@ -1,9 +1,17 @@
 var app = require('express')()
   , server = require('http').createServer(app)
   , io = require('socket.io').listen(server)
-  , path = require('path');
+  , path = require('path')
+  , redis = require('redis')
+  , redis_client = redis.createClient();
+
+var INDEX_FILE = "../heatmap/index.html";
 
 server.listen(80);
+
+redis_client.on("error", function (err) {
+    console.log("Error " + err);
+});
 
 var enableCORS = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -28,23 +36,25 @@ app.options('/', function(req, res){
 });
 
 app.get('/', function (req, res) {
-  res.sendfile(path.resolve('../heatmap/index.html'));
+  res.sendfile(path.resolve(INDEX_FILE));
 });
 
 io.sockets.on('connection', function (socket) {
-  var f = function() {
-    /*
-    var np =  {
-      latitude: randomLat(),
-      longitude: randomLong(),
-      emotion: randomEmotion()
-    };
-    */
-
+  var random_emitter = function() {
     socket.volatile.emit('newPoint', randomPoint());
   };
 
-  setInterval(f, 20);
+  var redis_emitter = function() {
+    redis_client.brpoplpush("sentiment_stream", "sentiment_stream", 0, function(err, reply) {
+      var point = JSON.parse(reply);
+      socket.volatile.emit('newPoint', point);
+    });
+  };
+
+  var emit_interval = setInterval(redis_emitter, 20);
+  socket.on('disconnect', function() {
+    clearInterval(emit_interval);
+  });
 });
 
 var minLat = 29.482843,

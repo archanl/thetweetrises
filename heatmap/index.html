@@ -135,8 +135,7 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
-    // console.log(data);
-    var emotion = data.emotion;
+    var emotion = data.sentiment > 0 ? 1 : 0;
     var lat = data.latitude;
     var lng = data.longitude;
     
