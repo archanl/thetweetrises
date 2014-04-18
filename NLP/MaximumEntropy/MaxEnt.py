@@ -1,8 +1,7 @@
 import heapq
 import math
 import numpy as np
-from nltk.classify import SklearnClassifier
-from sklearn.svm import SVC
+from nltk.classify import MaxentClassifier
 import re
 import sys
 sys.path.insert(0, '..')
@@ -160,7 +159,7 @@ if __name__ == "__main__":
 	print "Getting top terms from mutual information"
 	scores = []
 	top_terms = []
-	term_limit = 5000
+	term_limit = 1000
 	heap_terms_processed = 0
 	for term in terms:
 		score = get_score(term, positive_classifications, negative_classifications, terms)
@@ -199,9 +198,7 @@ if __name__ == "__main__":
 	# Train
 	num_features = len(top_terms)
 	num_samples = len(go_tweets)
-	#X = np.zeros((num_samples, num_features))
 	train = []
-	#y = []
 	for (score, bag) in go_tweets:
 		fv = {}
 			# feature vector for this tweet
@@ -210,16 +207,10 @@ if __name__ == "__main__":
 				fv[word] = 1
 				
 		train.append( (fv, score) )
-	#Y = np.array(y)
 
-
-	'''print (X)
-	print (Y)
-	assert False'''
 
 	print "Fitting data..."
-	#classifier = SklearnClassifier(SVC(kernel='linear'), sparse=False).train(train)
-	classifier = SklearnClassifier(SVC(kernel='linear')).train(train)
+	classifier = MaxentClassifier.train(train, algorithm='IIs', trace=0, max_iter=100)
 	print "Data fitted!"
 	#clf = linear_model.SGDClassifier()
 	# Default linear_model.SGDClassifier settings:
