@@ -7,6 +7,8 @@ var app = require('express')()
 
 var INDEX_FILE = "../heatmap/index.html";
 
+io.set('log level', 2); // Info only
+
 server.listen(80);
 
 redis_client.on("error", function (err) {
