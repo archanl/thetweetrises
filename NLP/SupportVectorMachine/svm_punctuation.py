@@ -24,6 +24,13 @@ def get_words(tweet, stop_words):
 	# There are also other refinements...
 	words = re.findall("[a-zA-Z][a-zA-Z]+", tweet)
 	bag = {}
+	if tweet.find('?') != -1:
+		bag['?'] = True
+	if tweet.find('!') != -1:
+		bag['!'] = True
+	if tweet.find('.') != -1:
+		bag['.'] = True
+		
 	for word in words:
 		if word not in stop_words:
 			bag[word.lower()] = True
@@ -186,7 +193,9 @@ if __name__ == "__main__":
 	print "Top terms found"
 
 
-
+	top_terms["!"] = True
+	top_terms["?"] = True
+	top_terms["."] = True
 
 
 
