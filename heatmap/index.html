@@ -33,7 +33,6 @@ var map, pointArray, pointArrayNeg, heatmap, heatmapNeg;
 var data = [];
 
 var dataNeg = [];
-
  
 function initializeHeatmap() {
   var mapOptions = {
@@ -43,6 +42,7 @@ function initializeHeatmap() {
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
+
   pointArray = new google.maps.MVCArray(data);
 
   var gradientPos = [
@@ -94,8 +94,7 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
-    // console.log(data);
-    var emotion = data.emotion;
+    var emotion = data.sentiment > 0 ? 1 : 0;
     var lat = data.latitude;
     var lng = data.longitude;
     

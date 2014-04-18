@@ -8,6 +8,11 @@ apt-get install redis-server
 
 apt-get install nodejs
 
-npm install socket.io express
+npm install socket.io express redis
 
 pip install -r pip-reqs.txt
+
+python -m textblob.download_corpora
+
+mkdir logs
+
