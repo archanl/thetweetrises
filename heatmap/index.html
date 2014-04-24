@@ -24,13 +24,13 @@
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=visualization"></script>
     <script src="http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com/socket.io/socket.io.js"></script>
+    <script src="allStates.js"></script>
+    
     <script>
 
 var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
 
 var map, pointArray, pointArrayNeg, heatmap, heatmapNeg;
-
-var OHIO;
 
 var data = [];
 
@@ -89,62 +89,6 @@ function initializeHeatmap() {
   heatmapNeg.set('gradient', gradientNeg);
   heatmapNeg.setMap(map);
 
-    // Define the LatLng coordinates for the polygon's path.
-  var ohioOutline = [
-    new google.maps.LatLng(38.4385, -82.3425),
-    new google.maps.LatLng(38.5707, -82.2917),
-    new google.maps.LatLng(38.5965, -82.1722),
-    new google.maps.LatLng(38.7712, -82.1997),
-    new google.maps.LatLng(39.0181, -82.0294),
-    new google.maps.LatLng(38.8750, -81.8729),
-    new google.maps.LatLng(38.9359, -81.7644),
-    new google.maps.LatLng(39.1865, -81.7397),
-    new google.maps.LatLng(39.2812, -81.5680),
-    new google.maps.LatLng(39.4022, -81.4444),
-    new google.maps.LatLng(39.3460, -81.3661),
-    new google.maps.LatLng(39.4479, -81.1244),
-    new google.maps.LatLng(39.5549, -81.0352),
-    new google.maps.LatLng(39.6565, -80.8374),
-    new google.maps.LatLng(39.8676, -80.7948),
-    new google.maps.LatLng(40.5941, -80.6520),
-    new google.maps.LatLng(40.6223, -80.5188),
-    new google.maps.LatLng(42.3210, -80.5229),
-    new google.maps.LatLng(42.2153, -81.2521),
-    new google.maps.LatLng(41.9962, -81.6806),
-    new google.maps.LatLng(41.9962, -81.7094),
-    new google.maps.LatLng(41.6770, -82.3961),
-    new google.maps.LatLng(41.6709, -82.6845),
-    new google.maps.LatLng(41.9585, -83.1157),
-    new google.maps.LatLng(41.7314, -83.4219),
-    new google.maps.LatLng(41.6944, -84.8021),
-    new google.maps.LatLng(39.1056, -84.8172),
-    new google.maps.LatLng(39.1407, -84.7444),
-    new google.maps.LatLng(39.0960, -84.5068),
-    new google.maps.LatLng(39.0459, -84.4052),
-    new google.maps.LatLng(38.9434, -84.2857),
-    new google.maps.LatLng(38.8055, -84.2432),
-    new google.maps.LatLng(38.7712, -84.0866),
-    new google.maps.LatLng(38.7519, -83.8916),
-    new google.maps.LatLng(38.6330, -83.6636),
-    new google.maps.LatLng(38.6962, -83.5263),
-    new google.maps.LatLng(38.5976, -83.2736),
-    new google.maps.LatLng(38.6169, -83.1445),
-    new google.maps.LatLng(38.7027, -83.0127),
-    new google.maps.LatLng(38.7327, -82.8973),
-    new google.maps.LatLng(38.5782, -82.8355),
-    new google.maps.LatLng(38.3761, -82.5952),
-    new google.maps.LatLng(38.4385, -82.3425)
-  ];
-
-  // Construct the polygon.
-  OHIO = new google.maps.Polygon({
-    paths: ohioOutline,
-    strokeColor: '#000000',
-    strokeOpacity: 0.9,
-    strokeWeight: 2,
-    fillColor: '#000000',
-    fillOpacity: 0.50
-  });
 
 }
 
@@ -166,17 +110,7 @@ function addPoint(data) {
         pointArrayNeg.push(latlng);
     }
 
-    var withinOhio = google.maps.geometry.poly.containsLocation(latlng, OHIO);
-    if (withinOhio){
-      if (emotion == 0){
-        OHIO.setOptions({fillColor: 'blue'});
-      }
-      else{
-        OHIO.setOptions({fillColor: 'red'});
-      }
-    }
-    
-
+    addStatePoints(data);
 }
 
 function toggleHeatmapPositive() {
@@ -195,7 +129,7 @@ function changeRadiusLarger() {
 function switchMode(){
     heatmap.setMap(heatmap.getMap() ? null : map);
     heatmapNeg.setMap(heatmapNeg.getMap() ? null : map);
-    OHIO.setMap(OHIO.getMap() ? null : map);
+    enableStatesMode();
 }
 
 function changeOpacity() {
