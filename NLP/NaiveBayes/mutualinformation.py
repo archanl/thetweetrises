@@ -4,25 +4,10 @@ import re
 from definitions import *
 
 class tweetclass:
-	def __init__(self):
-		self.pos_dict = {}
-		self.neg_dict = {}
-
-	def hasInfo(self, word):
-		return word in self.pos_dict
-
-	def getPos(self, word):
-		return self.pos_dict[word]
-
-	def getNeg(self, word):
-		return self.neg_dict[word]
-
-	def setPos(self, percent, word):
-		self.pos_dict[word] = percent
-
-	def setNeg(self, percent, word):
-		self.neg_dict[word] = percent
-
+	def __init__(self, word):
+		self.term = word
+		self.positive = 0
+		self.negative = 0
 
 def get_words(tweet, stop_words):
 	''' Parses all of the words from a tweet '''
@@ -36,7 +21,7 @@ def get_words(tweet, stop_words):
 			bag[word.lower()] = True
 	return bag
 
-def get_classification(bag, top_terms, go_tweets, tc):
+def get_classification(bag, top_terms, positive_classifications, negative_classifications, terms):
 	''' Uses Naive bayes to classify the bag of words (a tweet) using the
 		terms in the list 'top_terms' and the training data "go_tweets"'''
 
@@ -44,21 +29,9 @@ def get_classification(bag, top_terms, go_tweets, tc):
 	prob_pos = 1
 
 	for word in top_terms:
-		prob_word_in_pos = 1
-		prob_word_in_neg = 1
-		if not tc.hasInfo(word):
-			pos_count = 0
-			neg_count = 0
-			for (s, b) in go_tweets:
-				if word in b:
-					if s == 0:
-						neg_count = neg_count + 1
-					else:
-						pos_count = pos_count + 1
-			tc.setPos(float(pos_count) / float(len(go_tweets)), word)
-			tc.setNeg(float(neg_count) / float(len(go_tweets)), word)
-		prob_word_in_pos = tc.getPos(word)
-		prob_word_in_neg = tc.getNeg(word)
+		prob_word_in_pos = float(terms[word].positive) / positive_classifications
+		prob_word_in_neg = float(terms[word].negative) / negative_classifications
+
 		if word in bag:
 			prob_neg = prob_neg * prob_word_in_neg
 			prob_pos = prob_pos * prob_word_in_pos
@@ -75,27 +48,19 @@ def get_classification(bag, top_terms, go_tweets, tc):
 	return 4
 	
 
-def get_score(term, tweets):
+def get_score(term, positive_classifications, negative_classifications, terms):
 	''' Gets the Mutual Information score of a term based on the training data'''
 	# Term in tweet and classifier is positive
-	n_11 = 0;
+	n_11 = terms[term].positive
 	# Term in tweet and classifier is negative
-	n_10 = 0;
+	n_10 = terms[term].negative
 	# Term not in tweet and classfier is positive
-	n_01 = 0;
+	n_01 = positive_classifications - n_11
 	# Term not in tweet and classfier is negative
-	n_00 = 0;
-	for (score, bag) in tweets:
-		if term in bag:
-			if score == 0:
-				n_10 = n_10 + 1
-			else:
-				n_11 = n_11 + 1
-		else:
-			if score == 0:
-				n_00 = n_00 + 1
-			else:
-				n_01 = n_01 + 1
+	n_00 = negative_classifications - n_10
+	
+
+
 	# Total number of tweets
 	N = n_11 + n_10 + n_01 + n_00
 
@@ -121,6 +86,7 @@ def get_score(term, tweets):
 	return score
 
 if __name__ == "__main__":
+	# A dictionary whose keys are strings (words) and values are tweetclass objects
 	terms = {}
 
 	# Load training data
@@ -138,49 +104,77 @@ if __name__ == "__main__":
 	positive_counter = 0
 	negative_counter = 0
 	# A debug limit for the number of positive and negative tweets
-	upto = 5000 
+	upto = 1000000
+	do_debug_limit = False 
 
 	for line in go_training_data:
 		# Parse the line for the classification and the tweet
 		parts = line.split(",")
 		score = float(parts[0].replace('"', ""))
 		# Debug
-		
-		if score == 0:
-			if negative_counter >= upto:
-				continue
-			negative_counter = negative_counter + 1
-		else:
-			if positive_counter >= upto:
-				continue
-			positive_counter = positive_counter + 1
+		if do_debug_limit:
+			if score == 0:
+				if negative_counter >= upto:
+					continue
+				negative_counter = negative_counter + 1
+			else:
+				if positive_counter >= upto:
+					continue
+				positive_counter = positive_counter + 1
 		
 		bag = get_words(parts[5], stop_words)
 		go_tweets.append((score, bag))
 	
 		# Add all the words in the tweet to the list of all terms
 		for word in bag:
-			terms[word] = True
+			if word not in terms:
+				nt = tweetclass(word)
+				if score == 0:
+					nt.negative = 1
+					nt.positive = 0
+				else:
+					nt.positive = 1
+					nt.negative = 0
+				terms[word] = nt
+			else:
+				if score == 0:
+					terms[word].negative = terms[word].negative + 1
+				else:
+					terms[word].positive = terms[word].positive + 1
 
 		# Debug
 		debug_counter = debug_counter + 1
 		if debug_counter % 1000 == 0:
 			print "processed %d tweets" % debug_counter
+			
 
+	negative_classifications = 0
+	for (score, bag) in go_tweets:
+		if score == 0:
+			negative_classifications = negative_classifications + 1
+	positive_classifications = len(go_tweets) - negative_classifications
+
+	# Debug
+	print "Total number of terms: %d" % len(terms)
+	#assert False
 
 	# Get the top number of terms
 	print "Getting top terms from mutual information"
 	scores = []
 	top_terms = []
-	term_limit = 10
+	term_limit = 5000
+	heap_terms_processed = 0
 	for term in terms:
-		score = get_score(term, go_tweets)
+		score = get_score(term, positive_classifications, negative_classifications, terms)
 		# Debug
 		#print "score: %f\tterm: %s" % (score, term)
+		if heap_terms_processed % 1000 == 0:
+			print "heap terms processed: %d" % heap_terms_processed
 		heapq.heappush(scores, (score, term))
 		if len(scores) > term_limit:
 			heapq.heappop(scores)
 		assert len(scores) <= term_limit
+		heap_terms_processed = heap_terms_processed + 1
 
 	for item in scores:
 		top_terms.append(item[1])
@@ -191,7 +185,7 @@ if __name__ == "__main__":
 	go_test_data = open(GO_TEST_DATA)
 	correct_classifications = 0;
 	total_classifications = 0;
-	tc = tweetclass()
+
 	for line in go_test_data:
 		parts = line.split(",")
 		score = float(parts[0].replace('"', ""))
@@ -199,9 +193,7 @@ if __name__ == "__main__":
 			bag = get_words(parts[5], stop_words)
 
 			# Get classification
-			cls = get_classification(bag, top_terms, go_tweets, tc)
-
-			assert cls == 0 or cls == 4
+			cls = get_classification(bag, top_terms, positive_classifications, negative_classifications, terms)
 
 			# Compare to the correct classification
 			if cls == score:

@@ -68,18 +68,19 @@ def get_score(term, positive_classifications, negative_classifications, terms):
 def get_point(bag, terms):
 	''' Make a point from the `bag` which represents a sentence '''
 	array = [0] * len(terms)
+	ct = 0
 	for word in bag:
 		if word in terms:
 			position = terms.keys().index(word)
 			array[position] = 1
+			ct = ct + 1
+	print ct
 	# sk-learn must have a list of points
 	return [array]
 
 if __name__ == "__main__":
 
 	print "Loading training data..."
-
-	#test = np.zeros((100000, 10000))
 
 	# A dictionary whose keys are strings (words) and values are tweetclass objects
 	terms = {}
@@ -159,7 +160,7 @@ if __name__ == "__main__":
 	print "Getting top terms from mutual information"
 	scores = []
 	top_terms = []
-	term_limit = 1000
+	term_limit = 5000
 	heap_terms_processed = 0
 	for term in terms:
 		score = get_score(term, positive_classifications, negative_classifications, terms)
@@ -186,40 +187,40 @@ if __name__ == "__main__":
 
 
 
-
+	print top_terms.keys()[0:100]
 
 
 
 	# Debug
-	print "Total number of terms: %d" % len(terms)
+	print "Total number of features: %d" % len(top_terms)
 	#assert False
 
 	# Train
 	num_features = len(top_terms)
 	num_samples = len(go_tweets)
-	X = np.zeros((num_samples, num_features))
+	X = np.zeros((num_samples, num_features), dtype=np.bool_)
 	y = []
 	i = 0
+	ct = 0
 	for (score, bag) in go_tweets:
 		y.append(score)
 		for word in bag:
 			if word in top_terms:
 				j = top_terms.keys().index(word)
 				X[i, j] = 1
+				ct = ct + 1
 		i = i + 1
 	Y = np.array(y)
 
-	'''print (X)
-	print (Y)
-	assert False'''
+	
+
+
+
+
+
+
 
 	clf = linear_model.SGDClassifier()
-	# Default linear_model.SGDClassifier settings:
-	#SGDClassifier(alpha=0.0001, class_weight=None, epsilon=0.1, eta0=0.0,
-	#        fit_intercept=True, l1_ratio=0.15, learning_rate='optimal',
-	#        loss='hinge', n_iter=5, n_jobs=1, penalty='l2', power_t=0.5,
-	#        random_state=None, rho=None, shuffle=False,
-	#        verbose=0, warm_start=False)
 	print "Fitting data..."
 	clf.fit(X, Y)
 	print "Data fitted!"
@@ -231,6 +232,9 @@ if __name__ == "__main__":
 	correct_classifications = 0;
 	total_classifications = 0;
 
+
+	pos_classifications = 0
+	neg_classifications = 0
 	for line in go_test_data:
 		parts = line.split(",")
 		score = float(parts[0].replace('"', ""))
@@ -242,10 +246,19 @@ if __name__ == "__main__":
 			clas = clf.predict(point)
 			cls = clas[0]
 
+			if cls == 4.0:
+				pos_classifications = pos_classifications + 1
+			else:
+				neg_classifications = neg_classifications + 1
+
+
+
 			# Compare to the correct classification
 			if cls == score:
 				correct_classifications = correct_classifications + 1
 
 			total_classifications = total_classifications + 1
 
+	print "Positive classifications: " + str(pos_classifications)
+	print "Negative classifications: " + str(neg_classifications)
 	print "The percentage correct was: %g" % (float(correct_classifications) / float(total_classifications))
