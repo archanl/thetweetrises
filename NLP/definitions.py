@@ -34,4 +34,4 @@ YORK_TRAINING_TWEETS_A = YORK_AC_DIR + "/" + "TrainingATweets.txt"
 YORK_TRAINING_DIST_B = YORK_AC_DIR + "/" + "TrainingB.dist.tsv"
 YORK_TRAINING_TWEETS_B = YORK_AC_DIR + "/" + "TrainingBTweets.txt"
 
-STOP_WORDS_DATA = "stop_words.txt"
+STOP_WORDS_DATA = "../stop_words.txt"
