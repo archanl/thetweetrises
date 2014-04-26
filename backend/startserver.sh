@@ -1,4 +1,4 @@
-node app.js >> logs/app.log 2>&1 &
-python tweet_stream.py >> logs/tweet_stream.log 2>&1 &
-python tweet_categorize.py >> logs/tweet_categorize.log 2>&1 &
+node app.js > /dev/null 2>&1 &
+python tweet_stream.py > /dev/null 2>&1 &
+python tweet_categorize.py > /dev/null 2>&1 &
 
