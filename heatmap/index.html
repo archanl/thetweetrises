@@ -35,6 +35,7 @@ var map, pointArray, pointArrayNeg, heatmap, heatmapNeg;
 var data = [];
 
 var dataNeg = [];
+
  
 function initializeHeatmap() {
   var mapOptions = {
@@ -89,6 +90,27 @@ function initializeHeatmap() {
   heatmapNeg.set('gradient', gradientNeg);
   heatmapNeg.setMap(map);
 
+  // Initialize garbage collection
+  window.setInterval(gc, 5000);
+
+}
+
+// Garbage collection: make old points decay
+function gc() {
+    // Max number of points per array
+    var maxPts = 1000;
+    var posLen = pointArray.length;
+    var negLen = pointArrayNeg.length
+
+    while (posLen != 0) {
+        pointArray.remove(0);
+        posLen--;
+    }
+
+    while (negLen != 0) {
+        pointArrayNeg.remove(0);
+        neglen--;
+    }
 
 }
 
