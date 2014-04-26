@@ -1,7 +1,8 @@
+from sklearn import linear_model
+from nltk.classify import SklearnClassifier
 import heapq
 import math
 import numpy as np
-from sklearn import linear_model
 import re
 import sys
 sys.path.insert(0, '..')
@@ -16,16 +17,35 @@ class tweetclass:
 		self.positive = 0
 		self.negative = 0
 
+def twocharreplacement(tweet):
+	nt = ""
+	for i in range(len(tweet)):
+		if i >= 2:
+			if not (tweet[i - 2] == tweet[i - 1] == tweet[i]):
+				nt += tweet[i]
+		else:
+			nt += tweet[i]
+		i += 1
+	return nt
+
 def get_words(tweet, stop_words):
 	''' Parses all of the words from a tweet '''
-	# This would ideally remove stop words and transform similar
-	# words such as huuungry -> huungry
-	# There are also other refinements...
-	words = re.findall("[a-zA-Z][a-zA-Z]+", tweet)
+	tweet = tweet.lower()
+
+	# replace characters that occur twice in a row
+	tweet = twocharreplacement(tweet)
+	
+	# Find n-grams
+	unigrams = re.findall("[a-zA-Z][a-zA-Z]+", tweet)
+	#twograms = re.findall("(?=((?:\s|^)[a-zA-Z] [a-zA-Z]+))", tweet)
+	#threegrams = re.findall("(?=((?:\s|^)[a-zA-Z] [a-zA-Z] [a-zA-Z]+))", tweet)
+	
+	allwords = unigrams
+
 	bag = {}
-	for word in words:
+	for word in allwords:
 		if word not in stop_words:
-			bag[word.lower()] = True
+			bag[word.strip()] = True
 	return bag
 
 def get_score(term, positive_classifications, negative_classifications, terms):
@@ -67,19 +87,19 @@ def get_score(term, positive_classifications, negative_classifications, terms):
 
 def get_point(bag, terms):
 	''' Make a point from the `bag` which represents a sentence '''
-	array = [0] * len(terms)
+	fv = {}
 	for word in bag:
 		if word in terms:
-			position = terms.keys().index(word)
-			array[position] = 1
+			fv[word] = 1
 	# sk-learn must have a list of points
-	return [array]
+	return fv
 
-if __name__ == "__main__":
+
+
+def get_classifier():
+	
 
 	print "Loading training data..."
-
-	#test = np.zeros((100000, 10000))
 
 	# A dictionary whose keys are strings (words) and values are tweetclass objects
 	terms = {}
@@ -99,7 +119,7 @@ if __name__ == "__main__":
 	positive_counter = 0
 	negative_counter = 0
 	# A debug limit for the number of positive and negative tweets
-	upto = 10000
+	upto = 100000
 	do_debug_limit = True 
 
 	for line in go_training_data:
@@ -159,7 +179,7 @@ if __name__ == "__main__":
 	print "Getting top terms from mutual information"
 	scores = []
 	top_terms = []
-	term_limit = 1000
+	term_limit = 600
 	heap_terms_processed = 0
 	for term in terms:
 		score = get_score(term, positive_classifications, negative_classifications, terms)
@@ -186,51 +206,197 @@ if __name__ == "__main__":
 
 
 
-
+	print top_terms.keys()[0:100]
 
 
 
 	# Debug
-	print "Total number of terms: %d" % len(terms)
+	print "Total number of features: %d" % len(top_terms)
 	#assert False
 
 	# Train
 	num_features = len(top_terms)
 	num_samples = len(go_tweets)
-	X = np.zeros((num_samples, num_features))
 	y = []
-	i = 0
+	train = []
 	for (score, bag) in go_tweets:
 		y.append(score)
+		fv = {}
+			# feature vector for this tweet
 		for word in bag:
 			if word in top_terms:
-				j = top_terms.keys().index(word)
-				X[i, j] = 1
-		i = i + 1
+				fv[word] = 1
+				
+		train.append( (fv, score) )
 	Y = np.array(y)
 
-	'''print (X)
-	print (Y)
-	assert False'''
-
-	clf = linear_model.SGDClassifier()
-	# Default linear_model.SGDClassifier settings:
-	#SGDClassifier(alpha=0.0001, class_weight=None, epsilon=0.1, eta0=0.0,
-	#        fit_intercept=True, l1_ratio=0.15, learning_rate='optimal',
-	#        loss='hinge', n_iter=5, n_jobs=1, penalty='l2', power_t=0.5,
-	#        random_state=None, rho=None, shuffle=False,
-	#        verbose=0, warm_start=False)
+	
 	print "Fitting data..."
-	clf.fit(X, Y)
+	clf = SklearnClassifier(linear_model.SGDClassifier(n_iter = 40, fit_intercept = False, alpha = 0.001, l1_ratio = 0.30), sparse=False).train(train)
+	#clf = linear_model.SGDClassifier()
+	#clf.fit()
 	print "Data fitted!"
-	# Example prediction
-	#print(clf.predict([[-0.8, -1]]))
+
+	return clf
+
+
+
+if __name__ == "__main__":
+
+	print "Loading training data..."
+
+	# A dictionary whose keys are strings (words) and values are tweetclass objects
+	terms = {}
+
+	# Load training data
+	go_training_data = open(GO_TRAINING_DATA)
+	go_tweets = []
+
+	# Load stop words
+	sw = open(STOP_WORDS_DATA)
+	stop_words = {}
+	for line in sw:
+		stop_words[line.strip()] = True
+	
+	# DEBUG
+	debug_counter = 0
+	positive_counter = 0
+	negative_counter = 0
+	# A debug limit for the number of positive and negative tweets
+	upto = 100000
+	do_debug_limit = True 
+
+	for line in go_training_data:
+		# Parse the line for the classification and the tweet
+		parts = line.split(",")
+		score = float(parts[0].replace('"', ""))
+		# Debug
+		if do_debug_limit:
+			if score == 0:
+				if negative_counter >= upto:
+					continue
+				negative_counter = negative_counter + 1
+			else:
+				if positive_counter >= upto:
+					continue
+				positive_counter = positive_counter + 1
+		
+		bag = get_words(parts[5], stop_words)
+		go_tweets.append((score, bag))
+	
+		# Add all the words in the tweet to the list of all terms
+		for word in bag:
+			if word not in terms:
+				nt = tweetclass(word)
+				if score == 0:
+					nt.negative = 1
+					nt.positive = 0
+				else:
+					nt.positive = 1
+					nt.negative = 0
+				terms[word] = nt
+			else:
+				if score == 0:
+					terms[word].negative = terms[word].negative + 1
+				else:
+					terms[word].positive = terms[word].positive + 1
+
+		# Debug
+		debug_counter = debug_counter + 1
+		if debug_counter % 1000 == 0:
+			print "processed %d tweets" % debug_counter
+			
+
+	negative_classifications = 0
+	for (score, bag) in go_tweets:
+		if score == 0:
+			negative_classifications = negative_classifications + 1
+	positive_classifications = len(go_tweets) - negative_classifications
+
+
+	print "Training data loaded!"
+
+
+
+	
+	# Get the top number of terms
+	print "Getting top terms from mutual information"
+	scores = []
+	top_terms = []
+	term_limit = 600
+	heap_terms_processed = 0
+	for term in terms:
+		score = get_score(term, positive_classifications, negative_classifications, terms)
+		# Debug
+		#print "score: %f\tterm: %s" % (score, term)
+		if heap_terms_processed % 1000 == 0:
+			print "heap terms processed: %d" % heap_terms_processed
+		heapq.heappush(scores, (score, term))
+		if len(scores) > term_limit:
+			heapq.heappop(scores)
+		assert len(scores) <= term_limit
+		heap_terms_processed = heap_terms_processed + 1
+
+	for item in scores:
+		top_terms.append(item[1])
+
+	tt = top_terms
+	top_terms = {}
+	for t in tt:
+		top_terms[t] = True
+
+
+	print "Top terms found"
+
+
+
+	print top_terms.keys()[0:100]
+
+
+
+	# Debug
+	print "Total number of features: %d" % len(top_terms)
+	#assert False
+
+	# Train
+	num_features = len(top_terms)
+	num_samples = len(go_tweets)
+	y = []
+	train = []
+	for (score, bag) in go_tweets:
+		y.append(score)
+		fv = {}
+			# feature vector for this tweet
+		for word in bag:
+			if word in top_terms:
+				fv[word] = 1
+				
+		train.append( (fv, score) )
+	Y = np.array(y)
+
+	
+
+
+
+
+
+	
+	print "Fitting data..."
+	clf = SklearnClassifier(linear_model.SGDClassifier(n_iter = 40, fit_intercept = False, alpha = 0.001, l1_ratio = 0.30), sparse=False).train(train)
+	#clf = linear_model.SGDClassifier()
+	#clf.fit()
+	print "Data fitted!"
 
 	# Loop through test data
+	
+	print "Running on test data..."
+
 	go_test_data = open(GO_TEST_DATA)
 	correct_classifications = 0;
 	total_classifications = 0;
-
+	pos_classifications = 0
+	neg_classifications = 0
+	
 	for line in go_test_data:
 		parts = line.split(",")
 		score = float(parts[0].replace('"', ""))
@@ -239,8 +405,14 @@ if __name__ == "__main__":
 
 			# Get classification
 			point = get_point(bag, top_terms)
-			clas = clf.predict(point)
-			cls = clas[0]
+			cls = clf.classify(point)
+
+			if cls == 4.0:
+				pos_classifications = pos_classifications + 1
+			else:
+				neg_classifications = neg_classifications + 1
+
+
 
 			# Compare to the correct classification
 			if cls == score:
@@ -248,4 +420,6 @@ if __name__ == "__main__":
 
 			total_classifications = total_classifications + 1
 
+	print "Positive classifications: " + str(pos_classifications)
+	print "Negative classifications: " + str(neg_classifications)
 	print "The percentage correct was: %g" % (float(correct_classifications) / float(total_classifications))
