@@ -95,6 +95,7 @@ function initializeHeatmap() {
 function initializeSocket() {
     var socket = io.connect(hostname);
     socket.on("newPoint", addPoint);
+    socket.on("initialPoints", prePopulate);
 }
 
 function addPoint(data) {
@@ -113,6 +114,24 @@ function addPoint(data) {
     addStatePoints(data);
 }
 
+function prePopulate(data) {
+    // Add every point to the heatmap
+    for (var i = 0; i < data.length; i++) {
+        var p = data[i];
+        var lat = p.latitude;
+        var lng = p.longitude;
+        var latlng = new google.maps.LatLng(lat,lng);
+
+        if (p.emotion == 0) {
+            pointArray.push(latlng);
+        }
+        else {
+            pointArrayNeg.push(latlng);
+        }
+    }
+
+}
+
 function toggleHeatmapPositive() {
   heatmap.setMap(heatmap.getMap() ? null : map);
 }
@@ -126,7 +145,7 @@ function changeRadiusLarger() {
   heatmapNeg.set('radius', heatmapNeg.get('radius') ? null : 15);
 }
 
-function switchMode(){
+function switchMode() {
     heatmap.setMap(heatmap.getMap() ? null : map);
     heatmapNeg.setMap(heatmapNeg.getMap() ? null : map);
     enableStatesMode();
