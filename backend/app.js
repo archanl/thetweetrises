@@ -5,8 +5,6 @@ var app = require('express')()
   , redis = require('redis')
   , redis_client = redis.createClient();
 
-var INDEX_FILE = "../heatmap/index.html";
-
 io.set('log level', 2); // Info only
 
 server.listen(80);
@@ -15,6 +13,7 @@ redis_client.on("error", function (err) {
     console.log("Error " + err);
 });
 
+/*
 var enableCORS = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -36,9 +35,10 @@ app.options('/', function(req, res){
     res.header("Access-Control-Allow-Origin", "*"); 
     res.end(''); 
 });
+*/
 
-app.get('/', function (req, res) {
-  res.sendfile(path.resolve(INDEX_FILE));
+app.configure(function(){
+  server.use(express.static(__dirname + '/public'));
 });
 
 io.sockets.on('connection', function (socket) {

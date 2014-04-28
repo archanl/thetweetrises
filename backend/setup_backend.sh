@@ -1,4 +1,7 @@
 sudo su -
+cd /
+mkdir thetweetrises
+cd thetweetrises
 
 apt-get install python-software-properties
 apt-add-repository ppa:chris-lea/node.js
@@ -8,7 +11,7 @@ apt-get install redis-server
 
 apt-get install nodejs
 
-npm install socket.io express redis
+npm install socket.io express redis node-static
 
 pip install -r pip-reqs.txt
 
