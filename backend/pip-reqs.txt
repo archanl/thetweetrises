@@ -1,4 +1,4 @@
 redis
 requests
 requests_oauthlib
-
+textblob
