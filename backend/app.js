@@ -14,9 +14,7 @@ redis_client.on("error", function (err) {
     console.log("Error " + err);
 });
 
-app.configure(function(){
-  app.use(express.static(__dirname + '/public'));
-});
+app.use(express.static(__dirname + '/public'));
 
 io.sockets.on('connection', function (socket) {
   var random_emitter = function() {
