@@ -1,44 +1,21 @@
-var app = require('express')()
-  , server = require('http').createServer(app)
-  , io = require('socket.io').listen(server)
+var express = require('express')
+  , app = express()
+  , http = require('http')
+  , server = http.createServer(app)
+  , socketIO = require('socket.io')
+  , io = socketIO.listen(server)
   , path = require('path')
   , redis = require('redis')
   , redis_client = redis.createClient();
 
 io.set('log level', 2); // Info only
 
-server.listen(80);
-
 redis_client.on("error", function (err) {
     console.log("Error " + err);
 });
 
-/*
-var enableCORS = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-
-    // intercept OPTIONS method
-    if ('OPTIONS' == req.method) {
-      res.send(200);
-    }
-    else {
-      next();
-    }
-};
-
-app.use(enableCORS);
-
-app.options('/', function(req, res){ 
-    console.log("writing headers only"); 
-    res.header("Access-Control-Allow-Origin", "*"); 
-    res.end(''); 
-});
-*/
-
 app.configure(function(){
-  server.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public'));
 });
 
 io.sockets.on('connection', function (socket) {
@@ -58,6 +35,13 @@ io.sockets.on('connection', function (socket) {
     clearInterval(emit_interval);
   });
 });
+
+server.listen(80);
+
+
+
+
+// Random points generator
 
 var minLat = 29.482843,
     maxLat = 48.972145,
