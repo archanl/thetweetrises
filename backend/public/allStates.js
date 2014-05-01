@@ -3925,28 +3925,97 @@ Wyoming = new google.maps.Polygon({
   fillOpacity: 0.50 
 }); 
 
-var allStateOutlines = new Array(Alabama, Arizona, Arkansas, California, Colorado, Connecticut, Delaware, Florida, Georgia, Idaho, Illinois, Indiana, Iowa, Kansas, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, Nevada, NewHampshire, NewJersey, NewMexico, NewYork, NorthCarolina, NorthDakota, Ohio, Oklahoma, Oregon, Pennsylvania, RhodeIsland, SouthCarolina, SouthDakota, Tennessee, Texas, Utah, Vermont, Virginia, Washington, WestVirginia, Wisconsin, Wyoming);
+var allStateOutlines = new Array([California, 0, 0], [NewYork, 0, 0], [Alabama, 0, 0], [Arizona, 0, 0], [Arkansas, 0, 0], [Colorado, 0, 0], [Connecticut, 0, 0], [Delaware, 0, 0], [Florida, 0, 0], [Georgia, 0, 0], [Idaho, 0, 0], [Illinois, 0, 0], [Indiana, 0, 0], [Iowa, 0, 0], [Kansas, 0, 0], [Kentucky, 0, 0], [Louisiana, 0, 0], [Maine, 0, 0], [Maryland, 0, 0], [Massachusetts, 0, 0], [Michigan, 0, 0], [Minnesota, 0, 0], [Mississippi, 0, 0], [Missouri, 0, 0], [Montana, 0, 0], [Nebraska, 0, 0], [Nevada, 0, 0], [NewHampshire, 0, 0], [NewJersey, 0, 0], [NewMexico, 0, 0], [NorthCarolina, 0, 0], [NorthDakota, 0, 0], [Ohio, 0, 0], [Oklahoma, 0, 0], [Oregon, 0, 0], [Pennsylvania, 0, 0], [RhodeIsland, 0, 0], [SouthCarolina, 0, 0], [SouthDakota, 0, 0], [Tennessee, 0, 0], [Texas, 0, 0], [Utah, 0, 0], [Vermont, 0, 0], [Virginia, 0, 0], [Washington, 0, 0], [WestVirginia, 0, 0], [Wisconsin, 0, 0], [Wyoming, 0, 0]);
 
-function enableStatesMode(){
+function enableStatesMode(averages){
   for (i = 0; i< allStateOutlines.length; i++){
-    allStateOutlines[i].setMap(allStateOutlines[i].getMap() ? null : map);
+    var actualState = allStateOutlines[i][0];
+    if(averages){
+      if (allStateOutlines[i][2] != 0)
+      {
+        var positive = allStateOutlines[i][1];
+        var total = allStateOutlines[i][2];
+        var positiveNumber = Math.ceil(255 * (positive / total));
+        var negativeNumber = 255 - positiveNumber;
+        var colorString = 'rgb(' + String(negativeNumber) + ',0,' + String(positiveNumber) + ')';
+        actualState.setOptions({fillColor: colorString});
+      }
+    }
+    else{
+      actualState.setOptions({fillColor: '#000000'});
+    }
+    actualState.setMap(map);
   }
 }
 
-function addStatePoints(stateData){
+function disableStatesMode(){
   for (i = 0; i< allStateOutlines.length; i++){
-    var emotionState = stateData.sentiment > 0 ? 1 : 0;
-    var latState = stateData.latitude;
-    var lngState = stateData.longitude;
+    allStateOutlines[i][0].setMap(null);
+  }
+}
+
+function addStatePoints(data, averages){
+  for (i = 0; i< allStateOutlines.length; i++){
+    var emotionState = data.sentiment > 0 ? 1 : 0;
+    var latState = data.latitude;
+    var lngState = data.longitude;
     var latlngState = new google.maps.LatLng(latState,lngState);
-    var insideState = google.maps.geometry.poly.containsLocation(latlngState, allStateOutlines[i]);
+    var insideState = google.maps.geometry.poly.containsLocation(latlngState, allStateOutlines[i][0]);
     if (insideState){
+      var actualState = allStateOutlines[i][0];
+      var positive = allStateOutlines[i][1];
+      var total = allStateOutlines[i][2];
+      total = total + 1;
       if (emotionState == 0){
-        allStateOutlines[i].setOptions({fillColor: 'blue'});
+        positive = positive + 1;
+        var positiveNumber = Math.ceil(255 * (positive / total));
+        var negativeNumber = 255 - positiveNumber;
+        var colorString = 'rgb(' + String(negativeNumber) + ',0,' + String(positiveNumber) + ')';
+        if (averages){
+          actualState.setOptions({fillColor: colorString});
+        }
+        else{
+          actualState.setOptions({fillColor: "rgb(0,0,255)"});
+        }
       }
       else{
-        allStateOutlines[i].setOptions({fillColor: 'red'});
+        var positiveNumber = Math.ceil(255 * (positive / total));
+        var negativeNumber = 255 - positiveNumber;
+        var colorString = 'rgb(' + String(negativeNumber) + ',0,' + String(positiveNumber) + ')';
+        if (averages){
+          actualState.setOptions({fillColor: colorString});
+        }
+        else{
+          actualState.setOptions({fillColor: "rgb(255,0,0)"});
+        }
       }
+      allStateOutlines[i] = [actualState, positive, total];
+
+/*
+      var marker = new MarkerWithLabel({
+        position: new google.maps.LatLng(0,0),
+        draggable: false,
+        raiseOnDrag: false,
+        map: map,
+        labelContent: String(0),
+        labelAnchor: new google.maps.Point(30, 20),
+        labelClass: "labels", // the CSS class for the label
+        labelStyle: {opacity: 1.0},
+        icon: "http://placehold.it/1x1",
+        visible: false
+      });
+
+      //marker.set("labelContent", String(total));
+
+      google.maps.event.addListener(actualState, "mousemove", function(event) {
+        marker.setPosition(event.latLng);
+        marker.setVisible(true);
+      });
+
+      google.maps.event.addListener(actualState, "mouseout", function(event) {
+        marker.setVisible(false);
+      });
+*/
       break;
     }
   }

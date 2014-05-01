@@ -24,8 +24,9 @@
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=visualization"></script>
     <script src="http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com/socket.io/socket.io.js"></script>
+    <script src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
     <script src="allStates.js"></script>
-    
+
     <script>
 
 var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
@@ -36,6 +37,7 @@ var data = [];
 
 var dataNeg = [];
 
+var stateAverages = false;
  
 function initializeHeatmap() {
   var mapOptions = {
@@ -133,7 +135,7 @@ function addPoint(data) {
         pointArrayNeg.push(latlng);
     }
 
-    addStatePoints(data);
+    addStatePoints(data, stateAverages);
 }
 
 function prePopulate(data) {
@@ -150,16 +152,15 @@ function prePopulate(data) {
         else {
             pointArrayNeg.push(latlng);
         }
+       // p.sentiment = p.emotion;
+       // addStatePoints(p);
     }
-
 }
 
-function toggleHeatmapPositive() {
-  heatmap.setMap(heatmap.getMap() ? null : map);
-}
-
-function toggleHeatmapNegative() {
-  heatmapNeg.setMap(heatmapNeg.getMap() ? null : map);
+function HeatmapMode() {
+  heatmap.setMap(map);
+  heatmapNeg.setMap(map);
+  disableStatesMode();
 }
 
 function changeRadiusLarger() {
@@ -167,10 +168,18 @@ function changeRadiusLarger() {
   heatmapNeg.set('radius', heatmapNeg.get('radius') ? null : 15);
 }
 
-function switchMode() {
-    heatmap.setMap(heatmap.getMap() ? null : map);
-    heatmapNeg.setMap(heatmapNeg.getMap() ? null : map);
-    enableStatesMode();
+function switchModeAverage() {
+    heatmap.setMap(null);
+    heatmapNeg.setMap(null);
+    stateAverages = true;
+    enableStatesMode(stateAverages);
+}
+
+function switchModeCurrent() {
+    heatmap.setMap(null);
+    heatmapNeg.setMap(null);
+    stateAverages = false;
+    enableStatesMode(stateAverages);
 }
 
 function changeOpacity() {
@@ -185,9 +194,9 @@ google.maps.event.addDomListener(window, 'load', initializeSocket);
   </head>
   <body>
     <div id="panel">
-      <button onclick="toggleHeatmapPositive()">Toggle Positive</button>
-      <button onclick="toggleHeatmapNegative()">Toggle Negative</button>
-      <button onclick="switchMode()">Change Mode</button>
+      <button onclick="HeatmapMode()">Standard Heatmap</button>
+      <button onclick="switchModeAverage()">State Averages</button>
+      <button onclick="switchModeCurrent()">State Current</button>
       <button onclick="changeRadiusLarger()">Larger Points</button>
       <button onclick="changeOpacity()">Change Opacity</button>
     </div>
