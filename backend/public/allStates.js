@@ -3992,6 +3992,8 @@ function addStatePoints(data, averages){
       allStateOutlines[i] = [actualState, positive, total];
 
 /*
+    // Note: the marker with label comes from the following example
+    // http://jsfiddle.net/tcfwH/
       var marker = new MarkerWithLabel({
         position: new google.maps.LatLng(0,0),
         draggable: false,
