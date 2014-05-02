@@ -20,20 +20,30 @@ import cPickle
 
 
 DEBUG = False
-NAIVE_BAYES_TWEET_LIMIT = 500
-NAIVE_BAYES_NUM_FEATURES = 20
+NAIVE_BAYES_TWEET_LIMIT = 1000000
+NAIVE_BAYES_NUM_FEATURES = 2000
 DO_NAIVE_BAYES_LIMIT = True
-SGD_FEATURE_LIMIT = 50
-SGD_TWEET_LIMIT = 500
-SVM_TWEET_LIMIT = 500
-SVM_FEATURE_LIMIT = 50
-MAXIMUM_ENTROPY_TWEET_LIMIT = 500
-MAXIMUM_ENTROPY_TERM_LIMIT = 50
+SGD_FEATURE_LIMIT = 1000
+SGD_TWEET_LIMIT = 10000
+SVM_TWEET_LIMIT = 1000
+SVM_FEATURE_LIMIT = 100
+MAXIMUM_ENTROPY_TWEET_LIMIT = 3000
+MAXIMUM_ENTROPY_TERM_LIMIT = 80 
+'''
+NAIVE_BAYES_TWEET_LIMIT = 1
+NAIVE_BAYES_NUM_FEATURES = 1
+DO_NAIVE_BAYES_LIMIT = True
+SGD_FEATURE_LIMIT = 1
+SGD_TWEET_LIMIT = 1
+SVM_TWEET_LIMIT = 1
+SVM_FEATURE_LIMIT = 1
+MAXIMUM_ENTROPY_TWEET_LIMIT = 1
+MAXIMUM_ENTROPY_TERM_LIMIT = 1 '''
 
 
 class classifier_wrapper:
     def __init__(self):
-        tweet = "I love to test things!";
+        '''tweet = "I love to test things!";
         #self.train_naive_bayes();
         #self.train_sgd();
         #self.train_support_vector_machine();
@@ -42,36 +52,40 @@ class classifier_wrapper:
         #    algorithm = "naive_bayes";
         #    cls = self.classify(tweet, algorithm, tolerance);
         #    print "The classification is ", cls, " for tolerance ", tolerance
-        '''for tolerance in [0.5, 0.7, 0.9, 0.95]:
+        for tolerance in [0.5, 0.7, 0.9, 0.95]:
             algorithm = "sgd";
             cls = self.classify(tweet, algorithm, tolerance);
             print "The classification is ", cls, " for tolerance ", tolerance
         for tolerance in [0.5, 0.7, 0.9, 0.95]:
             algorithm = "svm";
             cls = self.classify(tweet, algorithm, tolerance);
-            print "The classification is ", cls, " for tolerance ", tolerance'''
+            print "The classification is ", cls, " for tolerance ", tolerance
         for tolerance in [0.5, 0.7, 0.9, 0.95]:
             algorithm = "maximum_entropy";
             cls = self.classify(tweet, algorithm, tolerance);
-            print "The classification is ", cls, " for tolerance ", tolerance
-        '''
-        t1 = threading.Thread(target=self.train_naive_bayes)
-        t1.daemon = True
-        t1.start()
-        t2 = threading.Thread(target=self.train_sgd)
-        t2.daemon = True
-        t2.start()
-        t3 = threading.Thread(target=self.train_support_vector_machine)
-        t3.daemon = True
-        t3.start()
+            print "The classification is ", cls, " for tolerance ", tolerance'''
+        
         t4 = threading.Thread(target=self.train_maximum_entropy)
         t4.daemon = True
         t4.start()
-        t1.join()
-        t2.join()
-        t3.join()
         t4.join()
-        '''
+        t1 = threading.Thread(target=self.train_naive_bayes)
+        t1.daemon = True
+        t1.start()
+        t1.join()
+        t2 = threading.Thread(target=self.train_sgd)
+        t2.daemon = True
+        t2.start()
+        t2.join()
+        t3 = threading.Thread(target=self.train_support_vector_machine)
+        t3.daemon = True
+        t3.start()
+        t3.join()
+        #t1.join()
+        #t2.join()
+        #t3.join()
+        #t4.join()
+        
 
     def train_all(self):
         self.train_naive_bayes();
@@ -519,9 +533,9 @@ def get_svm_classifier():
     upto = SVM_TWEET_LIMIT
     do_debug_limit = True 
 
-    if DEBUG:
-        upto = 1000
-        do_debug_limit = True
+    #if DEBUG:
+    #    upto = 1000
+    #    do_debug_limit = True
 
     for line in go_training_data:
         # Parse the line for the classification and the tweet
