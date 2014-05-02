@@ -40,7 +40,7 @@ io.sockets.on('connection', function (socket) {
       var point = JSON.parse(reply);
       
       // Only emit if different from last message
-      if (last_emitted === point) {
+      if (last_emitted !== point) {
           last_emitted = point;
           socket.volatile.emit('newPoint', point);
       }
