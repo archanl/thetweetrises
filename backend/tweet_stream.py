@@ -9,6 +9,7 @@ import signal
 logging.basicConfig(level=logging.DEBUG)
 
 MAXQUEUESIZE = 10000
+MAX_TWEET_CACHE = 100
 QUEUE_KEY = 'tweet_queue'
 
 def signal_handler(signum = None, frame = None):
@@ -34,13 +35,19 @@ def main():
     t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?language=en&locations=-125.0011,24.9493,-66.9326,49.5904',
                      auth=oauth, stream=True)
 
+    tweet_cache = []
     while True:
         try:
             if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
                 tweet = next_tweet(t)
                 while "delete" in tweet[:10]:
                     tweet = next_tweet(t)
-                r.lpush(QUEUE_KEY, tweet)
+
+                tweet_cache.append(tweet)
+
+                if len(tweet_cache) > MAX_TWEET_CACHE:
+                    r.lpush(QUEUE_KEY, *tweet_cache)
+                    tweet_cache = []
 
         except Exception as e:
             logging.debug("Something awful happened!")
