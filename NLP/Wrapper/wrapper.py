@@ -82,7 +82,13 @@ class classifier_wrapper:
 					fv[word] = 1
 
 			# Get classification
-			cls = self.svm_classifier.classify(fv)
+			pdist = self.svm_classifier.prob_classify(fv)
+            if pdist.prob(0) > tolerance:
+                cls = 0
+            elif pdist.prob(4) > tolerance:
+                cls = 4
+            else:
+                cls = 2
 
 		elif algorithm == "maximum_entropy":
 			bag = get_words(tweet, self.stop_words)
@@ -94,7 +100,13 @@ class classifier_wrapper:
 
 			# Get classification
 			#point = get_point(bag, self.top_maxent_terms)
-			cls = self.maxent_classifier.classify(fv)
+			pdist = self.maxent_classifier.classify(fv)
+            if pdist.prob(0) > tolerance:
+                cls = 0
+            elif pdistprob(4) > tolerance:
+                cls = 4
+            else:
+                cls = 2
 
 		else:
 			raise Exception("Invalid algorithm choice: " + algorithm)
@@ -584,7 +596,7 @@ def get_svm_classifier():
 	assert False'''
 
 	print "Fitting data..."
-	classifier = SklearnClassifier(SVC(kernel='linear')).train(train)
+	classifier = SklearnClassifier(SVC(kernel='linear', probability=True)).train(train)
 
 	return classifier, top_terms, stop_words
 
