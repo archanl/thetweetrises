@@ -25,19 +25,33 @@ NAIVE_BAYES_NUM_FEATURES = 20
 DO_NAIVE_BAYES_LIMIT = True
 SGD_FEATURE_LIMIT = 50
 SGD_TWEET_LIMIT = 500
+SVM_TWEET_LIMIT = 500
+SVM_FEATURE_LIMIT = 50
+MAXIMUM_ENTROPY_TWEET_LIMIT = 500
+MAXIMUM_ENTROPY_TERM_LIMIT = 50
 
 
 class classifier_wrapper:
-    def __init__(self):       
+    def __init__(self):
         tweet = "I love to test things!";
         #self.train_naive_bayes();
-        self.train_sgd();
+        #self.train_sgd();
+        #self.train_support_vector_machine();
+        self.train_maximum_entropy();
         #for tolerance in [0.5, 0.7, 0.9, 0.95]:
         #    algorithm = "naive_bayes";
         #    cls = self.classify(tweet, algorithm, tolerance);
         #    print "The classification is ", cls, " for tolerance ", tolerance
-        for tolerance in [0.5, 0.7, 0.9, 0.95]:
+        '''for tolerance in [0.5, 0.7, 0.9, 0.95]:
             algorithm = "sgd";
+            cls = self.classify(tweet, algorithm, tolerance);
+            print "The classification is ", cls, " for tolerance ", tolerance
+        for tolerance in [0.5, 0.7, 0.9, 0.95]:
+            algorithm = "svm";
+            cls = self.classify(tweet, algorithm, tolerance);
+            print "The classification is ", cls, " for tolerance ", tolerance'''
+        for tolerance in [0.5, 0.7, 0.9, 0.95]:
+            algorithm = "maximum_entropy";
             cls = self.classify(tweet, algorithm, tolerance);
             print "The classification is ", cls, " for tolerance ", tolerance
         '''
@@ -106,7 +120,13 @@ class classifier_wrapper:
                     fv[word] = 1
 
             # Get classification
-            cls = self.svm_classifier.classify(fv)
+            pdist = self.svm_classifier.prob_classify(fv)
+            if pdist.prob(0) > tolerance:
+                cls = 0
+            elif pdist.prob(4) > tolerance:
+                cls = 4
+            else:
+                cls = 2
 
         elif algorithm == "maximum_entropy":
             bag = get_words(tweet, self.stop_words)
@@ -118,7 +138,13 @@ class classifier_wrapper:
 
             # Get classification
             #point = get_point(bag, self.top_maxent_terms)
-            cls = self.maxent_classifier.classify(fv)
+            pdist = self.maxent_classifier.prob_classify(fv)
+            if pdist.prob(0) > tolerance:
+                cls = 0
+            elif pdist.prob(4) > tolerance:
+                cls = 4
+            else:
+                cls = 2
 
         else:
             raise Exception("Invalid algorithm choice: " + algorithm)
@@ -128,6 +154,7 @@ class classifier_wrapper:
         elif cls == 2.0:
             return "neutral"
         return "negative"
+
 
 
 
@@ -452,7 +479,7 @@ def get_sgd_classifier():
     Y = np.array(y)
 
     print "Fitting data..."
-    clf = SklearnClassifier(linear_model.SGDClassifier(n_iter = 40, fit_intercept = False, alpha = 0.001, l1_ratio = 0.30), sparse=False).train(train)
+    clf = SklearnClassifier(linear_model.SGDClassifier(loss = 'log', n_iter = 40, fit_intercept = False, alpha = 0.001, l1_ratio = 0.30), sparse=False).train(train)
     #clf = linear_model.SGDClassifier()
     #clf.fit()
     print "Data fitted!"
@@ -489,7 +516,7 @@ def get_svm_classifier():
     positive_counter = 0
     negative_counter = 0
     # A debug limit for the number of positive and negative tweets
-    upto = 10000
+    upto = SVM_TWEET_LIMIT
     do_debug_limit = True 
 
     if DEBUG:
@@ -553,7 +580,7 @@ def get_svm_classifier():
     print "Getting top terms from mutual information"
     scores = []
     top_terms = []
-    term_limit = 5000
+    term_limit = SVM_FEATURE_LIMIT
 
     if DEBUG:
         term_limit = 50
@@ -611,7 +638,8 @@ def get_svm_classifier():
     assert False'''
 
     print "Fitting data..."
-    classifier = SklearnClassifier(SVC(kernel='linear')).train(train)
+    classifier = SklearnClassifier(SVC(kernel='linear', probability=True)).train(train)
+
 
     return classifier, top_terms, stop_words
 
@@ -760,7 +788,7 @@ def get_maxent_classifier():
     positive_counter = 0
     negative_counter = 0
     # A debug limit for the number of positive and negative tweets
-    upto = 10000
+    upto = MAXIMUM_ENTROPY_TWEET_LIMIT
     do_debug_limit = True 
 
     if DEBUG:
@@ -824,7 +852,7 @@ def get_maxent_classifier():
     print "Getting top terms from mutual information"
     scores = []
     top_terms = []
-    term_limit = 1000
+    term_limit = MAXIMUM_ENTROPY_TERM_LIMIT
 
     if DEBUG:
         term_limit = 50
@@ -910,3 +938,4 @@ if __name__ == "__main__":
     f = open("test.txt", 'wb')
     cPickle.dump(thewrapper, f)
     f.close()
+

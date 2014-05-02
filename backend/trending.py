@@ -4,6 +4,8 @@ import requests
 from requests_oauthlib import OAuth1
 
 USA_WOEID = '23424977'
+TRENDING_KEYS_KEY = 'trending_keys'
+MAX_TRENDING = 10
 
 def main():
     r = redis.Redis('localhost')
@@ -18,7 +20,21 @@ def main():
     t = requests.get('https://api.twitter.com/1.1/trends/place.json?id=' + USA_WOEID,
                      auth=oauth)
 
-    print t
+    j = ""
+    for x in t:
+        j += x
+    j = json.loads(j)
+
+    trending_key = j[0]['created_at']
+    if not r.exists(trending_key):
+        while r.llen(TRENDING_KEYS_KEY) >= MAX_TRENDING:
+            to_remove = r.brpop(TRENDING_KEYS_KEY)
+            r.del(to_remove)
+
+        r.lpush(TRENDING_KEYS_KEY, trending_key)
+        for trend in j[0]['trends']:
+            r.lpush(trending_key, json.dumps(trend))
+
     
 if __name__ == '__main__':
     main()
