@@ -7,6 +7,7 @@ var express = require('express')
   , path = require('path')
   , redis = require('redis')
   , crypto = require('crypto')
+  , _und = require('underscore')
   , redis_client = redis.createClient();
 
 // Initial emit size
@@ -32,7 +33,7 @@ io.sockets.on('connection', function (socket) {
     redis_client.lrange("sentiment_stream", 0, 0, function(err, reply) {
       var point = JSON.parse(reply);
       // Only emit if different from last message
-      if (last_emitted !== point) {
+      if (_und.isEqual(last_emitted, point)) {
           last_emitted = point;
           socket.volatile.emit('newPoint', point);
       }
