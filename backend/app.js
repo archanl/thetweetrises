@@ -33,7 +33,7 @@ io.sockets.on('connection', function (socket) {
     redis_client.lrange("sentiment_stream", -1, -1, function(err, reply) {
       var point = JSON.parse(reply);
       // Only emit if different from last message
-      if (_und.isEqual(last_emitted, point)) {
+      if (last_emitted.latitude !== point.latitude) {
           last_emitted = point;
           socket.volatile.emit('newPoint', point);
       }
