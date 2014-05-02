@@ -30,7 +30,7 @@ io.sockets.on('connection', function (socket) {
   };
 
   var redis_emitter = function() {
-    redis_client.lrange("sentiment_stream", 0, 0, function(err, reply) {
+    redis_client.lrange("sentiment_stream", -1, -1, function(err, reply) {
       var point = JSON.parse(reply);
       // Only emit if different from last message
       if (_und.isEqual(last_emitted, point)) {
