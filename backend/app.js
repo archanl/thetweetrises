@@ -14,6 +14,7 @@ var express = require('express')
 var iemit_size = 100;
 
 // Last emitted sentiment
+// TODO: Is it OK to have global variables? what happens when multiple users login?
 var last_emitted = ""
 
 io.set('log level', 2); // Info only
