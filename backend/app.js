@@ -44,7 +44,7 @@ io.sockets.on('connection', function (socket) {
   var initial_emit = function() {
     redis_client.lrange("sentiment_stream", 0, 100, function(err, reply) {
       var point = JSON.parse(reply);
-      socket.volatile.emit('preload_data', point);
+      socket.volatile.emit('initialPoints', point);
       
     });
   };
