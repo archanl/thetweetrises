@@ -8,6 +8,11 @@ var express = require('express')
   , redis = require('redis')
   , redis_client = redis.createClient();
 
+// Initial emit size
+var iemit_size = 100;
+
+
+
 io.set('log level', 2); // Info only
 
 redis_client.on("error", function (err) {
@@ -22,7 +27,14 @@ io.sockets.on('connection', function (socket) {
   };
 
   var redis_emitter = function() {
-    redis_client.brpoplpush("sentiment_stream", "sentiment_stream", 0, function(err, reply) {
+    redis_client.lrange("sentiment_stream", 0, 0, function(err, reply) {
+      var point = JSON.parse(reply);
+      socket.volatile.emit('newPoint', point);
+    });
+  };
+
+  var initial_emit = function() {
+    redis_client.lrange("sentiment_stream", 0, 100, function(err, reply) {
       var point = JSON.parse(reply);
       socket.volatile.emit('newPoint', point);
     });
