@@ -6,12 +6,14 @@ var express = require('express')
   , io = socketIO.listen(server)
   , path = require('path')
   , redis = require('redis')
+  , crypto = require('crypto')
   , redis_client = redis.createClient();
 
 // Initial emit size
 var iemit_size = 100;
 
-
+// Last emitted sentiment
+var last_emitted = ""
 
 io.set('log level', 2); // Info only
 
@@ -36,7 +38,12 @@ io.sockets.on('connection', function (socket) {
   var initial_emit = function() {
     redis_client.lrange("sentiment_stream", 0, 100, function(err, reply) {
       var point = JSON.parse(reply);
-      socket.volatile.emit('newPoint', point);
+      
+      // Only emit if different from last message
+      if (last_emitted === point) {
+          last_emitted = point;
+          socket.volatile.emit('newPoint', point);
+      }
     });
   };
 
@@ -44,6 +51,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('disconnect', function() {
     clearInterval(emit_interval);
   });
+
 });
 
 server.listen(80);
