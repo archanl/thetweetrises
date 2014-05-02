@@ -3,11 +3,14 @@ cd /
 mkdir thetweetrises
 cd thetweetrises
 
-apt-get install python-software-properties
+apt-get install -y python-software-properties
+
+add-apt-repository -y ppa:rwky/redis
 apt-add-repository ppa:chris-lea/node.js
+
 apt-get update
 
-apt-get install redis-server
+apt-get install -y redis-server
 
 apt-get install nodejs
 
