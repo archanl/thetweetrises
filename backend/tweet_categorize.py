@@ -5,6 +5,11 @@ import json
 from multiprocessing import Pool
 import signal
 import logging
+import cPickle
+import sys
+sys.path.insert(0, '../NLP/Wrapper/')
+sys.path.insert(0, '../NLP/')
+from wrapper import classifier_wrapper, tweetclass
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
@@ -22,7 +27,10 @@ def signal_handler(signum = None, frame = None):
 def main():
     logging.debug("Starting tweet consumer.")
 
-    for sig in [signal.SIGTERM, signal.SIGINT, signal.SIGHUP, signal.SIGQUIT]:
+    #for sig in [signal.SIGTERM, signal.SIGINT, signal.SIGHUP, signal.SIGQUIT]:
+    # On Windows, signal() can only be called with SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, or SIGTERM. 
+    # A ValueError will be raised in any other case.
+    for sig in [signal.SIGTERM, signal.SIGINT]:
         signal.signal(sig, signal_handler)
 
     r = redis.Redis('localhost')
@@ -33,6 +41,9 @@ def main():
 
 
 # def consume(r):
+    f = open("../NLP/Wrapper/test.txt", 'rb')
+    p = cPickle.load(f)
+    f.close()
     while True:
         try:
             if r.llen(SENTIMENT_KEY) >= MAX_SENTIMENTS:
@@ -46,12 +57,33 @@ def main():
                 continue
 
             coordinates = tweet['geo']['coordinates']
+            '''
             sentiment = TextBlob(tweet['text']).sentiment.polarity
             if sentiment != 0:
                 # Jsonify tweet with sentiment and store in redis
                 d = {'sentiment' : sentiment, \
                      'latitude' : coordinates[0], \
                      'longitude' : coordinates[1] }
+                logging.debug("data from categorizer: ")
+                logging.debug(d)
+                j = json.dumps(d)
+
+                r.lpush(SENTIMENT_KEY, str(j))
+                '''
+            sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
+            if sentiment == "positive":
+                sentiment = 1
+            elif sentiment == "negative":
+                sentiment = -1
+            elif sentiment == "neutral":
+                sentiment = 0
+            if sentiment != 0:
+                # Jsonify tweet with sentiment and store in redis
+                d = {'sentiment' : sentiment, \
+                     'latitude' : coordinates[0], \
+                     'longitude' : coordinates[1] }
+                logging.debug("data from categorizer: ")
+                logging.debug(d)
                 j = json.dumps(d)
 
                 r.lpush(SENTIMENT_KEY, str(j))
