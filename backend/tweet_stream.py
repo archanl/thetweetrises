@@ -9,7 +9,7 @@ import signal
 logging.basicConfig(level=logging.DEBUG)
 
 MAXQUEUESIZE = 10000
-MAX_TWEET_CACHE = 100
+MAX_TWEET_CACHE = 1
 QUEUE_KEY = 'tweet_queue'
 
 def signal_handler(signum = None, frame = None):
