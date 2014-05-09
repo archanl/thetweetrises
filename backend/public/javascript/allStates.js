@@ -21,7 +21,8 @@ var AlabamaOutline = [
   new google.maps.LatLng(31.8939, -88.4743),
   new google.maps.LatLng(34.8938, -88.1021),
   new google.maps.LatLng(34.9479, -88.1721),
-  new google.maps.LatLng(34.9107, -88.1461)
+  new google.maps.LatLng(34.9107, -88.1461),
+  new google.maps.LatLng(35.0041, -88.1955)
 ]; 
  
 Alabama = new google.maps.Polygon({ 
@@ -93,7 +94,8 @@ var ArkansasOutline = [
   new google.maps.LatLng(33.5872, -94.1885),
   new google.maps.LatLng(33.5345, -94.0375),
   new google.maps.LatLng(33.4314, -94.043),
-  new google.maps.LatLng(33.0213, -94.043)
+  new google.maps.LatLng(33.0213, -94.043),
+  new google.maps.LatLng(33.0225, -94.0416)
 ]; 
  
 Arkansas = new google.maps.Polygon({ 
@@ -192,7 +194,8 @@ var ArizonaOutline = [
   new google.maps.LatLng(36.119, -114.1054),
   new google.maps.LatLng(36.1989, -114.0463),
   new google.maps.LatLng(36.3638, -114.045),
-  new google.maps.LatLng(37.0001, -114.0508)
+  new google.maps.LatLng(37.0001, -114.0508),
+  new google.maps.LatLng(36.9993, -112.5989)
 ]; 
  
 Arizona = new google.maps.Polygon({ 
@@ -317,7 +320,7 @@ var CaliforniaOutline = [
   new google.maps.LatLng(41.011, -124.3144),
   new google.maps.LatLng(41.2386, -124.3419),
   new google.maps.LatLng(41.717, -124.4545),
-  new google.maps.LatLng(41.9983, -124.4009)
+  new google.maps.LatLng(41.9983, -124.4009),
 ]; 
  
 California = new google.maps.Polygon({ 
@@ -382,7 +385,8 @@ var ConnecticutOutline = [
   new google.maps.LatLng(41.2153, -73.4834),
   new google.maps.LatLng(41.2953, -73.5507),
   new google.maps.LatLng(41.4906, -73.5329),
-  new google.maps.LatLng(42.0493, -73.4875)
+  new google.maps.LatLng(42.0493, -73.4875),
+  new google.maps.LatLng(42.0498, -73.4875)
 ]; 
  
 Connecticut = new google.maps.Polygon({ 
@@ -415,7 +419,8 @@ var DelawareOutline = [
   new google.maps.LatLng(39.8106, -75.3937),
   new google.maps.LatLng(39.8249, -75.4692),
   new google.maps.LatLng(39.8296, -75.6477),
-  new google.maps.LatLng(39.7199, -75.7906)
+  new google.maps.LatLng(39.7199, -75.7906),
+  new google.maps.LatLng(39.7188, -75.7919)
 ]; 
  
 Delaware = new google.maps.Polygon({ 
@@ -516,7 +521,8 @@ var FloridaOutline = [
   new google.maps.LatLng(30.8527, -87.6256),
   new google.maps.LatLng(30.947, -87.5912),
   new google.maps.LatLng(30.9682, -87.5912),
-  new google.maps.LatLng(30.9964, -87.605)
+  new google.maps.LatLng(30.9964, -87.605),
+  new google.maps.LatLng(30.9988, -87.605)
 ]; 
  
 Florida = new google.maps.Polygon({ 
@@ -602,7 +608,8 @@ var GeorgiaOutline = [
   new google.maps.LatLng(32.9833, -85.2072),
   new google.maps.LatLng(33.6512, -85.3418),
   new google.maps.LatLng(34.562, -85.5231),
-  new google.maps.LatLng(34.9929, -85.6068)
+  new google.maps.LatLng(34.9929, -85.6068),
+  new google.maps.LatLng(34.9974, -85.6082)
 ]; 
  
 Georgia = new google.maps.Polygon({ 
@@ -675,7 +682,8 @@ var IowaOutline = [
   new google.maps.LatLng(41.0338, -95.8653),
   new google.maps.LatLng(40.8346, -95.8365),
   new google.maps.LatLng(40.6775, -95.8461),
-  new google.maps.LatLng(40.5837, -95.761)
+  new google.maps.LatLng(40.5837, -95.761),
+  new google.maps.LatLng(40.5848, -95.7623)
 ]; 
  
 Iowa = new google.maps.Polygon({ 
@@ -812,7 +820,8 @@ var IdahoOutline = [
   new google.maps.LatLng(46.3446, -117.0511),
   new google.maps.LatLng(46.427, -117.0408),
   new google.maps.LatLng(46.9451, -117.0394),
-  new google.maps.LatLng(48.9996, -117.0319)
+  new google.maps.LatLng(48.9996, -117.0319),
+  new google.maps.LatLng(49.0, -117.0319)
 ]; 
  
 Idaho = new google.maps.Polygon({ 
@@ -896,7 +905,8 @@ var IllinoisOutline = [
   new google.maps.LatLng(42.2021, -90.3598),
   new google.maps.LatLng(42.2936, -90.4395),
   new google.maps.LatLng(42.4032, -90.5356),
-  new google.maps.LatLng(42.4843, -90.6564)
+  new google.maps.LatLng(42.4843, -90.6564),
+  new google.maps.LatLng(42.5116, -90.629)
 ]; 
  
 Illinois = new google.maps.Polygon({ 
@@ -995,7 +1005,8 @@ var IndianaOutline = [
   new google.maps.LatLng(39.1695, -87.6366),
   new google.maps.LatLng(39.2493, -87.5899),
   new google.maps.LatLng(39.3492, -87.5336),
-  new google.maps.LatLng(41.76, -87.5253)
+  new google.maps.LatLng(41.76, -87.5253),
+  new google.maps.LatLng(41.7611, -87.5253)
 ]; 
  
 Indiana = new google.maps.Polygon({ 
@@ -1027,7 +1038,8 @@ var KansasOutline = [
   new google.maps.LatLng(39.876, -95.0922),
   new google.maps.LatLng(39.9445, -95.2213),
   new google.maps.LatLng(40.0087, -95.3036),
-  new google.maps.LatLng(40.0024, -102.0506)
+  new google.maps.LatLng(40.0024, -102.0506),
+  new google.maps.LatLng(40.0034, -102.0506)
 ]; 
  
 Kansas = new google.maps.Polygon({ 
@@ -1121,7 +1133,8 @@ var KentuckyOutline = [
   new google.maps.LatLng(36.6265, -89.2007),
   new google.maps.LatLng(36.5449, -89.2529),
   new google.maps.LatLng(36.6232, -89.3518),
-  new google.maps.LatLng(36.4986, -89.5345)
+  new google.maps.LatLng(36.4986, -89.5345),
+  new google.maps.LatLng(36.4986, -89.5372)
 ]; 
  
 Kentucky = new google.maps.Polygon({ 
@@ -1308,7 +1321,8 @@ var MassachusettsOutline = [
   new google.maps.LatLng(42.0452, -73.1841),
   new google.maps.LatLng(42.0371, -72.8146),
   new google.maps.LatLng(41.9962, -72.816),
-  new google.maps.LatLng(42.0024, -72.7803)
+  new google.maps.LatLng(42.0024, -72.7803),
+  new google.maps.LatLng(42.0003, -72.7789)
 ]; 
  
 Massachusetts = new google.maps.Polygon({ 
@@ -1432,7 +1446,8 @@ var MarylandOutline = [
   new google.maps.LatLng(39.3444, -79.4854),
   new google.maps.LatLng(39.3454, -79.484),
   new google.maps.LatLng(39.5316, -79.4833),
-  new google.maps.LatLng(39.7214, -79.4772)
+  new google.maps.LatLng(39.7214, -79.4772),
+  new google.maps.LatLng(39.722, -79.4778)
 ]; 
  
 Maryland = new google.maps.Polygon({ 
@@ -1502,7 +1517,8 @@ var MaineOutline = [
   new google.maps.LatLng(43.2292, -70.8179),
   new google.maps.LatLng(43.3631, -70.9799),
   new google.maps.LatLng(43.5675, -70.9717),
-  new google.maps.LatLng(45.3029, -71.0829)
+  new google.maps.LatLng(45.3029, -71.0829),
+  new google.maps.LatLng(45.3425, -71.0129)
 ]; 
  
 Maine = new google.maps.Polygon({ 
@@ -1632,7 +1648,8 @@ var MichiganOutline = [
   new google.maps.LatLng(48.0129, -89.4946),
   new google.maps.LatLng(47.9743, -89.3381),
   new google.maps.LatLng(48.2448, -88.6761),
-  new google.maps.LatLng(48.3042, -88.3726)
+  new google.maps.LatLng(48.3042, -88.3726),
+  new google.maps.LatLng(48.3033, -88.3713)
 ]; 
  
 Michigan = new google.maps.Polygon({ 
@@ -1734,7 +1751,8 @@ var MinnesotaOutline = [
   new google.maps.LatLng(45.4601, -96.7456),
   new google.maps.LatLng(45.3676, -96.5918),
   new google.maps.LatLng(45.2961, -96.4558),
-  new google.maps.LatLng(43.5008, -96.4531)
+  new google.maps.LatLng(43.5008, -96.4531),
+  new google.maps.LatLng(43.5008, -96.4517)
 ]; 
  
 Minnesota = new google.maps.Polygon({ 
@@ -1813,7 +1831,8 @@ var MissouriOutline = [
   new google.maps.LatLng(40.5879, -95.7527),
   new google.maps.LatLng(40.5795, -94.3135),
   new google.maps.LatLng(40.5962, -92.5818),
-  new google.maps.LatLng(40.614, -91.7358)
+  new google.maps.LatLng(40.614, -91.7358),
+  new google.maps.LatLng(40.6181, -91.7468)
 ]; 
  
 Missouri = new google.maps.Polygon({ 
@@ -1911,7 +1930,8 @@ var MississippiOutline = [
   new google.maps.LatLng(34.878, -90.4532),
   new google.maps.LatLng(34.8476, -90.3543),
   new google.maps.LatLng(34.8702, -90.2911),
-  new google.maps.LatLng(35.0041, -90.3062)
+  new google.maps.LatLng(35.0041, -90.3062),
+  new google.maps.LatLng(35.0041, -90.3049)
 ]; 
  
 Mississippi = new google.maps.Polygon({ 
@@ -2056,7 +2076,8 @@ var NorthCarolinaOutline = [
   new google.maps.LatLng(34.391, -77.4481),
   new google.maps.LatLng(34.0481, -77.7983),
   new google.maps.LatLng(33.7666, -77.926),
-  new google.maps.LatLng(33.7963, -78.4863)
+  new google.maps.LatLng(33.7963, -78.4863),
+  new google.maps.LatLng(33.7963, -78.485)
 ]; 
  
 NorthCarolina = new google.maps.Polygon({ 
@@ -2093,7 +2114,8 @@ var NorthDakotaOutline = [
   new google.maps.LatLng(48.7951, -97.1727),
   new google.maps.LatLng(48.9081, -97.229),
   new google.maps.LatLng(48.9982, -97.2331),
-  new google.maps.LatLng(48.9946, -104.0501)
+  new google.maps.LatLng(48.9946, -104.0501),
+  new google.maps.LatLng(48.9955, -104.0501)
 ]; 
  
 NorthDakota = new google.maps.Polygon({ 
@@ -2150,7 +2172,8 @@ var NebraskaOutline = [
   new google.maps.LatLng(42.8337, -98.145),
   new google.maps.LatLng(42.9293, -98.4485),
   new google.maps.LatLng(42.9966, -98.502),
-  new google.maps.LatLng(43.0006, -104.0543)
+  new google.maps.LatLng(43.0006, -104.0543),
+  new google.maps.LatLng(42.9986, -104.0543)
 ]; 
  
 Nebraska = new google.maps.Polygon({ 
@@ -2271,7 +2294,8 @@ var NewHampshireOutline = [
   new google.maps.LatLng(44.9697, -71.5237),
   new google.maps.LatLng(44.9862, -71.5443),
   new google.maps.LatLng(45.0017, -71.5237),
-  new google.maps.LatLng(45.0163, -71.5045)
+  new google.maps.LatLng(45.0163, -71.5045),
+  new google.maps.LatLng(45.0153, -71.5045)
 ]; 
  
 NewHampshire = new google.maps.Polygon({ 
@@ -2339,7 +2363,8 @@ var NewJerseyOutline = [
   new google.maps.LatLng(41.2293, -74.8677),
   new google.maps.LatLng(41.3479, -74.7537),
   new google.maps.LatLng(41.3469, -74.7249),
-  new google.maps.LatLng(41.3593, -74.696)
+  new google.maps.LatLng(41.3593, -74.696),
+  new google.maps.LatLng(41.3572, -74.695)
 ]; 
  
 NewJersey = new google.maps.Polygon({ 
@@ -2362,7 +2387,8 @@ var NewMexicoOutline = [
   new google.maps.LatLng(32.0034, -106.6223),
   new google.maps.LatLng(31.9999, -103.0696),
   new google.maps.LatLng(36.9982, -103.0023),
-  new google.maps.LatLng(36.9982, -109.0475)
+  new google.maps.LatLng(36.9982, -109.0475),
+  new google.maps.LatLng(36.9971, -109.0448)
 ]; 
  
 NewMexico = new google.maps.Polygon({ 
@@ -2424,7 +2450,8 @@ var NevadaOutline = [
   new google.maps.LatLng(35.1334, -114.8016),
   new google.maps.LatLng(37.2303, -117.5153),
   new google.maps.LatLng(39.0, -120.0009),
-  new google.maps.LatLng(41.9942, -119.9982)
+  new google.maps.LatLng(41.9942, -119.9982),
+  new google.maps.LatLng(41.9922, -120.0037)
 ]; 
  
 Nevada = new google.maps.Polygon({ 
@@ -2564,7 +2591,8 @@ var NewYorkOutline = [
   new google.maps.LatLng(41.9993, -79.725),
   new google.maps.LatLng(42.0003, -79.7621),
   new google.maps.LatLng(42.1827, -79.7621),
-  new google.maps.LatLng(42.5146, -79.7621)
+  new google.maps.LatLng(42.5146, -79.7621),
+  new google.maps.LatLng(42.5142, -79.7624)
 ]; 
  
 NewYork = new google.maps.Polygon({ 
@@ -2620,7 +2648,8 @@ var OhioOutline = [
   new google.maps.LatLng(38.7027, -83.0127),
   new google.maps.LatLng(38.7327, -82.8973),
   new google.maps.LatLng(38.5782, -82.8355),
-  new google.maps.LatLng(38.3761, -82.5952)
+  new google.maps.LatLng(38.3761, -82.5952),
+  new google.maps.LatLng(38.4385, -82.3425)
 ]; 
  
 Ohio = new google.maps.Polygon({ 
@@ -2681,7 +2710,8 @@ var OklahomaOutline = [
   new google.maps.LatLng(36.3715, -94.5978),
   new google.maps.LatLng(36.4942, -94.6198),
   new google.maps.LatLng(36.9982, -94.6211),
-  new google.maps.LatLng(37.0004, -103.0064)
+  new google.maps.LatLng(37.0004, -103.0064),
+  new google.maps.LatLng(37.0015, -103.0051)
 ]; 
  
 Oklahoma = new google.maps.Polygon({ 
@@ -2866,7 +2896,8 @@ var PennsylvaniaOutline = [
   new google.maps.LatLng(39.8317, -75.6477),
   new google.maps.LatLng(39.7199, -75.7892),
   new google.maps.LatLng(39.722, -80.5243),
-  new google.maps.LatLng(42.324, -80.5202)
+  new google.maps.LatLng(42.324, -80.5202),
+  new google.maps.LatLng(42.3261, -80.5174)
 ]; 
  
 Pennsylvania = new google.maps.Polygon({ 
@@ -2900,7 +2931,8 @@ var RhodeIslandOutline = [
   new google.maps.LatLng(41.3315, -71.852),
   new google.maps.LatLng(41.3057, -71.9041),
   new google.maps.LatLng(41.1849, -71.7915),
-  new google.maps.LatLng(41.2665, -71.4084)
+  new google.maps.LatLng(41.2665, -71.4084),
+  new google.maps.LatLng(41.3706, -71.0568)
 ]; 
  
 RhodeIsland = new google.maps.Polygon({ 
@@ -2966,7 +2998,8 @@ var SouthCarolinaOutline = [
   new google.maps.LatLng(32.5225, -79.8116),
   new google.maps.LatLng(32.3556, -80.1508),
   new google.maps.LatLng(32.2012, -80.424),
-  new google.maps.LatLng(32.05, -80.7001)
+  new google.maps.LatLng(32.05, -80.7001),
+  new google.maps.LatLng(32.0488, -80.7001)
 ]; 
  
 SouthCarolina = new google.maps.Polygon({ 
@@ -3006,7 +3039,8 @@ var SouthDakotaOutline = [
   new google.maps.LatLng(45.616, -96.8472),
   new google.maps.LatLng(45.8202, -96.5849),
   new google.maps.LatLng(45.9311, -96.5643),
-  new google.maps.LatLng(45.9416, -104.0501)
+  new google.maps.LatLng(45.9416, -104.0501),
+  new google.maps.LatLng(45.9435, -104.0501)
 ]; 
  
 SouthDakota = new google.maps.Polygon({ 
@@ -3077,7 +3111,8 @@ var TennesseeOutline = [
   new google.maps.LatLng(36.5107, -89.3051),
   new google.maps.LatLng(36.4986, -88.1667),
   new google.maps.LatLng(36.4997, -88.0692),
-  new google.maps.LatLng(36.6871, -88.0637)
+  new google.maps.LatLng(36.6871, -88.0637),
+  new google.maps.LatLng(36.6739, -88.0678)
 ]; 
  
 Tennessee = new google.maps.Polygon({ 
@@ -3262,7 +3297,8 @@ var TexasOutline = [
   new google.maps.LatLng(36.4975, -100.0017),
   new google.maps.LatLng(36.5008, -103.0408),
   new google.maps.LatLng(32.0011, -103.0655),
-  new google.maps.LatLng(32.0023, -106.6168)
+  new google.maps.LatLng(32.0023, -106.6168),
+  new google.maps.LatLng(31.8659, -106.5715)
 ]; 
  
 Texas = new google.maps.Polygon({ 
@@ -3283,7 +3319,8 @@ var UtahOutline = [
   new google.maps.LatLng(41.0006, -111.0471),
   new google.maps.LatLng(41.9993, -111.0498),
   new google.maps.LatLng(41.9901, -114.0395),
-  new google.maps.LatLng(37.0015, -114.0504)
+  new google.maps.LatLng(37.0015, -114.0504),
+  new google.maps.LatLng(36.9982, -114.0491)
 ]; 
  
 Utah = new google.maps.Polygon({ 
@@ -3449,7 +3486,8 @@ var VirginiaOutline = [
   new google.maps.LatLng(36.5957, -82.3961),
   new google.maps.LatLng(36.5935, -82.9344),
   new google.maps.LatLng(36.5957, -83.2654),
-  new google.maps.LatLng(36.6023, -83.6746)
+  new google.maps.LatLng(36.6023, -83.6746),
+  new google.maps.LatLng(36.6017, -83.6753)
 ]; 
  
 Virginia = new google.maps.Polygon({ 
@@ -3569,7 +3607,8 @@ var VermontOutline = [
   new google.maps.LatLng(44.9799, -73.3537),
   new google.maps.LatLng(45.0046, -73.3447),
   new google.maps.LatLng(45.0109, -73.3447),
-  new google.maps.LatLng(45.0104, -73.3426)
+  new google.maps.LatLng(45.0104, -73.3426),
+  new google.maps.LatLng(45.0104, -73.3427)
 ]; 
  
 Vermont = new google.maps.Polygon({ 
@@ -3706,7 +3745,8 @@ var WashingtonOutline = [
   new google.maps.LatLng(48.6901, -123.2721),
   new google.maps.LatLng(48.7675, -123.0084),
   new google.maps.LatLng(48.8313, -123.0084),
-  new google.maps.LatLng(49.0023, -123.3215)
+  new google.maps.LatLng(49.0023, -123.3215),
+  new google.maps.LatLng(49.0023, -123.3208)
 ]; 
  
 Washington = new google.maps.Polygon({ 
@@ -3785,7 +3825,8 @@ var WisconsinOutline = [
   new google.maps.LatLng(42.7692, -91.0547),
   new google.maps.LatLng(42.6915, -90.791),
   new google.maps.LatLng(42.634, -90.7031),
-  new google.maps.LatLng(42.5096, -90.6303)
+  new google.maps.LatLng(42.5096, -90.6303),
+  new google.maps.LatLng(42.5116, -90.6303)
 ]; 
  
 Wisconsin = new google.maps.Polygon({ 
@@ -3894,7 +3935,8 @@ var WestVirginiaOutline = [
   new google.maps.LatLng(40.591, -80.6451),
   new google.maps.LatLng(40.6338, -80.5188),
   new google.maps.LatLng(39.7241, -80.5174),
-  new google.maps.LatLng(39.7209, -79.4778)
+  new google.maps.LatLng(39.7209, -79.4778),
+  new google.maps.LatLng(39.7188, -79.4765)
 ]; 
  
 WestVirginia = new google.maps.Polygon({ 
@@ -3913,7 +3955,8 @@ var WyomingOutline = [
   new google.maps.LatLng(44.9949, -104.0584),
   new google.maps.LatLng(44.9998, -111.0539),
   new google.maps.LatLng(40.9986, -111.0457),
-  new google.maps.LatLng(41.0006, -104.0556)
+  new google.maps.LatLng(41.0006, -104.0556),
+  new google.maps.LatLng(41.0037, -104.0556)
 ]; 
  
 Wyoming = new google.maps.Polygon({ 

@@ -57,6 +57,7 @@ def main():
                 continue
 
             coordinates = tweet['geo']['coordinates']
+            times = tweet['created_at']
             '''
             sentiment = TextBlob(tweet['text']).sentiment.polarity
             if sentiment != 0:
@@ -82,7 +83,7 @@ def main():
                 d = {'sentiment' : sentiment, \
                      'latitude' : coordinates[0], \
                      'longitude' : coordinates[1], \
-                     'text': tweet["text"]}
+                     'timestamp' : times }
                 logging.debug("data from categorizer: ")
                 logging.debug(d)
                 j = json.dumps(d)
