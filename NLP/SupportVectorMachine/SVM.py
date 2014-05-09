@@ -12,11 +12,9 @@ sys.path.insert(0, '../Wrapper/')
 from helper import *
 
 
-def get_svm_classifier():
+def get_svm_classifier(parameters):
 
     print "Loading training data..."
-
-    #test = np.zeros((100000, 10000))
 
     # A dictionary whose keys are strings (words) and values are tweetclass objects
     terms = {}
@@ -36,27 +34,12 @@ def get_svm_classifier():
     positive_counter = 0
     negative_counter = 0
     # A debug limit for the number of positive and negative tweets
-    upto = SVM_TWEET_LIMIT
-    do_debug_limit = True 
-
-    #if DEBUG:
-    #    upto = 1000
-    #    do_debug_limit = True
+    upto = parameters.upto
 
     for line in go_training_data:
         # Parse the line for the classification and the tweet
         parts = line.split(",")
         score = float(parts[0].replace('"', ""))
-        # Debug
-        if do_debug_limit:
-            if score == 0:
-                if negative_counter >= upto:
-                    continue
-                negative_counter = negative_counter + 1
-            else:
-                if positive_counter >= upto:
-                    continue
-                positive_counter = positive_counter + 1
         
         bag = get_words(parts[5], stop_words)
         go_tweets.append((score, bag))
@@ -100,10 +83,7 @@ def get_svm_classifier():
     print "Getting top terms from mutual information"
     scores = []
     top_terms = []
-    term_limit = SVM_FEATURE_LIMIT
-
-    if DEBUG:
-        term_limit = 50
+    term_limit = parameters.term_limit
 
     heap_terms_processed = 0
     for term in terms:
@@ -150,15 +130,9 @@ def get_svm_classifier():
                 fv[word] = 1
                 
         train.append( (fv, score) )
-    #Y = np.array(y)
-
-
-    '''print (X)
-    print (Y)
-    assert False'''
 
     print "Fitting data..."
-    classifier = SklearnClassifier(SVC(kernel='linear', probability=True)).train(train)
+    classifier = SklearnClassifier(SVC(kernel=parameters.kernel, probability=True)).train(train)
 
 
     return classifier, top_terms, stop_words
