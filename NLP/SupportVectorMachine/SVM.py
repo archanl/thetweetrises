@@ -76,7 +76,7 @@ def get_svm_classifier(parameters):
 
         # Debug
         debug_counter = debug_counter + 1
-        if debug_counter % 1 == 0:
+        if debug_counter % 1000 == 0:
             print "processed %d tweets" % debug_counter
             
 
