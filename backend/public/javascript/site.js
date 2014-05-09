@@ -138,7 +138,7 @@ function changeTrending(data) {
   var obj = JSON.parse(data);
   for (var i = 0; i < 6; i++){
     var trendingName = obj[0].trends[i].name;
-    $($(".sidebar-topic-all").children()[i]).text(trendingName.toString());
+    $($(".sidebar-topic-all").children()[i]).html("<a>" + trendingName.toString() + "</a>");
   }
 }
 
@@ -182,7 +182,7 @@ google.maps.event.addDomListener(window, 'load', initializeSocket);
 $(function() {
 
 	$("#standard_heatmap_btn").on("click", function () {
-		HeatmapMode();
+    HeatmapMode();
 	});	
 	$("#state_average_btn").on("click", function () {
 		switchModeAverage();
