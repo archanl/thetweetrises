@@ -1,8 +1,8 @@
 // It's usually a good idea to put everything in a function closure so that variable
 // names don't conflict with libraries being used
 
-//var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
-var hostname = "http://localhost:8080/";
+var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
+//var hostname = "http://localhost:8080/";
 
 var map, pointArray, pointArrayNeg, heatmap, heatmapNeg;
 
@@ -97,7 +97,7 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
-    //console.log(data);
+    console.log(data);
 
     var emotion = data.sentiment > 0 ? 1 : 0;
     var lat = data.latitude;
