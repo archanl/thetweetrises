@@ -138,7 +138,7 @@ class classifier_wrapper:
 	for i in range(0, 20):
 	#for i in range(0, 1):
 		l1_ratio = .2 + i * .01
-		upto = 10000
+		upto = 40000
 		the_parameter = parameters(upto, 1000, .001, l1_ratio, 'linear', 100)
 		sgd_time=  time()
 		self.train_sgd(the_parameter)
