@@ -93,6 +93,7 @@ function initializeSocket() {
     var socket = io.connect(hostname);
     socket.on("newPoint", addPoint);
     socket.on("initialPoints", prePopulate);
+    socket.on("trending", changeTrending);
 }
 
 function addPoint(data) {
@@ -130,6 +131,19 @@ function prePopulate(data) {
        // p.sentiment = p.emotion;
        // addStatePoints(p);
     }
+}
+
+function changeTrending(data) {
+  //var data = '[ { "as_of": "2012-08-24T23:25:43Z", "created_at": "2012-08-24T23:24:14Z", "locations": [ { "name": "Worldwide", "woeid": 1 } ], "trends": [ { "events": null, "name": "#GanaPuntosSi", "promoted_content": null, "query": "%23GanaPuntosSi", "url": "http://twitter.com/search/?q=%23GanaPuntosSi" }, { "events": null, "name": "#WordsThatDescribeMe", "promoted_content": null, "query": "%23WordsThatDescribeMe", "url": "http://twitter.com/search/?q=%23WordsThatDescribeMe" }, { "events": null, "name": "#10PersonasQueExtra00f1oMucho", "promoted_content": null, "query": "%2310PersonasQueExtra%C3%B1oMucho", "url": "http://twitter.com/search/?q=%2310PersonasQueExtra%C3%B1oMucho" }, { "events": null, "name": "Apple $1.5", "promoted_content": null, "query": "%22Apple%20$1.5%22", "url": "http://twitter.com/search/?q=%22Apple%20$1.5%22" }, { "events": null, "name": "Zelko", "promoted_content": null, "query": "Zelko", "url": "http://twitter.com/search/?q=Zelko" }, { "events": null, "name": "LWWY", "promoted_content": null, "query": "LWWY", "url": "http://twitter.com/search/?q=LWWY" }, { "events": null, "name": "Lance Armstrong", "promoted_content": null, "query": "%22Lance%20Armstrong%22", "url": "http://twitter.com/search/?q=%22Lance%20Armstrong%22" }, { "events": null, "name": "Gonzo", "promoted_content": null, "query": "Gonzo", "url": "http://twitter.com/search/?q=Gonzo" }, { "events": null, "name": "Premium Rush", "promoted_content": null, "query": "%22Premium%20Rush%22", "url": "http://twitter.com/search/?q=%22Premium%20Rush%22" }, { "events": null, "name": "Sweet Dreams", "promoted_content": null, "query": "%22Sweet%20Dreams%22", "url": "http://twitter.com/search/?q=%22Sweet%20Dreams%22" } ] } ]';
+  var obj = JSON.parse(data);
+  for (var i = 0; i < 6; i++){
+    var trendingName = obj[0].trends[i].name;
+    $($(".sidebar-topic-all").children()[i]).text(trendingName.toString());
+  }
+}
+
+function trendingMode(topic) {
+  console.log(topic);
 }
 
 function HeatmapMode() {
@@ -181,7 +195,12 @@ $(function() {
 	});	
 	$("#change_opacity_btn").on("click", function () {
 		changeOpacity();
-	});	
+	});
+
+  $(".sidebar-topic").on("click", function () {
+    trendingMode($(this).text());
+  }); 
+
 	function hours_by_value(value) {
 		value = 120 - value;
 		hours = Math.floor(value / 60);
