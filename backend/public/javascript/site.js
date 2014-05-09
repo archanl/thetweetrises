@@ -1,7 +1,7 @@
 // It's usually a good idea to put everything in a function closure so that variable
 // names don't conflict with libraries being used
 
-var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
+var hostname = "http://162.243.150.138";
 //var hostname = "http://localhost:8080/";
 
 var map, pointArray, pointArrayNeg, heatmap, heatmapNeg;
@@ -134,6 +134,8 @@ function prePopulate(data) {
 }
 
 function changeTrending(data) {
+  console.log('trending data:');
+  console.log(data);
   var obj = JSON.parse(data);
   for (var i = 0; i < 6; i++){
     var trendingName = obj[0].trends[i].name;
@@ -184,21 +186,21 @@ google.maps.event.addDomListener(window, 'load', initializeSocket);
 
 $(function() {
 
-	$("#standard_heatmap_btn").on("click", function () {
+  $("#standard_heatmap_btn").on("click", function () {
     HeatmapMode();
-	});	
-	$("#state_average_btn").on("click", function () {
-		switchModeAverage();
-	});	
-	$("#state_current_btn").on("click", function () {
-		switchModeCurrent();
-	});	
-	$("#larger_points_btn").on("click", function () {
-		changeRadiusLarger();
-	});	
-	$("#change_opacity_btn").on("click", function () {
-		changeOpacity();
-	});
+  }); 
+  $("#state_average_btn").on("click", function () {
+    switchModeAverage();
+  }); 
+  $("#state_current_btn").on("click", function () {
+    switchModeCurrent();
+  }); 
+  $("#larger_points_btn").on("click", function () {
+    changeRadiusLarger();
+  }); 
+  $("#change_opacity_btn").on("click", function () {
+    changeOpacity();
+  });
   $("#about_us_btn").on("click", function () {
     aboutUs();
   });
@@ -206,41 +208,41 @@ $(function() {
     trendingMode($(this).text());
   }); 
 
-	function hours_by_value(value) {
-		value = 120 - value;
-		hours = Math.floor(value / 60);
-		minutes = value - 60 * hours;
-		if (hours > 0) {
-			if (hours === 1) {
-				return String(hours) + " hour " + String(minutes) + " minutes ago";
-			}
-			return String(hours) + " hours " + String(minutes) + " minutes ago";
-		}
-		return String(minutes) + " minutes ago";
-	}
-
-$("#time_slider").slider({
-    range: true,
-    min: 0,
-    max: 120,
-    step: 1,
-    values: [0, 120],
-    slide: function (e, ui) {
-	    var value1 = ui.values[0],
-	        value2 = ui.values[1],
-		time1 = hours_by_value(value1),
-		time2 = hours_by_value(value2);
-	    $("#slider_time_left").text(time1);
-	    $("#slider_time_right").text(time2);
+  function hours_by_value(value) {
+    value = 120 - value;
+    hours = Math.floor(value / 60);
+    minutes = value - 60 * hours;
+    if (hours > 0) {
+      if (hours === 1) {
+        return String(hours) + " hour " + String(minutes) + " minutes ago";
+      }
+      return String(hours) + " hours " + String(minutes) + " minutes ago";
     }
-});
-	function set_map_height() {
-		$(".page-content").css({
-			"height": $(window).height() - $(".page-content").offset().top
-		});
-	}
-	$(window).resize(function() {
-		set_map_height();
-	});
-	set_map_height();
+    return String(minutes) + " minutes ago";
+  }
+
+  $("#time_slider").slider({
+      range: true,
+      min: 0,
+      max: 120,
+      step: 1,
+      values: [0, 120],
+      slide: function (e, ui) {
+        var value1 = ui.values[0],
+            value2 = ui.values[1],
+      time1 = hours_by_value(value1),
+      time2 = hours_by_value(value2);
+        $("#slider_time_left").text(time1);
+        $("#slider_time_right").text(time2);
+      }
+  });
+    function set_map_height() {
+      $(".page-content").css({
+        "height": $(window).height() - $(".page-content").offset().top
+      });
+    }
+    $(window).resize(function() {
+      set_map_height();
+    });
+    set_map_height();
 });
