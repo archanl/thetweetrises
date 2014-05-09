@@ -91,6 +91,7 @@ class classifier_wrapper:
 	assert 0 == 1
 	'''
 
+	'''
 	# Naive Bayes trials over the whole data set
 
 	file1 = open(PLOT_NAIVE_BAYES, 'w')
@@ -109,21 +110,23 @@ class classifier_wrapper:
 		self.print_alpha_results(results, file1)
 	file1.close()
 	assert 0 == 1
-
+	'''
 
 	file1 = open(PLOT_ALPHA_SGD, 'w')
 	for i in range(0, 20):
 	#for i in range(0, 1):
+		upto = 10
 		alpha = float(i) / 100.0 + .001
-		the_parameter = parameters(10000, 1000, alpha, .3, 'linear', 100)
+		the_parameter = parameters(upto, 1000, alpha, .3, 'linear', 100)
 		sgd_time=  time()
 		self.train_sgd(the_parameter)
 		sgd_time = time() - sgd_time
 		# Do classification with the tweets and get the % accuracy
 		results = self.do_all_classification(tweets)
 		results["sgd_time"] = sgd_time
+		results["accuracy"] = results["sgd"]
 		results["alpha"] = alpha
-		results["upto"] = 10
+		results["upto"] = upto
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
@@ -133,22 +136,25 @@ class classifier_wrapper:
 	#for i in range(0, 20):
 	for i in range(0, 1):
 		l1_ratio = .2 + i * .01
-		the_parameter = parameters(10, 1000, .001, l1_ratio, 'linear', 100)
+		upto = 10
+		the_parameter = parameters(upto, 1000, .001, l1_ratio, 'linear', 100)
 		sgd_time=  time()
 		self.train_sgd(the_parameter)
 		sgd_time = time() - sgd_time
 		# Do classification with the tweets and get the % accuracy
 		results = self.do_all_classification(tweets)
 		results["sgd_time"] = sgd_time
+		results["accuracy"] = results["sgd"]
 		results["alpha"] = l1_ratio
-		results["upto"] = 10
+		results["upto"] = upto
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
 
 	file1 = open(PLOT_KERNEL_SVM, 'w')
 	for i in ["linear", "rbf", "poly"]:
-		the_parameter = parameters(10, 1000, .001, 0.3, i, 100)
+		upto = 10000
+		the_parameter = parameters(upto, 1000, .001, 0.3, i, 100)
 		support_time = time()
 		self.train_support_vector_machine(the_parameter)
 		support_time = time() - support_time
@@ -156,7 +162,8 @@ class classifier_wrapper:
 		results = self.do_all_classification(tweets)
 		results["sgd_time"] = support_time
 		results["alpha"] = i
-		results["upto"] = 10
+		results["accuracy"] = results["svm"]
+		results["upto"] = upto
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
@@ -164,15 +171,17 @@ class classifier_wrapper:
 	file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
 	#for i in range(50, 200, 10):
 	for i in range(100, 101):
-		the_parameter = parameters(10, 1000, .001, 0.3, 'linear', i)
+		upto = 10000
+		the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
 		max_ent_time = time()
 		self.train_maximum_entropy(the_parameter)
 		max_ent_time = time() - max_ent_time
 		# Do classification with the tweets and get the % accuracy
 		results = self.do_all_classification(tweets)
 		results["sgd_time"] = max_ent_time
+		results["accuracy"] = results["maximum_entropy"]
 		results["alpha"] = i
-		results["upto"] = 10
+		results["upto"] = upto
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
@@ -180,15 +189,17 @@ class classifier_wrapper:
 	file1 = open(PLOT_SGD_ITERATIONS, 'w')
 	#for i in range(50, 200, 10):
 	for i in range(100, 101):
-		the_parameter = parameters(10, 1000, .001, 0.3, 'linear', i)
+		upto = 10000
+		the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
 		max_ent_time = time()
 		self.train_maximum_entropy(the_parameter)
 		max_ent_time = time() - max_ent_time
 		# Do classification with the tweets and get the % accuracy
 		results = self.do_all_classification(tweets)
 		results["sgd_time"] = sgd_time
+		results["accuracy"] = results["sgd"]
 		results["alpha"] = i
-		results["upto"] = 10
+		results["upto"] = upto
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
@@ -197,7 +208,7 @@ class classifier_wrapper:
 
 
     def print_alpha_results(self, results, file1):
-	file1.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["alpha"]) + "\n")
+	file1.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["alpha"]) + "," + str(results["accuracy"]) + "\n")
 
 
     def print_results(self, results, file1, file2, file3, file4):
