@@ -24,6 +24,10 @@ from time import time
 
 class classifier_wrapper:
     def __init__(self):
+    	return
+
+    def do_training(self):
+	upto = 10000
 	the_parameter = parameters(upto, 1000, .001, .3, 'linear', 100)
 	self.train_support_vector_machine(the_parameter)
 	self.train_maximum_entropy(the_parameter)
@@ -86,6 +90,26 @@ class classifier_wrapper:
 	print "done with accuracy tests"
 	assert 0 == 1
 	'''
+
+	# Naive Bayes trials over the whole data set
+
+	file1 = open(PLOT_NAIVE_BAYES, 'w')
+	for i in range(0, 80, 5):
+		upto = 10000 * i
+		the_parameter = parameters(upto, 5000, .001, .3, 'linear', 100)
+		sgd_time=  time()
+		self.train_naive_bayes(the_parameter)
+		sgd_time = time() - sgd_time
+		# Do classification with the tweets and get the % accuracy
+		results = self.naive_bayes_classification(tweets)
+		results["sgd_time"] = sgd_time
+		results["alpha"] = results["naive_bayes"]
+		results["upto"] = upto
+		# Print the results to a file
+		self.print_alpha_results(results, file1)
+	file1.close()
+	assert 0 == 1
+
 
 	file1 = open(PLOT_ALPHA_SGD, 'w')
 	for i in range(0, 20):
@@ -181,6 +205,24 @@ class classifier_wrapper:
 	file2.write(str(results["upto"]) + "," + str(results["naive_bayes_time"]) + "," + str(results["naive_bayes"]) + "\n")
 	file3.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["sgd"]) + "\n")
 	file4.write(str(results["upto"]) + "," + str(results["support_time"]) + "," + str(results["svm"]) + "\n")
+
+    def naive_bayes_classification(self, tweets):
+	results = {}
+	algorithm = 'naive_bayes'
+	num_correct = 0
+	for (score, tweet) in tweets:
+		classification = self.classify(tweet, algorithm, 0.5)
+		#print "classification: " + str(classification)
+		#print score
+		if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+			num_correct = num_correct + 1
+	percent_correct = float(num_correct) / float(len(tweets))
+	results[algorithm] = percent_correct
+	#print results
+	#assert 0 == 1
+	return results
+
+
 
     def do_all_classification(self, tweets):
 	results = {}
@@ -394,7 +436,8 @@ def get_classification(bag, top_terms, positive_classifications, negative_classi
 
 if __name__ == "__main__":
     thewrapper = classifier_wrapper(); 
-    thewrapper.make_graphs()
+    thewrapper.do_training()
+    #thewrapper.make_graphs()
     f = open("test.txt", 'wb')
     cPickle.dump(thewrapper, f)
     f.close()
