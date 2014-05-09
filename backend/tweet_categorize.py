@@ -57,6 +57,7 @@ def main():
                 continue
 
             coordinates = tweet['geo']['coordinates']
+            times = tweet['created_at']
             '''
             sentiment = TextBlob(tweet['text']).sentiment.polarity
             if sentiment != 0:
@@ -81,7 +82,8 @@ def main():
                 # Jsonify tweet with sentiment and store in redis
                 d = {'sentiment' : sentiment, \
                      'latitude' : coordinates[0], \
-                     'longitude' : coordinates[1] }
+                     'longitude' : coordinates[1], \
+                     'timestamp' : times }
                 logging.debug("data from categorizer: ")
                 logging.debug(d)
                 j = json.dumps(d)
