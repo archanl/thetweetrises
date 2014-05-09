@@ -7,7 +7,7 @@ from definitions import *
 sys.path.insert(0, '../Wrapper/')
 from helper import *
 
-def get_naive_bayes_classifier():
+def get_naive_bayes_classifier(parameters):
     # A dictionary whose keys are strings (words) and values are tweetclass objects
     terms = {}
 
@@ -26,28 +26,26 @@ def get_naive_bayes_classifier():
     positive_counter = 0
     negative_counter = 0
     # A debug limit for the number of positive and negative tweets
-    upto = NAIVE_BAYES_TWEET_LIMIT
-    do_debug_limit = DO_NAIVE_BAYES_LIMIT 
-
-    #if DEBUG:
-    #    upto = 1000
-    #    do_debug_limit = True
+    upto = parameters.upto
+    negative_counter = 0
+    positive_counter = 0
 
     for line in go_training_data:
         # Parse the line for the classification and the tweet
         parts = line.split(",")
         score = float(parts[0].replace('"', ""))
-        # Debug
-        if do_debug_limit:
-            if score == 0:
-                if negative_counter >= upto:
-                    continue
-                negative_counter = negative_counter + 1
-            else:
-                if positive_counter >= upto:
-                    continue
-                positive_counter = positive_counter + 1
         
+
+	
+	if score == 0:
+		if negative_counter >= upto:
+			continue
+		negative_counter = negative_counter + 1
+	else:
+		if positive_counter >= upto:
+			continue
+		positive_counter = positive_counter + 1
+
         bag = get_words(parts[5], stop_words)
         go_tweets.append((score, bag))
     
@@ -67,7 +65,6 @@ def get_naive_bayes_classifier():
                     terms[word].negative = terms[word].negative + 1
                 else:
                     terms[word].positive = terms[word].positive + 1
-
         # Debug
         debug_counter = debug_counter + 1
         if debug_counter % 1000 == 0:
@@ -88,7 +85,7 @@ def get_naive_bayes_classifier():
     print "Getting top terms from mutual information"
     scores = []
     top_terms = []
-    term_limit = NAIVE_BAYES_NUM_FEATURES
+    term_limit = parameters.term_limit
 
     #if DEBUG:
     #    term_limit = 50

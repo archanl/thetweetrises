@@ -20,71 +20,185 @@ from SVM import *
 sys.path.insert(0, '../MaximumEntropy')
 from MaxEnt import *
 import cPickle
-
+from time import time
 
 class classifier_wrapper:
     def __init__(self):
-        '''tweet = "I love to test things!";
-        #self.train_naive_bayes();
-        #self.train_sgd();
-        #self.train_support_vector_machine();
-        self.train_maximum_entropy();
-        #for tolerance in [0.5, 0.7, 0.9, 0.95]:
-        #    algorithm = "naive_bayes";
-        #    cls = self.classify(tweet, algorithm, tolerance);
-        #    print "The classification is ", cls, " for tolerance ", tolerance
-        for tolerance in [0.5, 0.7, 0.9, 0.95]:
-            algorithm = "sgd";
-            cls = self.classify(tweet, algorithm, tolerance);
-            print "The classification is ", cls, " for tolerance ", tolerance
-        for tolerance in [0.5, 0.7, 0.9, 0.95]:
-            algorithm = "svm";
-            cls = self.classify(tweet, algorithm, tolerance);
-            print "The classification is ", cls, " for tolerance ", tolerance
-        for tolerance in [0.5, 0.7, 0.9, 0.95]:
-            algorithm = "maximum_entropy";
-            cls = self.classify(tweet, algorithm, tolerance);
-            print "The classification is ", cls, " for tolerance ", tolerance'''
+	# Get 1000 tweets from the test set
+	tweets = self.get_test_tweets(1000)
+
+	print "starting accuracy tests..."
+
+	file1 = open(PLOT_TIME_MAXENT_FILE, 'w')
+	file2 = open(PLOT_TIME_NAIVE_BAYES_FILE, 'w')
+	file3 = open(PLOT_TIME_SGD_FILE, 'w')
+	file4 = open(PLOT_TIME_SVM_FILE, 'w')
+	#for i in range(1, 20):
+	for i in range(1, 20):
+		the_parameter = parameters(i * 200, 1000, .001, .3, 'linear', 100)
+		support_time = time()
+		self.train_support_vector_machine(the_parameter)
+		support_time = time() - support_time
+		naive_bayes_time = time()
+		self.train_naive_bayes(the_parameter)
+		naive_bayes_time = time() - naive_bayes_time
+		max_ent_time = time()
+		self.train_maximum_entropy(the_parameter)
+		max_ent_time = time() - max_ent_time
+		sgd_time=  time()
+		self.train_sgd(the_parameter)
+		sgd_time = time() - sgd_time
+		# Do classification with the tweets and get the % accuracy
+		results = self.do_all_classification(tweets)
+		results["support_time"] = support_time
+		results["max_ent_time"] = max_ent_time
+		results["sgd_time"] = sgd_time
+		results["naive_bayes_time"] = naive_bayes_time
+		results["upto"] = i * 500
+		# Print the results to a file
+		self.print_results(results, file1, file2, file3, file4)
+	file1.close()
+	file2.close()
+	file3.close()
+	file4.close()
+
+	print "done with accuracy tests"
+
+	file1 = open(PLOT_ALPHA_SGD, 'w')
+	#for i in range(0, 20):
+	for i in range(0, 1):
+		alpha = float(i) / 100.0 + .001
+		the_parameter = parameters(10, 1000, alpha, .3, 'linear', 100)
+		sgd_time=  time()
+		self.train_sgd(the_parameter)
+		sgd_time = time() - sgd_time
+		# Do classification with the tweets and get the % accuracy
+		results = self.do_all_classification(tweets)
+		results["sgd_time"] = sgd_time
+		results["alpha"] = alpha
+		results["upto"] = 10
+		# Print the results to a file
+		self.print_alpha_results(results, file1)
+	file1.close()
+
+	file1 = open(PLOT_L1_SGD, 'w')
+	#for i in range(0, 20):
+	for i in range(0, 1):
+		l1_ratio = .2 + i * .01
+		the_parameter = parameters(10, 1000, .001, l1_ratio, 'linear', 100)
+		sgd_time=  time()
+		self.train_sgd(the_parameter)
+		sgd_time = time() - sgd_time
+		# Do classification with the tweets and get the % accuracy
+		results = self.do_all_classification(tweets)
+		results["sgd_time"] = sgd_time
+		results["alpha"] = l1_ratio
+		results["upto"] = 10
+		# Print the results to a file
+		self.print_alpha_results(results, file1)
+	file1.close()
+
+	file1 = open(PLOT_KERNEL_SVM, 'w')
+	for i in ["linear", "rbf", "poly"]:
+		the_parameter = parameters(10, 1000, .001, 0.3, i, 100)
+		support_time = time()
+		self.train_support_vector_machine(the_parameter)
+		support_time = time() - support_time
+		# Do classification with the tweets and get the % accuracy
+		results = self.do_all_classification(tweets)
+		results["sgd_time"] = support_time
+		results["alpha"] = i
+		results["upto"] = 10
+		# Print the results to a file
+		self.print_alpha_results(results, file1)
+	file1.close()
+
+	file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
+	#for i in range(50, 200, 10):
+	for i in range(100, 101):
+		the_parameter = parameters(10, 1000, .001, 0.3, 'linear', i)
+		max_ent_time = time()
+		self.train_maximum_entropy(the_parameter)
+		max_ent_time = time() - max_ent_time
+		# Do classification with the tweets and get the % accuracy
+		results = self.do_all_classification(tweets)
+		results["sgd_time"] = max_ent_time
+		results["alpha"] = i
+		results["upto"] = 10
+		# Print the results to a file
+		self.print_alpha_results(results, file1)
+	file1.close()
+
+	file1 = open(PLOT_SGD_ITERATIONS, 'w')
+	#for i in range(50, 200, 10):
+	for i in range(100, 101):
+		the_parameter = parameters(10, 1000, .001, 0.3, 'linear', i)
+		max_ent_time = time()
+		self.train_maximum_entropy(the_parameter)
+		max_ent_time = time() - max_ent_time
+		# Do classification with the tweets and get the % accuracy
+		results = self.do_all_classification(tweets)
+		results["sgd_time"] = sgd_time
+		results["alpha"] = i
+		results["upto"] = 10
+		# Print the results to a file
+		self.print_alpha_results(results, file1)
+	file1.close()
+
+
+
+
+    def print_alpha_results(self, results, file1):
+	file1.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["alpha"]))
+
+
+    def print_results(self, results, file1, file2, file3, file4):
+	file1.write(str(results["upto"]) + "," + str(results["max_ent_time"]) + "," + str(results["maximum_entropy"]))
+	file2.write(str(results["upto"]) + "," + str(results["naive_bayes_time"]) + "," + str(results["naive_bayes"]))
+	file3.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["sgd"]))
+	file4.write(str(results["upto"]) + "," + str(results["support_time"]) + "," + str(results["svm"]))
+
+    def do_all_classification(self, tweets):
+	results = {}
+	for algorithm in ["sgd", "svm", "naive_bayes", "maximum_entropy"]:
+		num_correct = 0
+		for (score, tweet) in tweets:
+			classification = self.classify(tweet, algorithm, 0.5)
+			if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+				num_correct = num_correct + 1
+		percent_correct = num_correct / len(tweets)
+		results[algorithm] = percent_correct
+	return results
+
+		
         
-        t4 = threading.Thread(target=self.train_maximum_entropy)
-        t4.daemon = True
-        t4.start()
-        t4.join()
-        t1 = threading.Thread(target=self.train_naive_bayes)
-        t1.daemon = True
-        t1.start()
-        t1.join()
-        t2 = threading.Thread(target=self.train_sgd)
-        t2.daemon = True
-        t2.start()
-        t2.join()
-        t3 = threading.Thread(target=self.train_support_vector_machine)
-        t3.daemon = True
-        t3.start()
-        t3.join()
-        #t1.join()
-        #t2.join()
-        #t3.join()
-        #t4.join()
-        
+    def get_test_tweets(self, number):
+    	thefile = open(GO_TEST_DATA , 'r')
+	go_tweets = []
+	for line in thefile:
+		parts = line.split(",")
+		score = float(parts[0].replace('"', ""))
 
-    def train_all(self):
-        self.train_naive_bayes();
-        self.train_sgd();
-        self.train_support_vector_machine();
-        self.train_maximum_entropy();
+		go_tweets.append((score, parts[5]))
+	return go_tweets
 
-    def train_naive_bayes(self):
-        new_naive_bayes_classifier(self);
+    def train_all(self, theparameter):
+        self.train_naive_bayes(theparameter);
+        self.train_sgd(theparameter);
+        self.train_support_vector_machine(theparameter);
+        self.train_maximum_entropy(theparameter);
 
-    def train_sgd(self):
-        new_sgd_classifier(self);
+    def train_naive_bayes(self, theparameter):
+        new_naive_bayes_classifier(self, theparameter);
 
-    def train_support_vector_machine(self):
-        new_svm_classifier(self);
+    def train_sgd(self, theparameter):
+        new_sgd_classifier(self, theparameter);
 
-    def train_maximum_entropy(self):
-        new_maximum_entropy_classifier(self);
+    def train_support_vector_machine(self, theparameter):
+        new_svm_classifier(self, theparameter);
+
+    def train_maximum_entropy(self, theparameter):
+        new_maximum_entropy_classifier(self, theparameter);
 
     def classify(self, tweet, algorithm, tolerance):
         if algorithm == "sgd":
@@ -158,16 +272,15 @@ class classifier_wrapper:
 
 
 
-
-def new_sgd_classifier(wrapper):
-    c_sgd, top_terms, stop_words = get_sgd_classifier();
+def new_sgd_classifier(wrapper, theparameter):
+    c_sgd, top_terms, stop_words = get_sgd_classifier(theparameter);
     wrapper.sgd_classifier = c_sgd
     wrapper.top_sgd_terms = top_terms
     wrapper.stop_words = stop_words
 
 
-def new_naive_bayes_classifier(wrapper):
-    top_terms, pos_classifications, neg_classifications, stop_words, naive_bayes_terms = get_naive_bayes_classifier();
+def new_naive_bayes_classifier(wrapper, theparameter):
+    top_terms, pos_classifications, neg_classifications, stop_words, naive_bayes_terms = get_naive_bayes_classifier(theparameter);
     wrapper.top_naive_bayes_terms = top_terms;
     wrapper.naive_bayes_positive_classifications = pos_classifications;
     wrapper.naive_bayes_negative_classifications = neg_classifications;
@@ -175,15 +288,15 @@ def new_naive_bayes_classifier(wrapper):
     wrapper.naive_bayes_terms = naive_bayes_terms;
 
 
-def new_maximum_entropy_classifier(wrapper):
-    m_classifier, stop_words, top_terms = get_maxent_classifier();
+def new_maximum_entropy_classifier(wrapper, theparameter):
+    m_classifier, stop_words, top_terms = get_maxent_classifier(theparameter);
     wrapper.maxent_classifier = m_classifier;
     wrapper.stop_words = stop_words;
     wrapper.top_maxent_terms = top_terms;
 
 
-def new_svm_classifier(wrapper):
-    c_svm, top_terms, stop_words = get_svm_classifier();
+def new_svm_classifier(wrapper, theparameter):
+    c_svm, top_terms, stop_words = get_svm_classifier(theparameter);
     wrapper.svm_classifier = c_svm;
     wrapper.top_svm_terms = top_terms;
     wrapper.stop_words = stop_words;
@@ -202,6 +315,8 @@ def get_classification(bag, top_terms, positive_classifications, negative_classi
     ''' Uses Naive bayes to classify the bag of words (a tweet) using the
         terms in the list 'top_terms' and the training data "go_tweets"'''
 
+    #print positive_classifications, negative_classifications, top_terms, tolerance
+
     prob_neg = 1
     prob_pos = 1
 
@@ -210,11 +325,15 @@ def get_classification(bag, top_terms, positive_classifications, negative_classi
         prob_word_in_neg = float(terms[word].negative) / negative_classifications
 
         if word in bag:
-            prob_neg = prob_neg * prob_word_in_neg
-            prob_pos = prob_pos * prob_word_in_pos
+	    if prob_word_in_neg != 0:
+		    prob_neg = prob_neg * prob_word_in_neg
+            if prob_word_in_pos != 0:
+		    prob_pos = prob_pos * prob_word_in_pos
         else:
-            prob_neg = prob_neg * (1 - prob_word_in_neg)
-            prob_pos = prob_pos * (1 - prob_word_in_pos)
+	    if prob_word_in_neg != 1:
+		    prob_neg = prob_neg * (1 - prob_word_in_neg)
+            if prob_word_in_pos != 1:
+		    prob_pos = prob_pos * (1 - prob_word_in_pos)
 
     # Debug
     #print "prob_neg: %f" % prob_neg

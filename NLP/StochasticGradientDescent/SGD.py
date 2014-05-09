@@ -22,7 +22,7 @@ def get_sgd_point(bag, terms):
     return fv
 
 
-def get_sgd_classifier():
+def get_sgd_classifier(parameters):
 
     print "Loading training data..."
 
@@ -44,27 +44,24 @@ def get_sgd_classifier():
     positive_counter = 0
     negative_counter = 0
     # A debug limit for the number of positive and negative tweets
-    upto = SGD_TWEET_LIMIT
-    do_debug_limit = True 
-
-    #if DEBUG:
-    #    upto = 1000
-    #    do_debug_limit = True
+    upto = parameters.upto
+    negative_counter = 0
+    positive_counter = 0
 
     for line in go_training_data:
         # Parse the line for the classification and the tweet
         parts = line.split(",")
         score = float(parts[0].replace('"', ""))
-        # Debug
-        if do_debug_limit:
-            if score == 0:
-                if negative_counter >= upto:
-                    continue
-                negative_counter = negative_counter + 1
-            else:
-                if positive_counter >= upto:
-                    continue
-                positive_counter = positive_counter + 1
+	
+	if score == 0:
+		if negative_counter >= upto:
+			continue
+		negative_counter = negative_counter + 1
+	else:
+		if positive_counter >= upto:
+			continue
+		positive_counter = positive_counter + 1
+
         
         bag = get_words(parts[5], stop_words)
         go_tweets.append((score, bag))
@@ -85,7 +82,6 @@ def get_sgd_classifier():
                     terms[word].negative = terms[word].negative + 1
                 else:
                     terms[word].positive = terms[word].positive + 1
-
         # Debug
         debug_counter = debug_counter + 1
         if debug_counter % 1000 == 0:
@@ -108,10 +104,10 @@ def get_sgd_classifier():
     print "Getting top terms from mutual information"
     scores = []
     top_terms = []
-    term_limit = SGD_FEATURE_LIMIT
+    term_limit = parameters.term_limit
 
-    if DEBUG:
-        term_limit = 50
+#    if DEBUG:
+        #term_limit = 50
 
     heap_terms_processed = 0
     for term in terms:
@@ -164,7 +160,8 @@ def get_sgd_classifier():
     Y = np.array(y)
 
     print "Fitting data..."
-    clf = SklearnClassifier(linear_model.SGDClassifier(loss = 'log', n_iter = 40, fit_intercept = False, alpha = 0.001, l1_ratio = 0.30), sparse=False).train(train)
+    clf = SklearnClassifier(linear_model.SGDClassifier(loss = 'log', n_iter = 40, fit_intercept = False, alpha = parameters.alpha, 
+		l1_ratio = parameters.l1_ratio), sparse=False).train(train)
     #clf = linear_model.SGDClassifier()
     #clf.fit()
     print "Data fitted!"
