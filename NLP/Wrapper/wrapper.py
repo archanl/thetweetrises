@@ -93,6 +93,7 @@ class classifier_wrapper:
 
 	# Naive Bayes trials over the whole data set
 
+	'''
 	file1 = open(PLOT_NAIVE_BAYES, 'w')
 	for i in range(0, 80, 5):
 		upto = 10000 * i
@@ -145,9 +146,11 @@ class classifier_wrapper:
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
+	'''
 
 	file1 = open(PLOT_KERNEL_SVM, 'w')
-	for i in ["linear", "rbf", "poly"]:
+    #for i in ["linear", "rbf", "poly"]:
+	for i in ["linear"]:
 		the_parameter = parameters(10, 1000, .001, 0.3, i, 100)
 		support_time = time()
 		self.train_support_vector_machine(the_parameter)
@@ -158,9 +161,10 @@ class classifier_wrapper:
 		results["alpha"] = i
 		results["upto"] = 10
 		# Print the results to a file
-		self.print_alpha_results(results, file1)
+		self.print_alpha_results(results, file1, 'svm')
 	file1.close()
 
+    '''
 	file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
 	#for i in range(50, 200, 10):
 	for i in range(100, 101):
@@ -192,12 +196,13 @@ class classifier_wrapper:
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
+    '''
 
 
 
 
-    def print_alpha_results(self, results, file1):
-	file1.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["alpha"]) + "\n")
+    def print_alpha_results(self, results, file1, algorithm):
+	file1.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["alpha"]) + str(results[algorithm]) + "\n")
 
 
     def print_results(self, results, file1, file2, file3, file4):
