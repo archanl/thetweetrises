@@ -40,7 +40,7 @@ def main():
     epoch = epoch.strftime("%s")
 
     for trend in j[0]['trends']:
-        r.zadd(TRENDING_KEY, epoch, trend)
+        r.zadd(TRENDING_KEY, trend, epoch)
 
 
 if __name__ == '__main__':
