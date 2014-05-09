@@ -23,13 +23,16 @@
       }
     </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=visualization"></script>
-    <script src="http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com/socket.io/socket.io.js"></script>
+    <!--<script src="http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com/socket.io/socket.io.js"></script>-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js" type="text/javascript"></script>
+    <!--<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1-rc2/jquery.min.js" type="text/javascript"></script>-->
     <script src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
     <script src="allStates.js"></script>
 
     <script>
-
-var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
+    
+//var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
+var hostname = "http://localhost:8080/";
 
 var map, pointArray, pointArrayNeg, heatmap, heatmapNeg;
 
@@ -123,6 +126,8 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
+    console.log(data);
+
     var emotion = data.sentiment > 0 ? 1 : 0;
     var lat = data.latitude;
     var lng = data.longitude;

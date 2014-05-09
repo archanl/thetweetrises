@@ -81,7 +81,8 @@ def main():
                 # Jsonify tweet with sentiment and store in redis
                 d = {'sentiment' : sentiment, \
                      'latitude' : coordinates[0], \
-                     'longitude' : coordinates[1] }
+                     'longitude' : coordinates[1], \
+                     'text': tweet["text"]}
                 logging.debug("data from categorizer: ")
                 logging.debug(d)
                 j = json.dumps(d)
