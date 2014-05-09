@@ -9,6 +9,10 @@ import cPickle
 import sys
 sys.path.insert(0, '../NLP/Wrapper/')
 sys.path.insert(0, '../NLP/')
+sys.path.insert(0, '../NLP/NaiveBayes')
+sys.path.insert(0, '../NLP/MaximumEntropy')
+sys.path.insert(0, '../NLP/StochasticGradientDescent')
+sys.path.insert(0, '../NLP/SupportVectorMachine')
 from wrapper import classifier_wrapper, tweetclass
 
 # Log everything, and send it to stderr.
