@@ -112,17 +112,18 @@ class classifier_wrapper:
 	assert 0 == 1
 	'''
 
+	'''
 	file1 = open(PLOT_ALPHA_SGD, 'w')
 	for i in range(0, 20):
 	#for i in range(0, 1):
-		upto = 10
-		alpha = float(i) / 100.0 + .001
+		upto = 10000
+		alpha = float(i) / 1000.0 + .001
 		the_parameter = parameters(upto, 1000, alpha, .3, 'linear', 100)
 		sgd_time=  time()
 		self.train_sgd(the_parameter)
 		sgd_time = time() - sgd_time
 		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
+		results = self.sgd_classification(tweets)
 		results["sgd_time"] = sgd_time
 		results["accuracy"] = results["sgd"]
 		results["alpha"] = alpha
@@ -131,18 +132,19 @@ class classifier_wrapper:
 		self.print_alpha_results(results, file1)
 	file1.close()
 	assert 0 == 1
+	'''
 
 	file1 = open(PLOT_L1_SGD, 'w')
-	#for i in range(0, 20):
-	for i in range(0, 1):
+	for i in range(0, 20):
+	#for i in range(0, 1):
 		l1_ratio = .2 + i * .01
-		upto = 10
+		upto = 10000
 		the_parameter = parameters(upto, 1000, .001, l1_ratio, 'linear', 100)
 		sgd_time=  time()
 		self.train_sgd(the_parameter)
 		sgd_time = time() - sgd_time
 		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
+		results = self.sgd_classification(tweets)
 		results["sgd_time"] = sgd_time
 		results["accuracy"] = results["sgd"]
 		results["alpha"] = l1_ratio
@@ -150,6 +152,7 @@ class classifier_wrapper:
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
+	assert 0 == 1
 
 	file1 = open(PLOT_KERNEL_SVM, 'w')
 	for i in ["linear", "rbf", "poly"]:
@@ -216,6 +219,23 @@ class classifier_wrapper:
 	file2.write(str(results["upto"]) + "," + str(results["naive_bayes_time"]) + "," + str(results["naive_bayes"]) + "\n")
 	file3.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["sgd"]) + "\n")
 	file4.write(str(results["upto"]) + "," + str(results["support_time"]) + "," + str(results["svm"]) + "\n")
+
+    def sgd_classification(self, tweets):
+	results = {}
+	algorithm = 'sgd'
+	num_correct = 0
+	for (score, tweet) in tweets:
+		classification = self.classify(tweet, algorithm, 0.5)
+		#print "classification: " + str(classification)
+		#print score
+		if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+			num_correct = num_correct + 1
+	percent_correct = float(num_correct) / float(len(tweets))
+	results[algorithm] = percent_correct
+	#print results
+	#assert 0 == 1
+	return results
+
 
     def naive_bayes_classification(self, tweets):
 	results = {}
