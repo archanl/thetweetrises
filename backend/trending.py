@@ -22,10 +22,10 @@ def main():
     t = requests.get('https://api.twitter.com/1.1/trends/place.json?id=' + USA_WOEID,
                      auth=oauth)
 
-    j = ""
+    j_str = ""
     for x in t:
-        j += x
-    j = json.loads(j)
+        j_str += x
+    j = json.loads(j_str)
 
     trending_time = j[0]['created_at']
 #     if not r.exists(trending_key):
@@ -41,6 +41,8 @@ def main():
 
     for trend in j[0]['trends']:
         r.zadd(TRENDING_KEY, trend, epoch)
+
+    r.set('trending_json', j_str)
 
 
 if __name__ == '__main__':
