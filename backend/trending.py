@@ -29,7 +29,6 @@ def main():
     if not r.exists(trending_key):
         while r.llen(TRENDING_KEYS_KEY) >= MAX_TRENDING:
             to_remove = r.brpop(TRENDING_KEYS_KEY)
-            r.del(to_remove)
 
         r.lpush(TRENDING_KEYS_KEY, trending_key)
         for trend in j[0]['trends']:
