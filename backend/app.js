@@ -6,7 +6,16 @@ var express = require('express')
   , io = socketIO.listen(server)
   , path = require('path')
   , redis = require('redis')
+  , crypto = require('crypto')
+  , _und = require('underscore')
   , redis_client = redis.createClient();
+
+// Initial emit size
+var iemit_size = 100;
+
+// Last emitted sentiment
+// TODO: Is it OK to have global variables? what happens when multiple users login?
+var last_emitted = ""
 
 io.set('log level', 2); // Info only
 
@@ -22,9 +31,22 @@ io.sockets.on('connection', function (socket) {
   };
 
   var redis_emitter = function() {
-    redis_client.brpoplpush("sentiment_stream", "sentiment_stream", 0, function(err, reply) {
+    // TODO: Check this, emitting very rarely
+    redis_client.lrange("sentiment_stream", 0, 0, function(err, reply) {
       var point = JSON.parse(reply);
-      socket.volatile.emit('newPoint', point);
+      // Only emit if different from last message
+      if (last_emitted.latitude !== point.latitude) {
+          last_emitted = point;
+          socket.volatile.emit('newPoint', point);
+      }
+    });
+  };
+
+  var initial_emit = function() {
+    redis_client.lrange("sentiment_stream", 0, 100, function(err, reply) {
+      var point = JSON.parse(reply);
+      socket.volatile.emit('initialPoints', point);
+      
     });
   };
 
@@ -32,9 +54,10 @@ io.sockets.on('connection', function (socket) {
   socket.on('disconnect', function() {
     clearInterval(emit_interval);
   });
+
 });
 
-server.listen(80);
+server.listen(8080);
 
 
 

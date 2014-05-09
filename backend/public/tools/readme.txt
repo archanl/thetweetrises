@@ -1,0 +1,1 @@
+you can use one of the compressors to minify your javascript once you have finished
