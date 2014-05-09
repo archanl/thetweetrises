@@ -48,3 +48,14 @@ SVM_FEATURE_LIMIT = 100
 MAXIMUM_ENTROPY_TWEET_LIMIT = 3000
 MAXIMUM_ENTROPY_TERM_LIMIT = 80 
 
+
+PLOT_TIME_MAXENT_FILE = BASE_DIR + "/NLP/Plots/max_ent_file_1.txt"
+PLOT_TIME_NAIVE_BAYES_FILE = BASE_DIR + "/NLP/Plots/naive_bayes_file_1.txt"
+PLOT_TIME_SVM_FILE = BASE_DIR + "/NLP/Plots/sgd_file_1.txt"
+PLOT_TIME_SGD_FILE = BASE_DIR + "/NLP/Plots/svm_file_1.txt"
+
+PLOT_ALPHA_SGD = BASE_DIR + "//NLP/Plots/sgd_alpha.txt"
+PLOT_L1_SGD = BASE_DIR + "/NLP/Plots/sgd_l1_ratio.txt"
+PLOT_KERNEL_SVM = BASE_DIR + "/NLP/Plots/svm_kernel.txt"
+PLOT_MAXENT_ITERATIONS = BASE_DIR + "/NLP/Plots/maxent_iterations.txt"
+PLOT_SGD_ITERATIONS = BASE_DIR + "/NLP/Plots/sgd_iterations.txt"

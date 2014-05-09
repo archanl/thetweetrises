@@ -32,13 +32,26 @@ def get_maxent_classifier(parameters):
     # A debug limit for the number of positive and negative tweets
     upto = parameters.upto
     do_debug_limit = True 
+    negative_counter = 0
+    positive_counter = 0
 
 
     for line in go_training_data:
         # Parse the line for the classification and the tweet
         parts = line.split(",")
         score = float(parts[0].replace('"', ""))
-        
+ 
+	
+	if score == 0:
+		if negative_counter >= upto:
+			continue
+		negative_counter = negative_counter + 1
+	else:
+		if positive_counter >= upto:
+			continue
+		positive_counter = positive_counter + 1
+
+       
         bag = get_words(parts[5], stop_words)
         go_tweets.append((score, bag))
     
@@ -58,7 +71,6 @@ def get_maxent_classifier(parameters):
                     terms[word].negative = terms[word].negative + 1
                 else:
                     terms[word].positive = terms[word].positive + 1
-
         # Debug
         debug_counter = debug_counter + 1
         if debug_counter % 1000 == 0:

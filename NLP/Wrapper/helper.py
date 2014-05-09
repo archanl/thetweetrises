@@ -1,6 +1,15 @@
 import re
 import math
 
+class parameters:
+    def __init__(self, upto, term_limit, alpha, l1_ratio, kernel, iterations):
+        self.upto = upto
+	self.term_limit = term_limit
+	self.alpha = alpha
+	self.l1_ratio = l1_ratio
+	self.kernel = kernel
+	self.iterations = iterations
+
 class tweetclass:
     def __init__(self, word):
         self.term = word
