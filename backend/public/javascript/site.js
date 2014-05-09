@@ -134,10 +134,8 @@ function prePopulate(data) {
 }
 
 function changeTrending(data) {
-  console.log('trending data:');
-  console.log(data);
   var obj = JSON.parse(data);
-  for (var i = 0; i < 6; i++){
+  for (var i = 0; i < 10; i++){
     var trendingName = obj[0].trends[i].name;
     $($(".sidebar-topic-all").children()[i]).html("<a>" + trendingName.toString() + "</a>");
   }
