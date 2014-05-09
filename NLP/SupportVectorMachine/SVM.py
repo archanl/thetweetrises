@@ -8,76 +8,11 @@ import re
 import sys
 sys.path.insert(0, '..')
 from definitions import *
+sys.path.insert(0, '../Wrapper/')
+from helper import *
 
 
-
-
-class tweetclass:
-    def __init__(self, word):
-        self.term = word
-        self.positive = 0
-        self.negative = 0
-
-def get_words(tweet, stop_words):
-    ''' Parses all of the words from a tweet '''
-    # This would ideally remove stop words and transform similar
-    # words such as huuungry -> huungry
-    # There are also other refinements...
-    words = re.findall("[a-zA-Z][a-zA-Z]+", tweet)
-    bag = {}
-    for word in words:
-        if word not in stop_words:
-            bag[word.lower()] = True
-    return bag
-
-def get_score(term, positive_classifications, negative_classifications, terms):
-    ''' Gets the Mutual Information score of a term based on the training data'''
-    # Term in tweet and classifier is positive
-    n_11 = terms[term].positive
-    # Term in tweet and classifier is negative
-    n_10 = terms[term].negative
-    # Term not in tweet and classfier is positive
-    n_01 = positive_classifications - n_11
-    # Term not in tweet and classfier is negative
-    n_00 = negative_classifications - n_10
-    
-
-
-    # Total number of tweets
-    N = n_11 + n_10 + n_01 + n_00
-
-    N_1 = n_11 + n_10
-    N_2 = n_11 + n_01
-    N_3 = n_10 + n_00
-    N_4 = n_01 + n_00
-
-    # Debug
-    #print "n_11: %d, n_10: %d, n_01: %d, n_00: %d" % (n_11, n_10, n_01, n_00)
-    #print "N_1: %d, N_2: %d, N_3: %d, N_4: %d" % (N_1, N_2, N_3, N_4)
-    
-    score = 0
-    if n_11 != 0:
-        score = score + float(n_11) / float(N) * math.log(float(n_11 * N) / float(N_1 * N_2), 2)
-    if n_01 != 0:
-        score = score + float(n_01) / float(N) * math.log(float(n_01 * N) / float(N_4 * N_2), 2)
-    if n_10 != 0:
-        score = score + float(n_10) / float(N) * math.log(float(n_10 * N) / float(N_1 * N_3), 2)
-    if n_00 != 0:
-        score = score + float(n_00) / float(N) * math.log(float(n_00 * N) / float(N_4 * N_3), 2)
-
-    return score
-
-def get_point(bag, terms):
-    ''' Make a point from the `bag` which represents a sentence '''
-    array = [0] * len(terms)
-    for word in bag:
-        if word in terms:
-            position = terms.keys().index(word)
-            array[position] = 1
-    # sk-learn must have a list of points
-    return [array]
-
-if __name__ == "__main__":
+def get_svm_classifier():
 
     print "Loading training data..."
 
@@ -101,8 +36,12 @@ if __name__ == "__main__":
     positive_counter = 0
     negative_counter = 0
     # A debug limit for the number of positive and negative tweets
-    upto = 2000
+    upto = SVM_TWEET_LIMIT
     do_debug_limit = True 
+
+    #if DEBUG:
+    #    upto = 1000
+    #    do_debug_limit = True
 
     for line in go_training_data:
         # Parse the line for the classification and the tweet
@@ -161,7 +100,11 @@ if __name__ == "__main__":
     print "Getting top terms from mutual information"
     scores = []
     top_terms = []
-    term_limit = 1000
+    term_limit = SVM_FEATURE_LIMIT
+
+    if DEBUG:
+        term_limit = 50
+
     heap_terms_processed = 0
     for term in terms:
         score = get_score(term, positive_classifications, negative_classifications, terms)
@@ -185,10 +128,6 @@ if __name__ == "__main__":
 
 
     print "Top terms found"
-
-
-
-
 
 
 
@@ -219,67 +158,8 @@ if __name__ == "__main__":
     assert False'''
 
     print "Fitting data..."
-    #classifier = SklearnClassifier(SVC(kernel='linear'), sparse=False).train(train)
     classifier = SklearnClassifier(SVC(kernel='linear', probability=True)).train(train)
-    print "Data fitted!"
-    #clf = linear_model.SGDClassifier()
-    # Default linear_model.SGDClassifier settings:
-    #SGDClassifier(alpha=0.0001, class_weight=None, epsilon=0.1, eta0=0.0,
-    #        fit_intercept=True, l1_ratio=0.15, learning_rate='optimal',
-    #        loss='hinge', n_iter=5, n_jobs=1, penalty='l2', power_t=0.5,
-    #        random_state=None, rho=None, shuffle=False,
-    #        verbose=0, warm_start=False)
-    #print "Fitting data..."
-    #clf.fit(X, Y)
-    #print "Data fitted!"
-    # Example prediction
-    #print(clf.predict([[-0.8, -1]]))
 
-    #TODO
-    # Loop through test data
-    go_test_data = open(GO_TEST_DATA)
-    a=go_test_data.readline()
-    correct_classifications = 0;
-    total_classifications = 0;
 
-    i = 0
+    return classifier, top_terms, stop_words
 
-    for line in go_test_data:
-        parts = line.split(",")
-        score = float(parts[0].replace('"', ""))
-        if score == 0 or score == 4:
-            bag = get_words(parts[5], stop_words)
-            
-            fv = {}
-            for word in bag:
-                if word in top_terms:
-                    fv[word] = 1
-
-            # Get classification
-            #point = get_point(bag, top_terms)
-            cls = classifier.classify(fv)
-            abcd = classifier.prob_classify(fv)
-            defg = abcd.max()
-            print "sldfjlsdkjf"
-            print abcd.prob(0)
-            '''
-            print "blalsdkjflsdkfj"
-            print cls
-            abcd = classifier.prob_classify(fv)
-            print abcd
-            defg = abcd.max()
-            print defg
-            print classifier.labels()
-            '''
-            if cls != defg:
-                print "cls: " + str(cls) + ";  prob: " + str(defg)
-                i += 1
-
-            # Compare to the correct classification
-            if cls == score:
-                correct_classifications = correct_classifications + 1
-
-            total_classifications = total_classifications + 1
-
-    print "The percentage correct was: %g" % (float(correct_classifications) / float(total_classifications))
-    print i
