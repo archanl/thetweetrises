@@ -59,14 +59,14 @@ io.sockets.on('connection', function (socket) {
 
 function getTrendingTopics() {
     var args = ["+inf", "-inf", "WITHSCORES", "LIMIT", 0, 5];
-    var trending = 0;
     redis_client.zrevrangebyscore(args, function(err, reply) {
+        var trending = "";
         // The trending topics will be in the even indeces of the array
-        for (i = 0; i < reply.size(); i += 2 {
+        for (i = 0; i < reply.size(); i += 2) {
             trending += reply[i];
         }
-    }
-    console.log(trending);
+        console.log(trending);
+    })
     // TODO: serve
 
 }
