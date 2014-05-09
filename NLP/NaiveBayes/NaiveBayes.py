@@ -1,31 +1,13 @@
-from sklearn import linear_model
-from nltk.classify import SklearnClassifier
 import heapq
 import math
-import numpy as np
 import re
 import sys
-sys.path.insert(0, '..')
+sys.path.insert(0, '../')
 from definitions import *
 sys.path.insert(0, '../Wrapper/')
 from helper import *
 
-
-
-def get_sgd_point(bag, terms):
-    ''' Make a point from the `bag` which represents a sentence '''
-    fv = {}
-    for word in bag:
-        if word in terms:
-            fv[word] = 1
-    # sk-learn must have a list of points
-    return fv
-
-
-def get_sgd_classifier():
-
-    print "Loading training data..."
-
+def get_naive_bayes_classifier():
     # A dictionary whose keys are strings (words) and values are tweetclass objects
     terms = {}
 
@@ -44,8 +26,8 @@ def get_sgd_classifier():
     positive_counter = 0
     negative_counter = 0
     # A debug limit for the number of positive and negative tweets
-    upto = SGD_TWEET_LIMIT
-    do_debug_limit = True 
+    upto = NAIVE_BAYES_TWEET_LIMIT
+    do_debug_limit = DO_NAIVE_BAYES_LIMIT 
 
     #if DEBUG:
     #    upto = 1000
@@ -98,20 +80,18 @@ def get_sgd_classifier():
             negative_classifications = negative_classifications + 1
     positive_classifications = len(go_tweets) - negative_classifications
 
+    # Debug
+    print "Total number of terms: %d" % len(terms)
+    #assert False
 
-    print "Training data loaded!"
-
-
-
-    
     # Get the top number of terms
     print "Getting top terms from mutual information"
     scores = []
     top_terms = []
-    term_limit = SGD_FEATURE_LIMIT
+    term_limit = NAIVE_BAYES_NUM_FEATURES
 
-    if DEBUG:
-        term_limit = 50
+    #if DEBUG:
+    #    term_limit = 50
 
     heap_terms_processed = 0
     for term in terms:
@@ -129,44 +109,8 @@ def get_sgd_classifier():
     for item in scores:
         top_terms.append(item[1])
 
-    tt = top_terms
-    top_terms = {}
-    for t in tt:
-        top_terms[t] = True
-
-
     print "Top terms found"
 
 
+    return top_terms, positive_classifications, negative_classifications, stop_words, terms
 
-    print top_terms.keys()[0:100]
-
-
-
-    # Debug
-    print "Total number of features: %d" % len(top_terms)
-    #assert False
-
-    # Train
-    num_features = len(top_terms)
-    num_samples = len(go_tweets)
-    y = []
-    train = []
-    for (score, bag) in go_tweets:
-        y.append(score)
-        fv = {}
-            # feature vector for this tweet
-        for word in bag:
-            if word in top_terms:
-                fv[word] = 1
-                
-        train.append( (fv, score) )
-    Y = np.array(y)
-
-    print "Fitting data..."
-    clf = SklearnClassifier(linear_model.SGDClassifier(loss = 'log', n_iter = 40, fit_intercept = False, alpha = 0.001, l1_ratio = 0.30), sparse=False).train(train)
-    #clf = linear_model.SGDClassifier()
-    #clf.fit()
-    print "Data fitted!"
-
-    return clf, top_terms, stop_words

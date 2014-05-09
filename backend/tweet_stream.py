@@ -20,7 +20,10 @@ def signal_handler(signum = None, frame = None):
 def main():
     logging.debug("Starting tweet streamer.")
 
-    for sig in [signal.SIGTERM, signal.SIGINT, signal.SIGHUP, signal.SIGQUIT]:
+    #for sig in [signal.SIGTERM, signal.SIGINT, signal.SIGHUP, signal.SIGQUIT]:
+    # On Windows, signal() can only be called with SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, or SIGTERM. 
+    # A ValueError will be raised in any other case.
+    for sig in [signal.SIGTERM, signal.SIGINT]:
         signal.signal(sig, signal_handler)
 
     r = redis.Redis('localhost')
