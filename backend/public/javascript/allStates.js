@@ -4003,6 +4003,9 @@ function addStatePoints(data, averages){
     var latState = data.latitude;
     var lngState = data.longitude;
     var latlngState = new google.maps.LatLng(latState,lngState);
+    // Actual Twitter time
+    // var tweetTimeOriginal = data.timestamp;
+    // var tweetTImeConverted = moment(tweetTimeOriginal, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en');
     var insideState = google.maps.geometry.poly.containsLocation(latlngState, allStateOutlines[i][0]);
     if (insideState){
       var actualState = allStateOutlines[i][0];
