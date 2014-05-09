@@ -2,6 +2,7 @@ import sys
 import redis
 import requests
 from requests_oauthlib import OAuth1
+import json
 
 USA_WOEID = '23424977'
 TRENDING_KEYS_KEY = 'trending_keys'
