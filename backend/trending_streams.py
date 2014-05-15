@@ -34,19 +34,13 @@ def main():
     t = generateRequest(trends)
 
 
-    tweet_cache = []
     while True:
         try:
-            if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
+            tweet = next_tweet(t)
+            while "delete" in tweet[:10]:
                 tweet = next_tweet(t)
-                while "delete" in tweet[:10]:
-                    tweet = next_tweet(t)
 
-                tweet_cache.append(tweet)
-
-                if len(tweet_cache) > MAX_TWEET_CACHE:
-                    r.lpush(QUEUE_KEY, *tweet_cache)
-                    tweet_cache = []
+            r.lpush("trending_raw", tweet)
 
         except Exception as e:
             logging.debug("Something awful happened!")
