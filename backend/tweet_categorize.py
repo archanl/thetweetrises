@@ -92,7 +92,7 @@ def main():
                 logging.debug(d)
                 j = json.dumps(d)
 
-                key = classify_trending(tweet['text'], trends)
+                key = classifyTrending(tweet['text'], trends)
                 r.lpush("trending:" + key, str(j))
 
 
