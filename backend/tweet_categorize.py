@@ -15,6 +15,7 @@ sys.path.insert(0, '../NLP/StochasticGradientDescent')
 sys.path.insert(0, '../NLP/SupportVectorMachine')
 from wrapper import classifier_wrapper, tweetclass
 from trend_utils import getTrends, classifyTrending
+import time
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
