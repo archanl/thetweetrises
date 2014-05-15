@@ -57,7 +57,7 @@ def main():
     while True:
         try:
             if int(time.time()) % UPDATE_INT == 0:
-                trends = getTrends()
+                trends = getTrends(r)
 
             if r.llen(SENTIMENT_KEY) >= MAX_SENTIMENTS:
                 r.rpop(SENTIMENT_KEY)
