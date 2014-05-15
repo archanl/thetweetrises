@@ -43,7 +43,7 @@ def main():
                 trends = getTrends(r)
                 t_req = generateRequest(trends)
                 
-            tweet = next_tweet(t)
+            tweet = next_tweet(t_req)
     #             while "delete" in tweet[:10]:
     #                 tweet = next_tweet(t)
 
