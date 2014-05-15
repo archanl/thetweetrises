@@ -51,9 +51,13 @@ def main():
             logging.debug("Something awful happened!")
 
 def getTrends(r):
+    result = []
     topics = r.zrevrangebyscore("trending_keys", "+inf", "-inf", start=0, num=11)
-    print topics
-    return None
+    for topic in topics:
+        topic = ast.literal_eval(topic)
+        topic = topic['name']
+        result.append(topic)
+    return result
 
 def generateRequest(trends):
     oauth = OAuth1('ZZQMKjtL8kewgk4001jF8krqx',                             # API Key
