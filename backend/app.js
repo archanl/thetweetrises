@@ -57,6 +57,14 @@ io.sockets.on('connection', function (socket) {
 
 });
 
+function emitTrendingJSON() {
+  redis_client.get("trending_json", function(err, reply) {
+    io.sockets.emit('trending', reply);
+  });
+}
+
+setInterval(emitTrendingJSON, 5000);
+
 function getTrendingTopics() {
     var args = ["+inf", "-inf", "WITHSCORES", "LIMIT", 0, 5];
     redis_client.zrevrangebyscore(args, function(err, reply) {
@@ -71,7 +79,7 @@ function getTrendingTopics() {
 
 }
 
-server.listen(8080);
+server.listen(80);
 
 
 
