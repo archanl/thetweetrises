@@ -49,8 +49,8 @@ def main():
 
             r.lpush(QUEUE_KEY, tweet)
 
-        except Exception as e:
-            logging.debug("Something awful happened!")
+        except Exception, e:
+            logging.debug(e)
 
 
 def generateRequest(trends):
