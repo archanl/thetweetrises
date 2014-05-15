@@ -6,6 +6,7 @@ import logging
 import signal
 import ast
 import time
+from trend_utils import getTrands, classify
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
@@ -13,6 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 MAXQUEUESIZE = 10000
 MAX_TWEET_CACHE = 1
 QUEUE_KEY = 'trending_raw'
+UPDATE_INT = 4
 
 def signal_handler(signum = None, frame = None):
     logging.debug("Received signal " + str(signum))
@@ -51,14 +53,6 @@ def main():
         except Exception as e:
             logging.debug("Something awful happened!")
 
-def getTrends(r):
-    result = []
-    topics = r.zrevrangebyscore("trending_keys", "+inf", "-inf", start=0, num=11)
-    for topic in topics:
-        topic = ast.literal_eval(topic)
-        topic = topic['name']
-        result.append(topic)
-    return result
 
 def generateRequest(trends):
     oauth = OAuth1('ZZQMKjtL8kewgk4001jF8krqx',                             # API Key
@@ -73,13 +67,6 @@ def generateRequest(trends):
                      auth=oauth, stream=True)
     return t
 
-
-def classify(tweet, trends):
-    for trend in trends:
-        if trend in tweet:
-            return trend
-    else:
-        return None
     
 
 def next_tweet(t):
