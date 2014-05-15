@@ -37,20 +37,20 @@ def main():
 
 
     while True:
-        try:
-            if int(time.time()) % UPDATE_INT == 0:
-                # Update the trends
-                trends = getTrends(r)
-                t = generateRequest(trends)
-                
-            tweet = next_tweet(t)
+#         try:
+        if int(time.time()) % UPDATE_INT == 0:
+            # Update the trends
+            trends = getTrends(r)
+            t = generateRequest(trends)
+            
+        tweet = next_tweet(t)
 #             while "delete" in tweet[:10]:
 #                 tweet = next_tweet(t)
 
-            r.lpush(QUEUE_KEY, tweet)
+        r.lpush(QUEUE_KEY, tweet)
 
-        except Exception, e:
-            logging.debug(e)
+#         except Exception, e:
+#             logging.debug(e)
 
 
 def generateRequest(trends):
