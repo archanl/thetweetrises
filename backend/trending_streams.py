@@ -33,7 +33,7 @@ def main():
 
     trends = getTrends(r)
 
-    t_req = generateRequest(trends)
+    t = generateRequest(trends)
 
 
     while True:
@@ -41,9 +41,9 @@ def main():
             if int(time.time()) % UPDATE_INT == 0:
                 # Update the trends
                 trends = getTrends(r)
-                t_req = generateRequest(trends)
+                t = generateRequest(trends)
                 
-            tweet = next_tweet(t_req)
+            tweet = next_tweet(t)
     #             while "delete" in tweet[:10]:
     #                 tweet = next_tweet(t)
 
