@@ -4,6 +4,7 @@ import requests
 from requests_oauthlib import OAuth1
 import logging
 import signal
+import ast
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
