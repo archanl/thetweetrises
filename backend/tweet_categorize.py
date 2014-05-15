@@ -92,7 +92,7 @@ def main():
                 j = json.dumps(d)
 
                 key = classify_trending(tweet['text'], trends)
-                r.lpush(SENTIMENT_KEY, str(j))
+                r.lpush("trending:" + key, str(j))
 
 
                 

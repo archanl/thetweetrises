@@ -6,7 +6,7 @@ import logging
 import signal
 import ast
 import time
-from trend_utils import getTrands, classifyTrending
+from trend_utils import getTrends, classifyTrending
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
