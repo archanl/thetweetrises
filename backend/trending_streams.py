@@ -4,7 +4,6 @@ import requests
 from requests_oauthlib import OAuth1
 import logging
 import signal
-import ast
 import time
 from trend_utils import getTrends, classifyTrending
 

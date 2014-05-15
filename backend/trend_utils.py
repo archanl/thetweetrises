@@ -1,3 +1,4 @@
+import ast
 def getTrends(r):
     result = []
     topics = r.zrevrangebyscore("trending_keys", "+inf", "-inf", start=0, num=11)
