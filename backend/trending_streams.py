@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 MAXQUEUESIZE = 10000
 MAX_TWEET_CACHE = 1
 QUEUE_KEY = 'trending_raw'
-UPDATE_INT = 4
+UPDATE_INT = 20
 
 def signal_handler(signum = None, frame = None):
     logging.debug("Received signal " + str(signum))
