@@ -14,9 +14,9 @@ var stateAverages = false;
  
 function initializeHeatmap() {
   var mapOptions = {
-    zoom: 5,
-    center: new google.maps.LatLng(41.850033, -87.6500523),
-    mapTypeId: google.maps.MapTypeId.SATELLITE
+    zoom: 4,
+    center: new google.maps.LatLng(39.833333, -98.583333),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
@@ -234,13 +234,20 @@ $(function() {
         $("#slider_time_right").text(time2);
       }
   });
-    function set_map_height() {
-      $(".page-content").css({
-        "height": $(window).height() - $(".page-content").offset().top
-      });
+
+  $('#fullscreen-button').click(function() {
+    var $b = $('body');
+    var $btn = $('#fullscreen-button');
+    if ($b.hasClass('fullscreen')) {
+      $b.removeClass('fullscreen');
+      $btn.text('Fullscreen');
+      $btn.addClass('btn-primary');
+      $btn.removeClass('btn-danger');
+    } else {
+      $b.addClass('fullscreen');
+      $btn.text('Exit');
+      $btn.addClass('btn-danger');
+      $btn.removeClass('btn-primary');
     }
-    $(window).resize(function() {
-      set_map_height();
-    });
-    set_map_height();
+  });
 });
