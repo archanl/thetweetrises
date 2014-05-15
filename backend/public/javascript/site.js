@@ -67,26 +67,28 @@ function initializeHeatmap() {
 
   // Initialize garbage collection
   window.setInterval(gc, 5000);
+  window.setInterval(updateRate, 1000);
+}
 
+var numTotalReceivedPoints = 0;
+var startTime = new Date().getTime() / 1000;
+function updateRate() {
+  var elapsed = (new Date().getTime() / 1000) - startTime;
+  $('#rateText').text("Rate: " + (numTotalReceivedPoints / elapsed) + " points/second.");
 }
 
 // Garbage collection: make old points decay
 function gc() {
     // Max number of points per array
-    var maxPts = 1000;
-    var posLen = pointArray.length;
-    var negLen = pointArrayNeg.length
-
-    while (posLen != 0) {
-        pointArray.remove(0);
-        posLen--;
+    while (pointArray.length + pointArrayNeg.length > 2000) {
+      if (pointArray.length) {
+        pointArray.removeAt(0);
+      }
+      if (pointArrayNeg.length) {
+        pointArrayNeg.removeAt(0);
+      }
+      console.log('gc(): Old points have been removed.');
     }
-
-    while (negLen != 0) {
-        pointArrayNeg.remove(0);
-        neglen--;
-    }
-
 }
 
 function initializeSocket() {
@@ -97,21 +99,21 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
-    console.log(data);
+    if (data) {
+      var emotion = data.sentiment > 0 ? 1 : 0;
+      var lat = data.latitude;
+      var lng = data.longitude;
+      var latlng = new google.maps.LatLng(lat,lng);
 
-    var emotion = data.sentiment > 0 ? 1 : 0;
-    var lat = data.latitude;
-    var lng = data.longitude;
-    var latlng = new google.maps.LatLng(lat,lng);
-
-    if (emotion == 0) {
-        pointArray.push(latlng);
+      if (emotion == 0) {
+          pointArray.push(latlng);
+      }
+      else {
+          pointArrayNeg.push(latlng);
+      }
+      numTotalReceivedPoints++;
+      addStatePoints(data, stateAverages);
     }
-    else {
-        pointArrayNeg.push(latlng);
-    }
-
-    addStatePoints(data, stateAverages);
 }
 
 function prePopulate(data) {
@@ -134,15 +136,18 @@ function prePopulate(data) {
 }
 
 function changeTrending(data) {
-  var obj = JSON.parse(data);
-  for (var i = 0; i < 10; i++){
-    var trendingName = obj[0].trends[i].name;
-    $($(".sidebar-topic-all").children()[i]).html("<a>" + trendingName.toString() + "</a>");
+  console.log('changeTrending(' + data + ')');
+  if (data) {
+    var obj = JSON.parse(data);
+    for (var i = 0; i < 10; i++){
+      var trendingName = obj[0].trends[i].name;
+      $($(".sidebar-topic-all").children()[i]).html("<a>" + trendingName.toString() + "</a>");
+    }
   }
 }
 
 function trendingMode(topic) {
-  console.log(topic);
+  console.log("trendingMode(" + topic + ")");
 }
 
 function aboutUs(){
