@@ -93,7 +93,10 @@ def main():
                 j = json.dumps(d)
 
                 key = classifyTrending(tweet['text'], trends)
-                r.lpush("trending:" + key, str(j))
+                if key != None:
+                    r.lpush("trending:" + key, str(j))
+                else:
+                    logging.exception("Key for tweet: " + tweet + " with text: " + text + "was none." + "Trends: " + str(trends))
 
 
                 
