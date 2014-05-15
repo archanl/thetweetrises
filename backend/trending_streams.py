@@ -42,6 +42,9 @@ def main():
                 # Update the trends
                 trends = getTrends(r)
                 t = generateRequest(trends)
+
+            if t.status_code != 200:
+                continue
                 
             tweet = next_tweet(t)
     #             while "delete" in tweet[:10]:
