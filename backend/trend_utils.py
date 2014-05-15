@@ -7,7 +7,7 @@ def getTrends(r):
         result.append(topic)
     return result
 
-def classify(tweet, trends):
+def classifyTrending(tweet, trends):
     for trend in trends:
         if trend in tweet:
             return trend
