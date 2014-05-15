@@ -5,13 +5,14 @@ from requests_oauthlib import OAuth1
 import logging
 import signal
 import ast
+import time
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
 
 MAXQUEUESIZE = 10000
 MAX_TWEET_CACHE = 1
-QUEUE_KEY = 'tweet_queue'
+QUEUE_KEY = 'trending_raw'
 
 def signal_handler(signum = None, frame = None):
     logging.debug("Received signal " + str(signum))
@@ -36,11 +37,16 @@ def main():
 
     while True:
         try:
+            if int(time.time()) % UPDATE_INT == 0:
+                # Update the trends
+                trends = getTrends(r)
+                t = generateRequest(trends)
+                
             tweet = next_tweet(t)
             while "delete" in tweet[:10]:
                 tweet = next_tweet(t)
 
-            r.lpush("trending_raw", tweet)
+            r.lpush(QUEUE_KEY, tweet)
 
         except Exception as e:
             logging.debug("Something awful happened!")
