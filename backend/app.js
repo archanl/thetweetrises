@@ -32,22 +32,56 @@ io.sockets.on('connection', function (socket) {
 
   var redis_emitter = function() {
     // TODO: Check this, emitting very rarely
-    redis_client.lrange("sentiment_stream", 0, 0, function(err, reply) {
+    redis_client.zrange("sentiment_stream", 0, -1, function(err, reply) {
       var point = JSON.parse(reply);
+      point.topic = null;
       // Only emit if different from last message
       if (last_emitted.latitude !== point.latitude) {
           last_emitted = point;
           socket.volatile.emit('newPoint', point);
       }
+
+      // Emit a single tweet from all trends
+      redis_client.zrange("trending_keys", 0, -10, function(err, reply) {
+        
+          for (var i=0; i < reply.length; i++;) {
+              var trend = reply[i];
+              redis_client.zrange("trending:".concat(trend), 0, -1, function(err, reply) {
+                  var point = JSON.parse(reply);
+                  point.topic = trend;
+                  socket.volatile.emit('initialPoints', point);
+              });
+          }
+    });
+
     });
   };
 
+  // Initial emits
   var initial_emit = function() {
-    redis_client.lrange("sentiment_stream", 0, 100, function(err, reply) {
-      var point = JSON.parse(reply);
-      socket.volatile.emit('initialPoints', point);
+      var d = new Date();
+      var now = d.getTime();
+      redis_client.zrange("sentiment_stream", now, now - 600, function(err, reply) {
+          var point = JSON.parse(reply);
+          point.topic = null;
+          socket.volatile.emit('initialPoints', point);
       
+      });
+
+      
+      redis_client.zrange("trending_keys", 0, -10, function(err, reply) {
+        
+          // Emit last 600 secs from each trend
+          for (var i=0; i < reply.length; i++;) {
+              var trend = reply[i];
+              redis_client.zrange("trending:".concat(trend), 0, -200, function(err, reply) {
+                  var point = JSON.parse(reply);
+                  point.topic = trend;
+                  socket.volatile.emit('initialPoints', point);
+              });
+          }
     });
+
   };
 
   var emit_interval = setInterval(redis_emitter, 20);
@@ -56,6 +90,7 @@ io.sockets.on('connection', function (socket) {
   });
 
 });
+
 
 function emitTrendingJSON() {
   redis_client.get("trending_json", function(err, reply) {
