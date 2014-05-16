@@ -120,7 +120,7 @@ function addPoint(data) {
       }
       numTotalReceivedPoints++;
       //addStatePoints(data, stateAverages);
-      addStatePoints(data, 5);
+      addStatePoints2(data, 5);
     }
 }
 
