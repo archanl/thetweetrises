@@ -107,11 +107,10 @@ function initializeSocket() {
     window.setInterval(gc, 5000);
 
     socket.on("newPoint", addPoint);
-    socket.on("initialPoints", prePopulate);
-    socket.on("trending", changeTrending);
 }
 
 function addPoint(data) {
+  console.log(data);
     if (data) {
 
       storeAllStatePoints(data, 100);
@@ -123,6 +122,15 @@ function addPoint(data) {
         else{
           topicPoints[data.topic] = [];
           topicPoints[data.topic].push(data);
+          var $channelLink = $('<li><a href="#" class="channelLink unseen">' + data.topic + '</a></li>');
+          $('#topic-menu').append($channelLink);
+
+          var f = function(x) {
+            return function() {
+              changeTopic(x);
+            };
+          };
+          $channelLink.find('a').on('click', f(data.topic));
         }
       }
       else{
@@ -154,8 +162,9 @@ function addPoint(data) {
 }
 
 function changeTopic(topicName) {
-    var specificTopic = true;
-    var currentFilter = topicName;
+    console.log('changeTopic(' + topicName + ')')
+    specificTopic = true;
+    currentFilter = topicName;
     clearStateLists();
     if (topicPoints[topicName]){
       for (i = 0; i < topicPoints[topicName].length; i++){
@@ -194,33 +203,7 @@ function switchChannel(channel) {
   console.log('Switching to Channel: ' + topicChannels[channel].name);
   //todo
 }
-function changeTrending(data) {
-  if (data) {
-    var obj = JSON.parse(data);
-    for (var i = 0; i < 10; i++){
-      var trend = obj[0].trends[i];
 
-      if (!topicChannels[i] || (topicChannels[i].name !== trend.name)) {
-        newTopicsCount = newTopicsCount + 1 > 10 ? 10 : newTopicsCount + 1;
-        $('#new-topics-badge').text(newTopicsCount);
-
-        topicChannels[i] = trend;
-        
-        var $channelLink = $('<a href="#" id="channelLink-' + i + '" class="channelLink unseen">' + trend.name + '</a>');
-
-        $($('.topic-channel')[i]).html('');
-        $($('.topic-channel')[i]).append($channelLink);
-
-        var f = function(x) {
-          return function() {
-            switchChannel(x);
-          };
-        };
-        $channelLink.on('click', f(i));
-      }
-    }
-  }
-}
 function clearNewTopicsBadge() {
   var b = newTopicsCount;
   var g = function() {
@@ -269,7 +252,6 @@ $(document).ready(function() {
   initializeHeatmap();
   initializeSocket();
   switchModeCurrent();
-  console.log('hey');
 
   $("#standard_heatmap_btn").on("click", function () {
     HeatmapMode();
