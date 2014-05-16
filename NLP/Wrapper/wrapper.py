@@ -57,6 +57,7 @@ class classifier_wrapper:
         file4 = open(PLOT_TIME_SVM_FILE, 'w')
         #for i in range(1, 2):
         for i in range(2, 21, 2):
+            i = 22 - i
             upto = i * 500
             the_parameter = parameters(upto, 1000, .001, .3, 'linear', 100)
             #the_parameter = parameters(10000, 1000, .001, .3, 'linear', 100)
@@ -111,17 +112,19 @@ class classifier_wrapper:
         file1.close()
         assert 0 == 1
 
+        '''
+        '''
         file1 = open(PLOT_ALPHA_SGD, 'w')
         for i in range(0, 20):
         #for i in range(0, 1):
-            upto = 10
-            alpha = float(i) / 100.0 + .001
+            upto = 10000
+            alpha = float(i) / 1000.0 + .001
             the_parameter = parameters(upto, 1000, alpha, .3, 'linear', 100)
             sgd_time=  time()
             self.train_sgd(the_parameter)
             sgd_time = time() - sgd_time
             # Do classification with the tweets and get the % accuracy
-            results = self.do_all_classification(tweets)
+            results = self.sgd_classification(tweets)
             results["sgd_time"] = sgd_time
             results["accuracy"] = results["sgd"]
             results["alpha"] = alpha
@@ -130,18 +133,19 @@ class classifier_wrapper:
             self.print_alpha_results(results, file1)
         file1.close()
         assert 0 == 1
-
+        '''
+        '''
         file1 = open(PLOT_L1_SGD, 'w')
-        #for i in range(0, 20):
-        for i in range(0, 1):
+        for i in range(0, 20):
+        #for i in range(0, 1):
             l1_ratio = .2 + i * .01
-            upto = 10
+            upto = 40000
             the_parameter = parameters(upto, 1000, .001, l1_ratio, 'linear', 100)
             sgd_time=  time()
             self.train_sgd(the_parameter)
             sgd_time = time() - sgd_time
             # Do classification with the tweets and get the % accuracy
-            results = self.do_all_classification(tweets)
+            results = self.sgd_classification(tweets)
             results["sgd_time"] = sgd_time
             results["accuracy"] = results["sgd"]
             results["alpha"] = l1_ratio
@@ -149,65 +153,74 @@ class classifier_wrapper:
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
+        assert 0 == 1
         '''
 
         '''
         file1 = open(PLOT_KERNEL_SVM, 'w')
-#for i in ["linear", "rbf", "poly"]:
-        for i in ["linear"]:
-            upto = 10000
-            the_parameter = parameters(upto, 1000, .001, 0.3, i, 100)
-            support_time = time()
-            self.train_support_vector_machine(the_parameter)
-            support_time = time() - support_time
-            # Do classification with the tweets and get the % accuracy
-            results = self.do_all_classification(tweets)
-            results["sgd_time"] = support_time
-            results["alpha"] = i
-            results["accuracy"] = results["svm"]
-            results["upto"] = upto
-            # Print the results to a file
-            self.print_alpha_results(results, file1)
+        for i in ["linear", "rbf", "poly"]:
+        #for i in ["linear"]:
+            for j in range(2, 21, 2):
+                j = 22 - j
+                upto = j * 500
+                #upto = 10
+                the_parameter = parameters(upto, 1000, .001, 0.3, i, 100)
+                support_time = time()
+                self.train_support_vector_machine(the_parameter)
+                support_time = time() - support_time
+                # Do classification with the tweets and get the % accuracy
+                results = self.do_svm_classification(tweets)
+                results["sgd_time"] = support_time
+                results["alpha"] = i
+                results["accuracy"] = results["svm"]
+                results["upto"] = upto
+                # Print the results to a file
+                self.print_alpha_results(results, file1)
         file1.close()
         '''
 
+
+        '''
         file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
-        #for i in range(10, 51, 10):
-        for i in [1, 5, 75, 100]:
+        for i in range(50, 200, 40):
+        #for i in range(100, 101):
             upto = 10000
             the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
             max_ent_time = time()
             self.train_maximum_entropy(the_parameter)
             max_ent_time = time() - max_ent_time
             # Do classification with the tweets and get the % accuracy
-            results = self.do_maxent_classification(tweets)
+            results = self.classify_maximum_entropy(tweets)
             results["sgd_time"] = max_ent_time
             results["accuracy"] = results["maximum_entropy"]
             results["alpha"] = i
             results["upto"] = upto
+            print "results: ", results
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
-
+        assert 0 == 1
         '''
+
         file1 = open(PLOT_SGD_ITERATIONS, 'w')
         #for i in range(50, 200, 10):
         for i in range(100, 101):
-            upto = 10000
+            upto = 40000
             the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
-            max_ent_time = time()
-            self.train_maximum_entropy(the_parameter)
-            max_ent_time = time() - max_ent_time
+            sgd_time = time()
+            self.train_sgd(the_parameter)
+            sgd_time = time() - sgd_time
             # Do classification with the tweets and get the % accuracy
-            results = self.do_all_classification(tweets)
+            results = self.sgd_classification(tweets)
             results["sgd_time"] = sgd_time
             results["accuracy"] = results["sgd"]
             results["alpha"] = i
             results["upto"] = upto
+            print "upto", upto, "accuracy", results['sgd']
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
-        '''
+
 
 
 
@@ -224,18 +237,6 @@ class classifier_wrapper:
     def do_svm_classification(self, tweets):
         results = {}
         algorithm = 'svm'
-        num_correct = 0
-        for (score, tweet) in tweets:
-            classification = self.classify(tweet, algorithm, 0.5)
-            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
-                num_correct = num_correct + 1
-        percent_correct = float(num_correct) / float(len(tweets))
-        results[algorithm] = percent_correct
-        return results
-
-    def do_maxent_classification(self, tweets):
-        results = {}
-        algorithm = 'maximum_entropy'
         num_correct = 0
         for (score, tweet) in tweets:
             classification = self.classify(tweet, algorithm, 0.5)

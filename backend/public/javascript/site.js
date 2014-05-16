@@ -112,7 +112,8 @@ function addPoint(data) {
           pointArrayNeg.push(latlng);
       }
       numTotalReceivedPoints++;
-      addStatePoints(data, stateAverages);
+      //addStatePoints(data, stateAverages);
+      addStatePoints(data, 5);
     }
 }
 
