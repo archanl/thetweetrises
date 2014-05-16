@@ -17,7 +17,6 @@ var newTopicsCount = 0;
 var stateAverages = false;
 
 var topicPoints = {"average":[]};
-var allPoints = []
 var specificTopic = false;
 var currentFilter = null;
 
@@ -115,13 +114,7 @@ function initializeSocket() {
 function addPoint(data) {
     if (data) {
 
-      if (allPoints.length <= 500){
-        allPoints.push(data);
-      }
-      else{
-        allPoints = allPoints.slice(1);
-        allPoints.push(data);
-      }
+      storeAllStatePoints(data, 50);
 
       if (data.topic){
         if (topicPoints[data.topic]){
@@ -175,9 +168,7 @@ function viewAllTopics() {
     var specificTopic = false;
     var currentFilter = null;
     clearStateLists();
-    for (i = 0; i < allPoints.length; i++){
-      addStatePoints2(allPoints[i], numberToAverage);
-    }
+    showAllPointsAgain(numberToAverage);
 }
 
 function prePopulate(data) {
