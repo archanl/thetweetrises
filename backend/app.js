@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
 
   var redis_emitter = function() {
     // TODO: Check this, emitting very rarely
-    redis_client.zrange("sentiment_stream", 0, -1, function(err, reply) {
+    redis_client.zrevrange("sentiment_stream", 0, 0, function(err, reply) {
       var point = JSON.parse(reply);
       point.topic = null;
       // Only emit if different from last message
@@ -46,7 +46,7 @@ io.sockets.on('connection', function (socket) {
         
           for (var i=0; i < reply.length; i++) {
               var trend = reply[i];
-              redis_client.zrange("trending:".concat(trend), 0, -1, function(err, reply) {
+              redis_client.zrevrange("trending:".concat(trend), 0, 0, function(err, reply) {
                   var point = JSON.parse(reply);
                   point.topic = trend;
                   socket.volatile.emit('initialPoints', point);
