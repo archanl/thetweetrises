@@ -95,6 +95,8 @@ def main():
                 j = json.dumps(d)
 
                 key = classifyTrending(tweet['text'], trends)
+
+                # TODO: Fix none keys
                 if key != None:
                     r.zadd("trending:" + key, str(j), times)
                 else:
