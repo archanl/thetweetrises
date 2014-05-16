@@ -98,7 +98,7 @@ def main():
                 if key != None:
                     r.zadd("trending:" + key, str(j), times)
                 else:
-                    logging.exception("Key for tweet: " + tweet + " with text: " + text + "was none." + "Trends: " + str(trends))
+                    logging.exception("Key for tweet: " + tweet + " with text: " + text + "was none." + "Trends: " + ", ".join(trends))
 
 
                 
