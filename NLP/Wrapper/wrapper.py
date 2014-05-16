@@ -172,7 +172,6 @@ class classifier_wrapper:
     '''
 
 	file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
-	#for i in range(50, 200, 10):
 	for i in range(10, 51, 10):
 		upto = 10000
 		the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
