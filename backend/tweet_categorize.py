@@ -61,7 +61,7 @@ def main():
                 trends = getTrends(r)
 
             if r.zcard(SENTIMENT_KEY) >= MAX_SENTIMENTS:
-                r.rpop(SENTIMENT_KEY)
+                r.zremrangebyrank(SENTIMENT_KEY, 0, 0)
                 continue
 
 
