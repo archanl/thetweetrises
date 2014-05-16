@@ -3,8 +3,6 @@ def getTrends(r):
     result = []
     topics = r.zrevrangebyscore("trending_keys", "+inf", "-inf", start=0, num=11)
     for topic in topics:
-        topic = ast.literal_eval(topic)
-        topic = topic['name']
         result.append(topic)
     return result
 
