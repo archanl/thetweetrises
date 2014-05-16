@@ -10,19 +10,24 @@ var data = [];
 
 var dataNeg = [];
 
+var topicChannels = [];
+
+var newTopicsCount = 0;
+
 var stateAverages = false;
- 
-function initializeHeatmap() {
+
+function initializeMap() {
   var mapOptions = {
     zoom: 4,
     center: new google.maps.LatLng(39.833333, -98.583333),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
-  map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   pointArray = new google.maps.MVCArray(data);
+}
 
+function initializeHeatmap() {
   var gradientPos = [
     'rgba(255,255,255,0)',
     'rgba(235,229,255,0)',
@@ -41,8 +46,7 @@ function initializeHeatmap() {
     data: pointArray
   });
   heatmap.set('gradient', gradientPos);
-  heatmap.setMap(map);
-
+  // heatmap.setMap(map);
 
   pointArrayNeg = new google.maps.MVCArray(dataNeg);
 
@@ -63,18 +67,14 @@ function initializeHeatmap() {
     data: pointArrayNeg
   });
   heatmapNeg.set('gradient', gradientNeg);
-  heatmapNeg.setMap(map);
-
-  // Initialize garbage collection
-  window.setInterval(gc, 5000);
-  window.setInterval(updateRate, 1000);
+  // heatmapNeg.setMap(map);
 }
 
+// Should call every second
 var numTotalReceivedPoints = 0;
-var startTime = new Date().getTime() / 1000;
 function updateRate() {
-  var elapsed = (new Date().getTime() / 1000) - startTime;
-  $('#rateText').text("Rate: " + (numTotalReceivedPoints / elapsed) + " points/second.");
+  $('#rateText').text("Data download rate: " + numTotalReceivedPoints + " points/second.");
+  numTotalReceivedPoints = 0;
 }
 
 // Garbage collection: make old points decay
@@ -93,6 +93,13 @@ function gc() {
 
 function initializeSocket() {
     var socket = io.connect(hostname);
+    
+    // Initialize rate counter
+    window.setInterval(updateRate, 1000);
+
+    // Initialize garbage collection
+    window.setInterval(gc, 5000);
+
     socket.on("newPoint", addPoint);
     socket.on("initialPoints", prePopulate);
     socket.on("trending", changeTrending);
@@ -112,7 +119,8 @@ function addPoint(data) {
           pointArrayNeg.push(latlng);
       }
       numTotalReceivedPoints++;
-      addStatePoints(data, stateAverages);
+      //addStatePoints(data, stateAverages);
+      addStatePoints2(data, 5);
     }
 }
 
@@ -135,17 +143,11 @@ function prePopulate(data) {
     }
 }
 
-
-var topicChannels = new Array(10);
-var newTopicsCount = 0;
 function switchChannel(channel) {
-  console.log('switching');
-  console.log(channel);
-  console.log('Switching to Channel: ' + topicChannels[channel].name.toString());
-  return;
+  console.log('Switching to Channel: ' + topicChannels[channel].name);
+  //todo
 }
 function changeTrending(data) {
-  console.log('changeTrending(' + data + ')');
   if (data) {
     var obj = JSON.parse(data);
     for (var i = 0; i < 10; i++){
@@ -185,29 +187,15 @@ function clearNewTopicsBadge() {
   setTimeout(g, 2500);
 }
 function channelClick() {
-  console.log('channelClick()');
   $('.channelLink').removeClass("selected-channel");
   $(this).removeClass("unseen");
   $(this).addClass("selected-channel");
-}
-
-function trendingMode(topic) {
-  console.log("trendingMode(" + topic + ")");
-}
-
-function aboutUs(){
-  $("html, body").animate({ scrollTop: $(document).height() }, "slow");
 }
 
 function HeatmapMode() {
   heatmap.setMap(map);
   heatmapNeg.setMap(map);
   disableStatesMode();
-}
-
-function changeRadiusLarger() {
-  heatmap.set('radius', heatmap.get('radius') ? null : 15);
-  heatmapNeg.set('radius', heatmapNeg.get('radius') ? null : 15);
 }
 
 function switchModeAverage() {
@@ -229,39 +217,32 @@ function changeOpacity() {
   heatmapNeg.set('opacity', heatmapNeg.get('opacity') ? null : 0.5);
 }
 
-google.maps.event.addDomListener(window, 'load', initializeHeatmap);
-google.maps.event.addDomListener(window, 'load', initializeSocket);
-
-$(function() {
+$(document).ready(function() {
+  initializeMap();
+  initializeHeatmap();
+  initializeSocket();
+  switchModeCurrent();
+  console.log('hey');
 
   $("#standard_heatmap_btn").on("click", function () {
     HeatmapMode();
   }); 
+  
   $("#state_average_btn").on("click", function () {
     switchModeAverage();
   }); 
+  
   $("#state_current_btn").on("click", function () {
     switchModeCurrent();
   });
+  
   $("#topics-dropdown").click(clearNewTopicsBadge);
+  
   $('.dropdown').on('click', '.channelLink', channelClick);
+  
   $('.navbar-nav').on('click', 'a', function(e) {
     e.preventDefault();
   });
-
-
-  function hours_by_value(value) {
-    value = 120 - value;
-    hours = Math.floor(value / 60);
-    minutes = value - 60 * hours;
-    if (hours > 0) {
-      if (hours === 1) {
-        return String(hours) + " hour " + String(minutes) + " minutes ago";
-      }
-      return String(hours) + " hours " + String(minutes) + " minutes ago";
-    }
-    return String(minutes) + " minutes ago";
-  }
 
   $('#fullscreen-button').click(function() {
     var $b = $('body');

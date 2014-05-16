@@ -160,7 +160,7 @@ def get_sgd_classifier(parameters):
     Y = np.array(y)
 
     print "Fitting data..."
-    clf = SklearnClassifier(linear_model.SGDClassifier(loss = 'log', n_iter = 40, fit_intercept = False, alpha = parameters.alpha, 
+    clf = SklearnClassifier(linear_model.SGDClassifier(loss = 'log', n_iter = parameters.iterations, fit_intercept = False, alpha = parameters.alpha, 
 		l1_ratio = parameters.l1_ratio), sparse=False).train(train)
     #clf = linear_model.SGDClassifier()
     #clf.fit()
