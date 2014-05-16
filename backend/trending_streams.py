@@ -44,6 +44,7 @@ def main():
                 t = generateRequest(trends)
 
             if t.status_code != 200:
+                logging.debug("Got status code " + str(t.status_code))
                 time.sleep(2)
                 continue
                 
