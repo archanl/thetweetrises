@@ -16,6 +16,13 @@ var newTopicsCount = 0;
 
 var stateAverages = false;
 
+var topicPoints = {"average":[]};
+var allPoints = []
+var specificTopic = false;
+var currentFilter = null;
+
+var numberToAverage = 5;
+
 function initializeMap() {
   var mapOptions = {
     zoom: 4,
@@ -107,6 +114,28 @@ function initializeSocket() {
 
 function addPoint(data) {
     if (data) {
+
+      if (allPoints.length <= 500){
+        allPoints.push(data);
+      }
+      else{
+        allPoints = allPoints.slice(1);
+        allPoints.push(data);
+      }
+
+      if (data.topic){
+        if (topicPoints[data.topic]){
+          topicPoints[data.topic].push(data);
+        }
+        else{
+          topicPoints[data.topic] = [];
+          topicPoints[data.topic].push(data);
+        }
+      }
+      else{
+        topicPoints["average"].push(data);
+      }
+
       var emotion = data.sentiment > 0 ? 1 : 0;
       var lat = data.latitude;
       var lng = data.longitude;
@@ -120,7 +149,34 @@ function addPoint(data) {
       }
       numTotalReceivedPoints++;
       //addStatePoints(data, stateAverages);
-      addStatePoints2(data, 5);
+      if (specificTopic == false){
+        addStatePoints2(data, numberToAverage);
+      }
+      else{
+        if (data.topic == currentFilter){
+          addStatePoints2(data, numberToAverage);
+        }
+      }
+    }
+}
+
+function changeTopic(topicName) {
+    var specificTopic = true;
+    var currentFilter = topicName;
+    clearStateLists();
+    if (topicPoints[topicName]){
+      for (i = 0; i < topicPoints[topicName].length; i++){
+        addStatePoints2(topicPoints[topicName][i], numberToAverage);
+      }
+    }
+}
+
+function viewAllTopics() {
+    var specificTopic = false;
+    var currentFilter = null;
+    clearStateLists();
+    for (i = 0; i < allPoints.length; i++){
+      addStatePoints2(allPoints[i], numberToAverage);
     }
 }
 
