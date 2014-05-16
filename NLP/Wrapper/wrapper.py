@@ -57,6 +57,7 @@ class classifier_wrapper:
 	file4 = open(PLOT_TIME_SVM_FILE, 'w')
 	#for i in range(1, 2):
 	for i in range(2, 21, 2):
+		i = 22 - i
 		upto = i * 500
 		the_parameter = parameters(upto, 1000, .001, .3, 'linear', 100)
 		#the_parameter = parameters(10000, 1000, .001, .3, 'linear', 100)
@@ -110,8 +111,8 @@ class classifier_wrapper:
 		self.print_alpha_results(results, file1)
 	file1.close()
 	assert 0 == 1
-	'''
 
+	'''
 	'''
 	file1 = open(PLOT_ALPHA_SGD, 'w')
 	for i in range(0, 20):
@@ -133,7 +134,7 @@ class classifier_wrapper:
 	file1.close()
 	assert 0 == 1
 	'''
-
+	'''
 	file1 = open(PLOT_L1_SGD, 'w')
 	for i in range(0, 20):
 	#for i in range(0, 1):
@@ -153,9 +154,12 @@ class classifier_wrapper:
 		self.print_alpha_results(results, file1)
 	file1.close()
 	assert 0 == 1
+	'''
 
+	'''
 	file1 = open(PLOT_KERNEL_SVM, 'w')
-	for i in ["linear", "rbf", "poly"]:
+#for i in ["linear", "rbf", "poly"]:
+	for i in ["linear"]:
 		upto = 10000
 		the_parameter = parameters(upto, 1000, .001, 0.3, i, 100)
 		support_time = time()
@@ -170,25 +174,29 @@ class classifier_wrapper:
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
+	'''
 
 	file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
-	#for i in range(50, 200, 10):
-	for i in range(100, 101):
+	for i in range(50, 200, 40):
+	#for i in range(100, 101):
 		upto = 10000
 		the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
 		max_ent_time = time()
 		self.train_maximum_entropy(the_parameter)
 		max_ent_time = time() - max_ent_time
 		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
+		results = self.classify_maximum_entropy(tweets)
 		results["sgd_time"] = max_ent_time
 		results["accuracy"] = results["maximum_entropy"]
 		results["alpha"] = i
 		results["upto"] = upto
+		print "results: ", results
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
+	assert 0 == 1
 
+	'''
 	file1 = open(PLOT_SGD_ITERATIONS, 'w')
 	#for i in range(50, 200, 10):
 	for i in range(100, 101):
@@ -206,6 +214,7 @@ class classifier_wrapper:
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
+    '''
 
 
 
@@ -219,6 +228,19 @@ class classifier_wrapper:
 	file2.write(str(results["upto"]) + "," + str(results["naive_bayes_time"]) + "," + str(results["naive_bayes"]) + "\n")
 	file3.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["sgd"]) + "\n")
 	file4.write(str(results["upto"]) + "," + str(results["support_time"]) + "," + str(results["svm"]) + "\n")
+
+    def classify_maximum_entropy(self, tweets):
+	results = {}
+	algorithm = 'maximum_entropy'
+	num_correct = 0
+	for (score, tweet) in tweets:
+		classification = self.classify(tweet, algorithm, 0.5)
+		if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+			num_correct = num_correct + 1
+	percent_correct = float(num_correct) / float(len(tweets))
+	results[algorithm] = percent_correct
+	return results
+
 
     def sgd_classification(self, tweets):
 	results = {}

@@ -53,3 +53,5 @@ coverage.xml
 docs/_build/
 
 backend/node_modules/
+backend/dev/
+NLP/Plots/
