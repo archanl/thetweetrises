@@ -94,7 +94,7 @@ def main():
 
                 key = classifyTrending(tweet['text'], trends)
                 if key != None:
-                    r.lpush("trending:" + key, str(j))
+                    r.zadd("trending:" + key, str(j), times)
                 else:
                     logging.exception("Key for tweet: " + tweet + " with text: " + text + "was none." + "Trends: " + str(trends))
 
@@ -139,7 +139,7 @@ def main():
                 logging.debug(d)
                 j = json.dumps(d)
 
-                r.lpush(SENTIMENT_KEY, str(j))
+                r.zadd(SENTIMENT_KEY, str(j), times)
         except Exception as e:
             logging.exception("Something awful happened!")
 
