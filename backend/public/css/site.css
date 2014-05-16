@@ -8,6 +8,10 @@ body {
   transition: all 0.4s ease 0s;
 }
 
+a {
+  transition: all 0.4s ease 0s;
+}
+
 #page-content-wrapper {
   margin-top: -1px;
   width: 100%;
@@ -44,9 +48,9 @@ body.fullscreen {
 
 #fullscreen-button {
   position: absolute;
-  top: 30px;
-  right: 5px;
-  z-index: 1000;
+  top: 5px;
+  right: 100px;
+  z-index: 500;
 }
 
 #about {
@@ -86,3 +90,13 @@ body.fullscreen {
   background-color: #fff;
 }
 
+a.unseen {
+  font-weight: 600 !important;
+  font-style: italic;
+}
+a.selected-channel {
+  color: #ff0000 !important;
+}
+a.selected-channel:after {
+  content:" *";
+}
