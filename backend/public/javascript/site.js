@@ -1,7 +1,7 @@
 // It's usually a good idea to put everything in a function closure so that variable
 // names don't conflict with libraries being used
 
-var hostname = "http://ec2-54-187-28-208.us-west-2.compute.amazonaws.com";
+var hostname = "http://162.243.150.138";
 //var hostname = "http://localhost:8080/";
 
 var map, pointArray, pointArrayNeg, heatmap, heatmapNeg;
@@ -14,9 +14,9 @@ var stateAverages = false;
  
 function initializeHeatmap() {
   var mapOptions = {
-    zoom: 5,
-    center: new google.maps.LatLng(41.850033, -87.6500523),
-    mapTypeId: google.maps.MapTypeId.SATELLITE
+    zoom: 4,
+    center: new google.maps.LatLng(39.833333, -98.583333),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
@@ -67,26 +67,28 @@ function initializeHeatmap() {
 
   // Initialize garbage collection
   window.setInterval(gc, 5000);
+  window.setInterval(updateRate, 1000);
+}
 
+var numTotalReceivedPoints = 0;
+var startTime = new Date().getTime() / 1000;
+function updateRate() {
+  var elapsed = (new Date().getTime() / 1000) - startTime;
+  $('#rateText').text("Rate: " + (numTotalReceivedPoints / elapsed) + " points/second.");
 }
 
 // Garbage collection: make old points decay
 function gc() {
     // Max number of points per array
-    var maxPts = 1000;
-    var posLen = pointArray.length;
-    var negLen = pointArrayNeg.length
-
-    while (posLen != 0) {
-        pointArray.remove(0);
-        posLen--;
+    while (pointArray.length + pointArrayNeg.length > 2000) {
+      if (pointArray.length) {
+        pointArray.removeAt(0);
+      }
+      if (pointArrayNeg.length) {
+        pointArrayNeg.removeAt(0);
+      }
+      console.log('gc(): Old points have been removed.');
     }
-
-    while (negLen != 0) {
-        pointArrayNeg.remove(0);
-        neglen--;
-    }
-
 }
 
 function initializeSocket() {
@@ -97,21 +99,21 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
-    console.log(data);
+    if (data) {
+      var emotion = data.sentiment > 0 ? 1 : 0;
+      var lat = data.latitude;
+      var lng = data.longitude;
+      var latlng = new google.maps.LatLng(lat,lng);
 
-    var emotion = data.sentiment > 0 ? 1 : 0;
-    var lat = data.latitude;
-    var lng = data.longitude;
-    var latlng = new google.maps.LatLng(lat,lng);
-
-    if (emotion == 0) {
-        pointArray.push(latlng);
+      if (emotion == 0) {
+          pointArray.push(latlng);
+      }
+      else {
+          pointArrayNeg.push(latlng);
+      }
+      numTotalReceivedPoints++;
+      addStatePoints(data, stateAverages);
     }
-    else {
-        pointArrayNeg.push(latlng);
-    }
-
-    addStatePoints(data, stateAverages);
 }
 
 function prePopulate(data) {
@@ -134,15 +136,18 @@ function prePopulate(data) {
 }
 
 function changeTrending(data) {
-  var obj = JSON.parse(data);
-  for (var i = 0; i < 6; i++){
-    var trendingName = obj[0].trends[i].name;
-    $($(".sidebar-topic-all").children()[i]).html("<a>" + trendingName.toString() + "</a>");
+  console.log('changeTrending(' + data + ')');
+  if (data) {
+    var obj = JSON.parse(data);
+    for (var i = 0; i < 10; i++){
+      var trendingName = obj[0].trends[i].name;
+      $($(".sidebar-topic-all").children()[i]).html("<a>" + trendingName.toString() + "</a>");
+    }
   }
 }
 
 function trendingMode(topic) {
-  console.log(topic);
+  console.log("trendingMode(" + topic + ")");
 }
 
 function aboutUs(){
@@ -184,21 +189,21 @@ google.maps.event.addDomListener(window, 'load', initializeSocket);
 
 $(function() {
 
-	$("#standard_heatmap_btn").on("click", function () {
+  $("#standard_heatmap_btn").on("click", function () {
     HeatmapMode();
-	});	
-	$("#state_average_btn").on("click", function () {
-		switchModeAverage();
-	});	
-	$("#state_current_btn").on("click", function () {
-		switchModeCurrent();
-	});	
-	$("#larger_points_btn").on("click", function () {
-		changeRadiusLarger();
-	});	
-	$("#change_opacity_btn").on("click", function () {
-		changeOpacity();
-	});
+  }); 
+  $("#state_average_btn").on("click", function () {
+    switchModeAverage();
+  }); 
+  $("#state_current_btn").on("click", function () {
+    switchModeCurrent();
+  }); 
+  $("#larger_points_btn").on("click", function () {
+    changeRadiusLarger();
+  }); 
+  $("#change_opacity_btn").on("click", function () {
+    changeOpacity();
+  });
   $("#about_us_btn").on("click", function () {
     aboutUs();
   });
@@ -206,41 +211,48 @@ $(function() {
     trendingMode($(this).text());
   }); 
 
-	function hours_by_value(value) {
-		value = 120 - value;
-		hours = Math.floor(value / 60);
-		minutes = value - 60 * hours;
-		if (hours > 0) {
-			if (hours === 1) {
-				return String(hours) + " hour " + String(minutes) + " minutes ago";
-			}
-			return String(hours) + " hours " + String(minutes) + " minutes ago";
-		}
-		return String(minutes) + " minutes ago";
-	}
-
-$("#time_slider").slider({
-    range: true,
-    min: 0,
-    max: 120,
-    step: 1,
-    values: [0, 120],
-    slide: function (e, ui) {
-	    var value1 = ui.values[0],
-	        value2 = ui.values[1],
-		time1 = hours_by_value(value1),
-		time2 = hours_by_value(value2);
-	    $("#slider_time_left").text(time1);
-	    $("#slider_time_right").text(time2);
+  function hours_by_value(value) {
+    value = 120 - value;
+    hours = Math.floor(value / 60);
+    minutes = value - 60 * hours;
+    if (hours > 0) {
+      if (hours === 1) {
+        return String(hours) + " hour " + String(minutes) + " minutes ago";
+      }
+      return String(hours) + " hours " + String(minutes) + " minutes ago";
     }
-});
-	function set_map_height() {
-		$(".page-content").css({
-			"height": $(window).height() - $(".page-content").offset().top
-		});
-	}
-	$(window).resize(function() {
-		set_map_height();
-	});
-	set_map_height();
+    return String(minutes) + " minutes ago";
+  }
+
+  $("#time_slider").slider({
+      range: true,
+      min: 0,
+      max: 120,
+      step: 1,
+      values: [0, 120],
+      slide: function (e, ui) {
+        var value1 = ui.values[0],
+            value2 = ui.values[1],
+      time1 = hours_by_value(value1),
+      time2 = hours_by_value(value2);
+        $("#slider_time_left").text(time1);
+        $("#slider_time_right").text(time2);
+      }
+  });
+
+  $('#fullscreen-button').click(function() {
+    var $b = $('body');
+    var $btn = $('#fullscreen-button');
+    if ($b.hasClass('fullscreen')) {
+      $b.removeClass('fullscreen');
+      $btn.text('Fullscreen');
+      $btn.addClass('btn-primary');
+      $btn.removeClass('btn-danger');
+    } else {
+      $b.addClass('fullscreen');
+      $btn.text('Exit');
+      $btn.addClass('btn-danger');
+      $btn.removeClass('btn-primary');
+    }
+  });
 });
