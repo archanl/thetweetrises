@@ -44,7 +44,7 @@ io.sockets.on('connection', function (socket) {
       // Emit a single tweet from all trends
       redis_client.zrange("trending_keys", 0, -10, function(err, reply) {
         
-          for (var i=0; i < reply.length; i++;) {
+          for (var i=0; i < reply.length; i++) {
               var trend = reply[i];
               redis_client.zrange("trending:".concat(trend), 0, -1, function(err, reply) {
                   var point = JSON.parse(reply);
@@ -72,7 +72,7 @@ io.sockets.on('connection', function (socket) {
       redis_client.zrange("trending_keys", 0, -10, function(err, reply) {
         
           // Emit last 600 secs from each trend
-          for (var i=0; i < reply.length; i++;) {
+          for (var i=0; i < reply.length; i++) {
               var trend = reply[i];
               redis_client.zrange("trending:".concat(trend), 0, -200, function(err, reply) {
                   var point = JSON.parse(reply);
