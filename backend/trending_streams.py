@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 MAXQUEUESIZE = 10000
 MAX_TWEET_CACHE = 1
 QUEUE_KEY = 'trending_raw'
-UPDATE_INT = 20
+UPDATE_INT = 40
 
 def signal_handler(signum = None, frame = None):
     logging.debug("Received signal " + str(signum))
@@ -44,6 +44,7 @@ def main():
                 t = generateRequest(trends)
 
             if t.status_code != 200:
+                time.sleep(2)
                 continue
                 
             tweet = next_tweet(t)
