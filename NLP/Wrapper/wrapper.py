@@ -151,6 +151,7 @@ class classifier_wrapper:
 	file1.close()
 	'''
 
+    '''
 	file1 = open(PLOT_KERNEL_SVM, 'w')
 #for i in ["linear", "rbf", "poly"]:
 	for i in ["linear"]:
@@ -168,11 +169,11 @@ class classifier_wrapper:
 		# Print the results to a file
 		self.print_alpha_results(results, file1)
 	file1.close()
-
     '''
+
 	file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
 	#for i in range(50, 200, 10):
-	for i in range(100, 101):
+	for i in range(10, 51, 10):
 		upto = 10000
 		the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
 		max_ent_time = time()
@@ -188,6 +189,7 @@ class classifier_wrapper:
 		self.print_alpha_results(results, file1)
 	file1.close()
 
+    '''
 	file1 = open(PLOT_SGD_ITERATIONS, 'w')
 	#for i in range(50, 200, 10):
 	for i in range(100, 101):
