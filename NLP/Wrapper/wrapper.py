@@ -24,265 +24,336 @@ from time import time
 
 class classifier_wrapper:
     def __init__(self):
-    	return
+        return
 
     def do_training(self):
-	upto = 10000
-	the_parameter = parameters(upto, 1000, .001, .3, 'linear', 100)
-	self.train_support_vector_machine(the_parameter)
-	self.train_maximum_entropy(the_parameter)
-	self.train_sgd(the_parameter)
-	the_parameter.upto = 100000
-	self.train_naive_bayes(the_parameter)
+        upto = 10000
+        the_parameter = parameters(upto, 1000, .001, .3, 'linear', 100)
+        self.train_support_vector_machine(the_parameter)
+        self.train_maximum_entropy(the_parameter)
+        self.train_sgd(the_parameter)
+        the_parameter.upto = 100000
+        self.train_naive_bayes(the_parameter)
 
     def make_graphs(self):
-	# Get 1000 tweets from the test set
-	tweets = self.get_test_tweets(1000)
+        # Get 1000 tweets from the test set
+        tweets = self.get_test_tweets(1000)
 
-	'''
-	the_parameter = parameters(20 * 200, 1000, .001, .3, 'linear', 100)
-	self.train_naive_bayes(the_parameter)
-	tt = self.get_test_tweets(3000)
-	results = self.test_classification(tt)
-	print results
-	return
-	'''
+        '''
+        the_parameter = parameters(20 * 200, 1000, .001, .3, 'linear', 100)
+        self.train_naive_bayes(the_parameter)
+        tt = self.get_test_tweets(3000)
+        results = self.test_classification(tt)
+        print results
+        return
+        '''
 
-	'''
-	print "starting accuracy tests..."
+        '''
+        print "starting accuracy tests..."
 
-	file1 = open(PLOT_TIME_MAXENT_FILE, 'w')
-	file2 = open(PLOT_TIME_NAIVE_BAYES_FILE, 'w')
-	file3 = open(PLOT_TIME_SGD_FILE, 'w')
-	file4 = open(PLOT_TIME_SVM_FILE, 'w')
-	#for i in range(1, 2):
-	for i in range(2, 21, 2):
-		upto = i * 500
-		the_parameter = parameters(upto, 1000, .001, .3, 'linear', 100)
-		#the_parameter = parameters(10000, 1000, .001, .3, 'linear', 100)
-		support_time = time()
-		self.train_support_vector_machine(the_parameter)
-		support_time = time() - support_time
-		naive_bayes_time = time()
-		self.train_naive_bayes(the_parameter)
-		naive_bayes_time = time() - naive_bayes_time
-		max_ent_time = time()
-		self.train_maximum_entropy(the_parameter)
-		max_ent_time = time() - max_ent_time
-		sgd_time=  time()
-		self.train_sgd(the_parameter)
-		sgd_time = time() - sgd_time
-		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
-		results["support_time"] = support_time
-		results["max_ent_time"] = max_ent_time
-		results["sgd_time"] = sgd_time
-		results["naive_bayes_time"] = naive_bayes_time
-		results["upto"] = upto
-		print "Results of upto = ", upto, ": ", results
-		# Print the results to a file
-		self.print_results(results, file1, file2, file3, file4)
-	file1.close()
-	file2.close()
-	file3.close()
-	file4.close()
+        file1 = open(PLOT_TIME_MAXENT_FILE, 'w')
+        file2 = open(PLOT_TIME_NAIVE_BAYES_FILE, 'w')
+        file3 = open(PLOT_TIME_SGD_FILE, 'w')
+        file4 = open(PLOT_TIME_SVM_FILE, 'w')
+        #for i in range(1, 2):
+        for i in range(2, 21, 2):
+            upto = i * 500
+            the_parameter = parameters(upto, 1000, .001, .3, 'linear', 100)
+            #the_parameter = parameters(10000, 1000, .001, .3, 'linear', 100)
+            support_time = time()
+            self.train_support_vector_machine(the_parameter)
+            support_time = time() - support_time
+            naive_bayes_time = time()
+            self.train_naive_bayes(the_parameter)
+            naive_bayes_time = time() - naive_bayes_time
+            max_ent_time = time()
+            self.train_maximum_entropy(the_parameter)
+            max_ent_time = time() - max_ent_time
+            sgd_time=  time()
+            self.train_sgd(the_parameter)
+            sgd_time = time() - sgd_time
+            # Do classification with the tweets and get the % accuracy
+            results = self.do_all_classification(tweets)
+            results["support_time"] = support_time
+            results["max_ent_time"] = max_ent_time
+            results["sgd_time"] = sgd_time
+            results["naive_bayes_time"] = naive_bayes_time
+            results["upto"] = upto
+            print "Results of upto = ", upto, ": ", results
+            # Print the results to a file
+            self.print_results(results, file1, file2, file3, file4)
+        file1.close()
+        file2.close()
+        file3.close()
+        file4.close()
 
-	print "done with accuracy tests"
-	assert 0 == 1
-	'''
+        print "done with accuracy tests"
+        assert 0 == 1
+        '''
 
-	'''
-	# Naive Bayes trials over the whole data set
+        '''
+        # Naive Bayes trials over the whole data set
 
-	file1 = open(PLOT_NAIVE_BAYES, 'w')
-	for i in range(0, 80, 5):
-		upto = 10000 * i
-		the_parameter = parameters(upto, 5000, .001, .3, 'linear', 100)
-		sgd_time=  time()
-		self.train_naive_bayes(the_parameter)
-		sgd_time = time() - sgd_time
-		# Do classification with the tweets and get the % accuracy
-		results = self.naive_bayes_classification(tweets)
-		results["sgd_time"] = sgd_time
-		results["alpha"] = results["naive_bayes"]
-		results["upto"] = upto
-		# Print the results to a file
-		self.print_alpha_results(results, file1)
-	file1.close()
-	assert 0 == 1
+        file1 = open(PLOT_NAIVE_BAYES, 'w')
+        for i in range(0, 80, 5):
+            upto = 10000 * i
+            the_parameter = parameters(upto, 5000, .001, .3, 'linear', 100)
+            sgd_time=  time()
+            self.train_naive_bayes(the_parameter)
+            sgd_time = time() - sgd_time
+            # Do classification with the tweets and get the % accuracy
+            results = self.naive_bayes_classification(tweets)
+            results["sgd_time"] = sgd_time
+            results["alpha"] = results["naive_bayes"]
+            results["upto"] = upto
+            # Print the results to a file
+            self.print_alpha_results(results, file1)
+        file1.close()
+        assert 0 == 1
 
-	file1 = open(PLOT_ALPHA_SGD, 'w')
-	for i in range(0, 20):
-	#for i in range(0, 1):
-		upto = 10
-		alpha = float(i) / 100.0 + .001
-		the_parameter = parameters(upto, 1000, alpha, .3, 'linear', 100)
-		sgd_time=  time()
-		self.train_sgd(the_parameter)
-		sgd_time = time() - sgd_time
-		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
-		results["sgd_time"] = sgd_time
-		results["accuracy"] = results["sgd"]
-		results["alpha"] = alpha
-		results["upto"] = upto
-		# Print the results to a file
-		self.print_alpha_results(results, file1)
-	file1.close()
-	assert 0 == 1
+        file1 = open(PLOT_ALPHA_SGD, 'w')
+        for i in range(0, 20):
+        #for i in range(0, 1):
+            upto = 10
+            alpha = float(i) / 100.0 + .001
+            the_parameter = parameters(upto, 1000, alpha, .3, 'linear', 100)
+            sgd_time=  time()
+            self.train_sgd(the_parameter)
+            sgd_time = time() - sgd_time
+            # Do classification with the tweets and get the % accuracy
+            results = self.do_all_classification(tweets)
+            results["sgd_time"] = sgd_time
+            results["accuracy"] = results["sgd"]
+            results["alpha"] = alpha
+            results["upto"] = upto
+            # Print the results to a file
+            self.print_alpha_results(results, file1)
+        file1.close()
+        assert 0 == 1
 
-	file1 = open(PLOT_L1_SGD, 'w')
-	#for i in range(0, 20):
-	for i in range(0, 1):
-		l1_ratio = .2 + i * .01
-		upto = 10
-		the_parameter = parameters(upto, 1000, .001, l1_ratio, 'linear', 100)
-		sgd_time=  time()
-		self.train_sgd(the_parameter)
-		sgd_time = time() - sgd_time
-		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
-		results["sgd_time"] = sgd_time
-		results["accuracy"] = results["sgd"]
-		results["alpha"] = l1_ratio
-		results["upto"] = upto
-		# Print the results to a file
-		self.print_alpha_results(results, file1)
-	file1.close()
-	'''
+        file1 = open(PLOT_L1_SGD, 'w')
+        #for i in range(0, 20):
+        for i in range(0, 1):
+            l1_ratio = .2 + i * .01
+            upto = 10
+            the_parameter = parameters(upto, 1000, .001, l1_ratio, 'linear', 100)
+            sgd_time=  time()
+            self.train_sgd(the_parameter)
+            sgd_time = time() - sgd_time
+            # Do classification with the tweets and get the % accuracy
+            results = self.do_all_classification(tweets)
+            results["sgd_time"] = sgd_time
+            results["accuracy"] = results["sgd"]
+            results["alpha"] = l1_ratio
+            results["upto"] = upto
+            # Print the results to a file
+            self.print_alpha_results(results, file1)
+        file1.close()
+        '''
 
-    '''
-	file1 = open(PLOT_KERNEL_SVM, 'w')
+        '''
+        file1 = open(PLOT_KERNEL_SVM, 'w')
 #for i in ["linear", "rbf", "poly"]:
-	for i in ["linear"]:
-		upto = 10000
-		the_parameter = parameters(upto, 1000, .001, 0.3, i, 100)
-		support_time = time()
-		self.train_support_vector_machine(the_parameter)
-		support_time = time() - support_time
-		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
-		results["sgd_time"] = support_time
-		results["alpha"] = i
-		results["accuracy"] = results["svm"]
-		results["upto"] = upto
-		# Print the results to a file
-		self.print_alpha_results(results, file1)
-	file1.close()
-    '''
+        for i in ["linear"]:
+            upto = 10000
+            the_parameter = parameters(upto, 1000, .001, 0.3, i, 100)
+            support_time = time()
+            self.train_support_vector_machine(the_parameter)
+            support_time = time() - support_time
+            # Do classification with the tweets and get the % accuracy
+            results = self.do_all_classification(tweets)
+            results["sgd_time"] = support_time
+            results["alpha"] = i
+            results["accuracy"] = results["svm"]
+            results["upto"] = upto
+            # Print the results to a file
+            self.print_alpha_results(results, file1)
+        file1.close()
+        '''
 
-	file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
-	for i in range(10, 51, 10):
-		upto = 10000
-		the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
-		max_ent_time = time()
-		self.train_maximum_entropy(the_parameter)
-		max_ent_time = time() - max_ent_time
-		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
-		results["sgd_time"] = max_ent_time
-		results["accuracy"] = results["maximum_entropy"]
-		results["alpha"] = i
-		results["upto"] = upto
-		# Print the results to a file
-		self.print_alpha_results(results, file1)
-	file1.close()
+        file1 = open(PLOT_MAXENT_ITERATIONS, 'w')
+        #for i in range(10, 51, 10):
+        for i in [1, 5, 75, 100]:
+            upto = 10000
+            the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
+            max_ent_time = time()
+            self.train_maximum_entropy(the_parameter)
+            max_ent_time = time() - max_ent_time
+            # Do classification with the tweets and get the % accuracy
+            results = self.do_maxent_classification(tweets)
+            results["sgd_time"] = max_ent_time
+            results["accuracy"] = results["maximum_entropy"]
+            results["alpha"] = i
+            results["upto"] = upto
+            # Print the results to a file
+            self.print_alpha_results(results, file1)
+        file1.close()
 
-    '''
-	file1 = open(PLOT_SGD_ITERATIONS, 'w')
-	#for i in range(50, 200, 10):
-	for i in range(100, 101):
-		upto = 10000
-		the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
-		max_ent_time = time()
-		self.train_maximum_entropy(the_parameter)
-		max_ent_time = time() - max_ent_time
-		# Do classification with the tweets and get the % accuracy
-		results = self.do_all_classification(tweets)
-		results["sgd_time"] = sgd_time
-		results["accuracy"] = results["sgd"]
-		results["alpha"] = i
-		results["upto"] = upto
-		# Print the results to a file
-		self.print_alpha_results(results, file1)
-	file1.close()
-    '''
-
+        '''
+        file1 = open(PLOT_SGD_ITERATIONS, 'w')
+        #for i in range(50, 200, 10):
+        for i in range(100, 101):
+            upto = 10000
+            the_parameter = parameters(upto, 1000, .001, 0.3, 'linear', i)
+            max_ent_time = time()
+            self.train_maximum_entropy(the_parameter)
+            max_ent_time = time() - max_ent_time
+            # Do classification with the tweets and get the % accuracy
+            results = self.do_all_classification(tweets)
+            results["sgd_time"] = sgd_time
+            results["accuracy"] = results["sgd"]
+            results["alpha"] = i
+            results["upto"] = upto
+            # Print the results to a file
+            self.print_alpha_results(results, file1)
+        file1.close()
+        '''
 
 
 
     def print_alpha_results(self, results, file1):
-	file1.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["alpha"]) + "," + str(results["accuracy"]) + "\n")
+        file1.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["alpha"]) + "," + str(results["accuracy"]) + "\n")
 
 
     def print_results(self, results, file1, file2, file3, file4):
-	file1.write(str(results["upto"]) + "," + str(results["max_ent_time"]) + "," + str(results["maximum_entropy"]) + "\n")
-	file2.write(str(results["upto"]) + "," + str(results["naive_bayes_time"]) + "," + str(results["naive_bayes"]) + "\n")
-	file3.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["sgd"]) + "\n")
-	file4.write(str(results["upto"]) + "," + str(results["support_time"]) + "," + str(results["svm"]) + "\n")
+        file1.write(str(results["upto"]) + "," + str(results["max_ent_time"]) + "," + str(results["maximum_entropy"]) + "\n")
+        file2.write(str(results["upto"]) + "," + str(results["naive_bayes_time"]) + "," + str(results["naive_bayes"]) + "\n")
+        file3.write(str(results["upto"]) + "," + str(results["sgd_time"]) + "," + str(results["sgd"]) + "\n")
+        file4.write(str(results["upto"]) + "," + str(results["support_time"]) + "," + str(results["svm"]) + "\n")
+
+    def do_svm_classification(self, tweets):
+        results = {}
+        algorithm = 'svm'
+        num_correct = 0
+        for (score, tweet) in tweets:
+            classification = self.classify(tweet, algorithm, 0.5)
+            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                num_correct = num_correct + 1
+        percent_correct = float(num_correct) / float(len(tweets))
+        results[algorithm] = percent_correct
+        return results
+
+    def do_maxent_classification(self, tweets):
+        results = {}
+        algorithm = 'maximum_entropy'
+        num_correct = 0
+        for (score, tweet) in tweets:
+            classification = self.classify(tweet, algorithm, 0.5)
+            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                num_correct = num_correct + 1
+        percent_correct = float(num_correct) / float(len(tweets))
+        results[algorithm] = percent_correct
+        return results
+
+    def sgd_classification(self, tweets):
+        results = {}
+        algorithm = 'sgd'
+        num_correct = 0
+        for (score, tweet) in tweets:
+            classification = self.classify(tweet, algorithm, 0.5)
+            #print "classification: " + str(classification)
+            #print score
+            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                num_correct = num_correct + 1
+        percent_correct = float(num_correct) / float(len(tweets))
+        results[algorithm] = percent_correct
+        #print results
+        #assert 0 == 1
+        return results
+    
+
+    def classify_maximum_entropy(self, tweets):
+        results = {}
+        algorithm = 'maximum_entropy'
+        num_correct = 0
+        for (score, tweet) in tweets:
+            classification = self.classify(tweet, algorithm, 0.5)
+            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                num_correct = num_correct + 1
+        percent_correct = float(num_correct) / float(len(tweets))
+        results[algorithm] = percent_correct
+        return results
+
+
+    def sgd_classification(self, tweets):
+        results = {}
+        algorithm = 'sgd'
+        num_correct = 0
+        for (score, tweet) in tweets:
+            classification = self.classify(tweet, algorithm, 0.5)
+            #print "classification: " + str(classification)
+            #print score
+            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                num_correct = num_correct + 1
+        percent_correct = float(num_correct) / float(len(tweets))
+        results[algorithm] = percent_correct
+        #print results
+        #assert 0 == 1
+        return results
+
 
     def naive_bayes_classification(self, tweets):
-	results = {}
-	algorithm = 'naive_bayes'
-	num_correct = 0
-	for (score, tweet) in tweets:
-		classification = self.classify(tweet, algorithm, 0.5)
-		#print "classification: " + str(classification)
-		#print score
-		if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
-			num_correct = num_correct + 1
-	percent_correct = float(num_correct) / float(len(tweets))
-	results[algorithm] = percent_correct
-	#print results
-	#assert 0 == 1
-	return results
+        results = {}
+        algorithm = 'naive_bayes'
+        num_correct = 0
+        for (score, tweet) in tweets:
+            classification = self.classify(tweet, algorithm, 0.5)
+            #print "classification: " + str(classification)
+            #print score
+            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                num_correct = num_correct + 1
+        percent_correct = float(num_correct) / float(len(tweets))
+        results[algorithm] = percent_correct
+        #print results
+        #assert 0 == 1
+        return results
 
 
 
     def do_all_classification(self, tweets):
-	results = {}
-	for algorithm in ["sgd", "svm", "naive_bayes", "maximum_entropy"]:
-		num_correct = 0
-		for (score, tweet) in tweets:
-			classification = self.classify(tweet, algorithm, 0.5)
-			#print "classification: " + str(classification)
-			#print score
-			if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
-				num_correct = num_correct + 1
-		percent_correct = float(num_correct) / float(len(tweets))
-		#print "percent correct: ", percent_correct
-		results[algorithm] = percent_correct
-	#print results
-	#assert 0 == 1
-	return results
+        results = {}
+        for algorithm in ["sgd", "svm", "naive_bayes", "maximum_entropy"]:
+            num_correct = 0
+            for (score, tweet) in tweets:
+                classification = self.classify(tweet, algorithm, 0.5)
+                #print "classification: " + str(classification)
+                #print score
+                if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                    num_correct = num_correct + 1
+            percent_correct = float(num_correct) / float(len(tweets))
+            #print "percent correct: ", percent_correct
+            results[algorithm] = percent_correct
+        #print results
+        #assert 0 == 1
+        return results
 
 
     def test_classification(self, tweets):
-	results = {}
-	num_correct = 0
-	for (score, tweet) in tweets:
-		classification = self.classify(tweet, 'naive_bayes', 0.5)
-		if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
-			num_correct = num_correct + 1
-	percent_correct = float(num_correct) / float(len(tweets))
-	results['naive_bayes'] = percent_correct
-	return results
+        results = {}
+        num_correct = 0
+        for (score, tweet) in tweets:
+            classification = self.classify(tweet, 'naive_bayes', 0.5)
+            if (score == 4 and classification == "positive") or (score == 0 and classification == "negative"):
+                num_correct = num_correct + 1
+        percent_correct = float(num_correct) / float(len(tweets))
+        results['naive_bayes'] = percent_correct
+        return results
 
 
-		
+        
         
     def get_test_tweets(self, number):
-    	thefile = open(GO_TEST_DATA , 'r')
-	go_tweets = []
-	for line in thefile:
-		parts = line.split(",")
-		score = float(parts[0].replace('"', ""))
+        thefile = open(GO_TEST_DATA , 'r')
+        go_tweets = []
+        for line in thefile:
+            parts = line.split(",")
+            score = float(parts[0].replace('"', ""))
 
-		if score != 2:
-			go_tweets.append((score, parts[5]))
-		if len(go_tweets) > number:
-			break
-	return go_tweets
+            if score != 2:
+                go_tweets.append((score, parts[5]))
+            if len(go_tweets) > number:
+                break
+        return go_tweets
 
     def train_all(self, theparameter):
         self.train_naive_bayes(theparameter);
@@ -427,15 +498,15 @@ def get_classification(bag, top_terms, positive_classifications, negative_classi
         prob_word_in_neg = float(terms[word].negative) / negative_classifications
 
         if word in bag:
-	    if prob_word_in_neg != 0:
-		    prob_neg = prob_neg * prob_word_in_neg
-            if prob_word_in_pos != 0:
-		    prob_pos = prob_pos * prob_word_in_pos
+            if prob_word_in_neg != 0:
+                prob_neg = prob_neg * prob_word_in_neg
+                if prob_word_in_pos != 0:
+                    prob_pos = prob_pos * prob_word_in_pos
         else:
-	    if prob_word_in_neg != 1:
-		    prob_neg = prob_neg * (1 - prob_word_in_neg)
-            if prob_word_in_pos != 1:
-		    prob_pos = prob_pos * (1 - prob_word_in_pos)
+            if prob_word_in_neg != 1:
+                prob_neg = prob_neg * (1 - prob_word_in_neg)
+                if prob_word_in_pos != 1:
+                    prob_pos = prob_pos * (1 - prob_word_in_pos)
 
     # Debug
     #print "prob_neg: %f" % prob_neg
