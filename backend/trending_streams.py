@@ -67,7 +67,7 @@ def generateRequest(trends):
     # language: English
     # location bounding box: USA
     trends = ",".join(trends)
-    t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?language=en&track=' + trends,
+    t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?language=en&locations=-125.0011,24.9493,-66.9326,49.5904&track=' + trends,
                      auth=oauth, stream=True)
     return t
 
