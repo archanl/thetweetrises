@@ -60,7 +60,7 @@ def main():
             if int(time.time()) % UPDATE_INT == 0:
                 trends = getTrends(r)
 
-            if r.llen(SENTIMENT_KEY) >= MAX_SENTIMENTS:
+            if r.zcard(SENTIMENT_KEY) >= MAX_SENTIMENTS:
                 r.rpop(SENTIMENT_KEY)
                 continue
 
