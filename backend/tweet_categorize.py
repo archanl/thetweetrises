@@ -16,7 +16,7 @@ sys.path.insert(0, '../NLP/SupportVectorMachine')
 from wrapper import classifier_wrapper, tweetclass
 from trend_utils import getTrends, classifyTrending
 import time
-import datetime
+from dateutil import parser
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
@@ -75,7 +75,7 @@ def main():
 
             coordinates = tweet['geo']['coordinates']
             times = tweet['created_at']
-            times = datetime.datetime(times).strftime("%s")
+            times = parser.parse(times).strftime("%s")
 
             sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
             if sentiment == "positive":
@@ -111,7 +111,7 @@ def main():
 
             coordinates = tweet['geo']['coordinates']
             times = tweet['created_at']
-            times = datetime.datetime(times).strftime("%s")
+            times = parser.parse(times).strftime("%s")
 
             '''
             sentiment = TextBlob(tweet['text']).sentiment.polarity
