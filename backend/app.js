@@ -47,6 +47,7 @@ io.sockets.on('connection', function (socket) {
           for (var i=0; i < reply.length; i++) {
               var trend = reply[i];
               redis_client.zrevrange("trending:".concat(trend), 0, 0, function(err, reply) {
+                    // TODO: This is not parsing, no idea why
                   var point = JSON.parse(reply);
                   point.topic = trend;
                   socket.volatile.emit('initialPoints', point);
