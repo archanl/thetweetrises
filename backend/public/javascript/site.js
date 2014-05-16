@@ -114,7 +114,7 @@ function initializeSocket() {
 function addPoint(data) {
     if (data) {
 
-      storeAllStatePoints(data, 50);
+      storeAllStatePoints(data, 100);
 
       if (data.topic){
         if (topicPoints[data.topic]){
