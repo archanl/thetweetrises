@@ -44,9 +44,9 @@ body.fullscreen {
 
 #fullscreen-button {
   position: absolute;
-  top: 30px;
-  right: 5px;
-  z-index: 1000;
+  top: 5px;
+  right: 100px;
+  z-index: 500;
 }
 
 #about {
@@ -86,3 +86,15 @@ body.fullscreen {
   background-color: #fff;
 }
 
+a.unclicked {
+  font-weight: 600 !important;
+  font-style: italic;
+}
+
+a.selected-channel {
+  color: #ff0000 !important;
+}
+
+.unclicked:after {
+  content:" *";
+}

@@ -135,15 +135,52 @@ function prePopulate(data) {
     }
 }
 
+
+var topicChannels = new Array(10);
+var newTopicsCount = 0;
+function switchChannel(channel) {
+  console.log('switching');
+  console.log(channel);
+  console.log('Switching to Channel: ' + topicChannels[channel].name.toString());
+  return;
+}
 function changeTrending(data) {
   console.log('changeTrending(' + data + ')');
   if (data) {
     var obj = JSON.parse(data);
     for (var i = 0; i < 10; i++){
-      var trendingName = obj[0].trends[i].name;
-      $($(".sidebar-topic-all").children()[i]).html("<a>" + trendingName.toString() + "</a>");
+      var trend = obj[0].trends[i];
+
+      if (!topicChannels[i] || (topicChannels[i].name !== trend.name)) {
+        newTopicsCount = newTopicsCount + 1 > 10 ? 10 : newTopicsCount + 1;
+        $('#new-topics-badge').text(newTopicsCount);
+
+        topicChannels[i] = trend;
+        
+        var $channelLink = $('<a href="#" id="channelLink-' + i + '" class="channelLink unclicked">' + trend.name + '</a>');
+
+        $($('.topic-channel')[i]).html('');
+        $($('.topic-channel')[i]).append($channelLink);
+
+        var f = function(x) {
+          return function() {
+            switchChannel(x);
+          };
+        };
+        $channelLink.on('click', f(i));
+      }
     }
   }
+}
+function clearNewTopicsBadge() {
+  newTopicsCount = 0;
+  $('#new-topics-badge').text('');
+}
+function channelClick() {
+  console.log('channelClick()');
+  $('.channelLink').removeClass("selected-channel");
+  $(this).removeClass("unclicked");
+  $(this).addClass("selected-channel");
 }
 
 function trendingMode(topic) {
@@ -197,19 +234,10 @@ $(function() {
   }); 
   $("#state_current_btn").on("click", function () {
     switchModeCurrent();
-  }); 
-  $("#larger_points_btn").on("click", function () {
-    changeRadiusLarger();
-  }); 
-  $("#change_opacity_btn").on("click", function () {
-    changeOpacity();
   });
-  $("#about_us_btn").on("click", function () {
-    aboutUs();
-  });
-  $(".sidebar-topic").on("click", function () {
-    trendingMode($(this).text());
-  }); 
+  $("#topics-dropdown").click(clearNewTopicsBadge);
+  $('.dropdown').on('click', '.channelLink', channelClick);
+
 
   function hours_by_value(value) {
     value = 120 - value;
@@ -223,22 +251,6 @@ $(function() {
     }
     return String(minutes) + " minutes ago";
   }
-
-  $("#time_slider").slider({
-      range: true,
-      min: 0,
-      max: 120,
-      step: 1,
-      values: [0, 120],
-      slide: function (e, ui) {
-        var value1 = ui.values[0],
-            value2 = ui.values[1],
-      time1 = hours_by_value(value1),
-      time2 = hours_by_value(value2);
-        $("#slider_time_left").text(time1);
-        $("#slider_time_right").text(time2);
-      }
-  });
 
   $('#fullscreen-button').click(function() {
     var $b = $('body');
