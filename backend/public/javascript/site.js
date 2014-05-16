@@ -157,7 +157,7 @@ function changeTrending(data) {
 
         topicChannels[i] = trend;
         
-        var $channelLink = $('<a href="#" id="channelLink-' + i + '" class="channelLink unclicked">' + trend.name + '</a>');
+        var $channelLink = $('<a href="#" id="channelLink-' + i + '" class="channelLink unseen">' + trend.name + '</a>');
 
         $($('.topic-channel')[i]).html('');
         $($('.topic-channel')[i]).append($channelLink);
@@ -173,13 +173,21 @@ function changeTrending(data) {
   }
 }
 function clearNewTopicsBadge() {
-  newTopicsCount = 0;
-  $('#new-topics-badge').text('');
+  var b = newTopicsCount;
+  var g = function() {
+    newTopicsCount -= b;
+    $('#new-topics-badge').text(newTopicsCount > 0 ? newTopicsCount : '');
+  };
+  var f = function(x) {
+    $('.unseen').removeClass("unseen");
+  };
+  setTimeout(f, 5000);
+  setTimeout(g, 2500);
 }
 function channelClick() {
   console.log('channelClick()');
   $('.channelLink').removeClass("selected-channel");
-  $(this).removeClass("unclicked");
+  $(this).removeClass("unseen");
   $(this).addClass("selected-channel");
 }
 
@@ -237,6 +245,9 @@ $(function() {
   });
   $("#topics-dropdown").click(clearNewTopicsBadge);
   $('.dropdown').on('click', '.channelLink', channelClick);
+  $('.navbar-nav').on('click', 'a', function(e) {
+    e.preventDefault();
+  });
 
 
   function hours_by_value(value) {
