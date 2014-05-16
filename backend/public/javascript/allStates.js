@@ -3976,8 +3976,10 @@ var storeAllPoints = new Array([California, []], [NewYork, []], [Alabama, []], [
 
 
 function clearStateLists(){
-  allStateOutlines = new Array([California, 0, 0], [NewYork, 0, 0], [Alabama, 0, 0], [Arizona, 0, 0], [Arkansas, 0, 0], [Colorado, 0, 0], [Connecticut, 0, 0], [Delaware, 0, 0], [Florida, 0, 0], [Georgia, 0, 0], [Idaho, 0, 0], [Illinois, 0, 0], [Indiana, 0, 0], [Iowa, 0, 0], [Kansas, 0, 0], [Kentucky, 0, 0], [Louisiana, 0, 0], [Maine, 0, 0], [Maryland, 0, 0], [Massachusetts, 0, 0], [Michigan, 0, 0], [Minnesota, 0, 0], [Mississippi, 0, 0], [Missouri, 0, 0], [Montana, 0, 0], [Nebraska, 0, 0], [Nevada, 0, 0], [NewHampshire, 0, 0], [NewJersey, 0, 0], [NewMexico, 0, 0], [NorthCarolina, 0, 0], [NorthDakota, 0, 0], [Ohio, 0, 0], [Oklahoma, 0, 0], [Oregon, 0, 0], [Pennsylvania, 0, 0], [RhodeIsland, 0, 0], [SouthCarolina, 0, 0], [SouthDakota, 0, 0], [Tennessee, 0, 0], [Texas, 0, 0], [Utah, 0, 0], [Vermont, 0, 0], [Virginia, 0, 0], [Washington, 0, 0], [WestVirginia, 0, 0], [Wisconsin, 0, 0], [Wyoming, 0, 0]);
   allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+  for (i = 0; i< allStateOutlines2.length; i++){
+    allStateOutlines2[i][0].setOptions({fillColor: '#000000'});
+  }
 }
 
 function enableStatesMode(averages){
