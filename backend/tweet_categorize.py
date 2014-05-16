@@ -71,7 +71,7 @@ def main():
             tweet = json.loads(r.brpop(TRENDING_KEY)[1])
             if tweet['geo'] is None:
                 # No geo data? IGNORE!
-                continue
+                pass
 
             coordinates = tweet['geo']['coordinates']
             times = tweet['created_at']
