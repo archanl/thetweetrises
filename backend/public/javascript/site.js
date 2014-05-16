@@ -16,6 +16,12 @@ var newTopicsCount = 0;
 
 var stateAverages = false;
 
+var topicPoints = {"average":[]};
+var specificTopic = false;
+var currentFilter = null;
+
+var numberToAverage = 5;
+
 function initializeMap() {
   var mapOptions = {
     zoom: 4,
@@ -107,6 +113,22 @@ function initializeSocket() {
 
 function addPoint(data) {
     if (data) {
+
+      storeAllStatePoints(data, 100);
+
+      if (data.topic){
+        if (topicPoints[data.topic]){
+          topicPoints[data.topic].push(data);
+        }
+        else{
+          topicPoints[data.topic] = [];
+          topicPoints[data.topic].push(data);
+        }
+      }
+      else{
+        topicPoints["average"].push(data);
+      }
+
       var emotion = data.sentiment > 0 ? 1 : 0;
       var lat = data.latitude;
       var lng = data.longitude;
@@ -120,8 +142,33 @@ function addPoint(data) {
       }
       numTotalReceivedPoints++;
       //addStatePoints(data, stateAverages);
-      addStatePoints2(data, 5);
+      if (specificTopic == false){
+        addStatePoints2(data, numberToAverage);
+      }
+      else{
+        if (data.topic == currentFilter){
+          addStatePoints2(data, numberToAverage);
+        }
+      }
     }
+}
+
+function changeTopic(topicName) {
+    var specificTopic = true;
+    var currentFilter = topicName;
+    clearStateLists();
+    if (topicPoints[topicName]){
+      for (i = 0; i < topicPoints[topicName].length; i++){
+        addStatePoints2(topicPoints[topicName][i], numberToAverage);
+      }
+    }
+}
+
+function viewAllTopics() {
+    var specificTopic = false;
+    var currentFilter = null;
+    clearStateLists();
+    showAllPointsAgain(numberToAverage);
 }
 
 function prePopulate(data) {

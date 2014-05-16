@@ -3972,6 +3972,13 @@ var allStateOutlines = new Array([California, 0, 0], [NewYork, 0, 0], [Alabama, 
 
 var allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
 
+var storeAllPoints = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+
+
+function clearStateLists(){
+  allStateOutlines = new Array([California, 0, 0], [NewYork, 0, 0], [Alabama, 0, 0], [Arizona, 0, 0], [Arkansas, 0, 0], [Colorado, 0, 0], [Connecticut, 0, 0], [Delaware, 0, 0], [Florida, 0, 0], [Georgia, 0, 0], [Idaho, 0, 0], [Illinois, 0, 0], [Indiana, 0, 0], [Iowa, 0, 0], [Kansas, 0, 0], [Kentucky, 0, 0], [Louisiana, 0, 0], [Maine, 0, 0], [Maryland, 0, 0], [Massachusetts, 0, 0], [Michigan, 0, 0], [Minnesota, 0, 0], [Mississippi, 0, 0], [Missouri, 0, 0], [Montana, 0, 0], [Nebraska, 0, 0], [Nevada, 0, 0], [NewHampshire, 0, 0], [NewJersey, 0, 0], [NewMexico, 0, 0], [NorthCarolina, 0, 0], [NorthDakota, 0, 0], [Ohio, 0, 0], [Oklahoma, 0, 0], [Oregon, 0, 0], [Pennsylvania, 0, 0], [RhodeIsland, 0, 0], [SouthCarolina, 0, 0], [SouthDakota, 0, 0], [Tennessee, 0, 0], [Texas, 0, 0], [Utah, 0, 0], [Vermont, 0, 0], [Virginia, 0, 0], [Washington, 0, 0], [WestVirginia, 0, 0], [Wisconsin, 0, 0], [Wyoming, 0, 0]);
+  allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+}
 
 function enableStatesMode(averages){
   for (i = 0; i< allStateOutlines.length; i++){
@@ -4028,6 +4035,31 @@ function do_the_fake_test() {
         }, 1000);
 }
 
+function storeAllStatePoints(data, totalToStore){
+    var latState = data.latitude;
+    var lngState = data.longitude;
+    var latlngState = new google.maps.LatLng(latState,lngState);
+    for (i = 0; i< storeAllPoints.length; i++){
+      var insideState = google.maps.geometry.poly.containsLocation(latlngState, storeAllPoints[i][0]);
+      if (insideState){
+        if (storeAllPoints[i][1].length > totalToStore){
+          storeAllPoints[i][1] = storeAllPoints[i][1].slice(1);
+          storeAllPoints[i][1].push(data);
+        }
+        else{
+          storeAllPoints[i][1].push(data);
+        }
+      }
+    }
+}
+
+function showAllPointsAgain(numberToAverage){
+  for (i = 0; i < storeAllPoints.length; i++){
+    for(j = 0; j < storeAllPoints[i][1].length; j++){
+      addStatePoints2(storeAllPoints[i][1][j], numberToAverage);
+    }
+  }
+}
 
 function addStatePoints2(data, numToAverage){
   //console.log("addStatePoints2 called");
@@ -4108,34 +4140,6 @@ function addStatePoints(data, averages){
         }
       }
       allStateOutlines[i] = [actualState, positive, total];
-
-/*
-    // Note: the marker with label comes from the following example
-    // http://jsfiddle.net/tcfwH/
-      var marker = new MarkerWithLabel({
-        position: new google.maps.LatLng(0,0),
-        draggable: false,
-        raiseOnDrag: false,
-        map: map,
-        labelContent: String(0),
-        labelAnchor: new google.maps.Point(30, 20),
-        labelClass: "labels", // the CSS class for the label
-        labelStyle: {opacity: 1.0},
-        icon: "http://placehold.it/1x1",
-        visible: false
-      });
-
-      //marker.set("labelContent", String(total));
-
-      google.maps.event.addListener(actualState, "mousemove", function(event) {
-        marker.setPosition(event.latLng);
-        marker.setVisible(true);
-      });
-
-      google.maps.event.addListener(actualState, "mouseout", function(event) {
-        marker.setVisible(false);
-      });
-*/
       break;
     }
   }
