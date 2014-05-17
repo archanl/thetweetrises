@@ -54,11 +54,9 @@ function ten_second_emitter() {
       return;
     }
 
-    var trend, point;
-
     // For each trending topic
     for (var i=0; i < keys_reply.length; i++) {
-      trend = keys_reply[i];
+      var trend = keys_reply[i];
 
       redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
         console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
@@ -69,7 +67,7 @@ function ten_second_emitter() {
         }
 
         for (var j = 0; j < trend_reply.length; j++) {
-          point = trend_reply[j];
+          var point = trend_reply[j];
 
           point.topic = trend;
           io.sockets.emit('newPoint', point);
@@ -105,19 +103,23 @@ io.sockets.on('connection', function (socket) {
     if (!keys_reply) {
       return;
     }
-
-    var trend, point;
     
     // For each trending topic
     for (var i=0; i < keys_reply.length; i++) {
-      trend = keys_reply[i];
+      var trend = keys_reply[i];
 
       redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
         console.log("initial_emission : trending-keys : trending:" + trend + " ::");
         console.log(trend_reply);
 
-        if (trend_reply) {
-          socket.emit('newPoints', trend_reply);
+        if (!trend_reply) {
+          return;
+        }
+
+        for (var j = 0; j < trend_reply.length; j++) {
+          var point = trend_reply[j];
+          point.topic = trend;
+          io.sockets.emit('newPoint', point);
         }
       });
     }
