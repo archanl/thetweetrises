@@ -57,8 +57,8 @@ function ten_second_emitter() {
     // For each trending topic
     for (var i=0; i < keys_reply.length; i++) {
       console.log("getting trend " + i);
-      
       var trend = keys_reply[i];
+      console.log('trend is ' + trend);
 
       redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
         console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
@@ -110,6 +110,7 @@ io.sockets.on('connection', function (socket) {
     for (var i = 0; i < keys_reply.length; i++) {
       console.log("getting trend " + i);
       var trend = keys_reply[i];
+      console.log('trend is ' + trend);
 
       redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
         console.log("initial_emission : trending-keys : trending:" + trend + " ::");
