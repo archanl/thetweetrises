@@ -93,7 +93,7 @@ def main():
                 logging.debug(d)
                 j = json.dumps(d)
 
-                key = classifyTrending(tweet['text'], trends)
+                key = classifyTrending(str(tweet), trends)
 
                 # TODO: Fix none keys
                 if key != None:
