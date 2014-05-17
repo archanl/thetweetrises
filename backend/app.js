@@ -46,7 +46,7 @@ function ten_second_emitter() {
   });
 
   // Emit trending topics
-  redis_client.zrange("trending_keys", 0, -10, function(err, keys_reply) {
+  redis_client.zrevrange("trending_keys", 0, 10, function(err, keys_reply) {
     console.log("ten_second_emitter : trending-keys ::");
     console.log(keys_reply);
 
@@ -96,7 +96,7 @@ io.sockets.on('connection', function (socket) {
   });
 
   // Emit initial points for trending topics
-  redis_client.zrange("trending_keys", 0, -10, function(err, keys_reply) {
+  redis_client.zrevrange("trending_keys", 0, 10, function(err, keys_reply) {
     console.log("initial_emission : trending-keys ::");
     console.log(keys_reply);
 
@@ -105,7 +105,7 @@ io.sockets.on('connection', function (socket) {
     }
     
     // For each trending topic
-    for (var i=0; i < keys_reply.length; i++) {
+    for (var i = 0; i < keys_reply.length; i++) {
       var trend = keys_reply[i];
 
       redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
