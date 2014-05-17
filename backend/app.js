@@ -60,21 +60,23 @@ function ten_second_emitter() {
       var trend = keys_reply[i];
       console.log('trend is ' + trend);
 
-      redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
-        console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
-        console.log(trend_reply);
+      !function(j) {
+        redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
+          console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
+          console.log(trend_reply);
 
-        if (!trend_reply) {
-          return;
-        }
+          if (!trend_reply) {
+            return;
+          }
 
-        for (var j = 0; j < trend_reply.length; j++) {
-          var point = trend_reply[j];
+          for (var j = 0; j < trend_reply.length; j++) {
+            var point = trend_reply[j];
 
-          point.topic = trend;
-          io.sockets.emit('newPoint', point);
-        }
-      });
+            point.topic = trend;
+            io.sockets.emit('newPoint', point);
+          }
+        });
+      }(j);
     }
   });
 }
@@ -111,21 +113,22 @@ io.sockets.on('connection', function (socket) {
       console.log("getting trend " + i);
       var trend = keys_reply[i];
       console.log('trend is ' + trend);
+      !function(j) {
+        redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
+          console.log("initial_emission : trending-keys : trending:" + trend + " ::");
+          console.log(trend_reply);
 
-      redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
-        console.log("initial_emission : trending-keys : trending:" + trend + " ::");
-        console.log(trend_reply);
+          if (!trend_reply) {
+            return;
+          }
 
-        if (!trend_reply) {
-          return;
-        }
-
-        for (var j = 0; j < trend_reply.length; j++) {
-          var point = trend_reply[j];
-          point.topic = trend;
-          io.sockets.emit('newPoint', point);
-        }
-      });
+          for (var j = 0; j < trend_reply.length; j++) {
+            var point = trend_reply[j];
+            point.topic = trend;
+            io.sockets.emit('newPoint', point);
+          }
+        });
+      }(j);
     }
   });
 });
