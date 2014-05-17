@@ -29,11 +29,11 @@ function initializeMap() {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
-  pointArray = new google.maps.MVCArray(data);
 }
 
 function initializeHeatmap() {
+  pointArray = new google.maps.MVCArray(data);
+  pointArrayNeg = new google.maps.MVCArray(dataNeg);
   var gradientPos = [
     'rgba(255,255,255,0)',
     'rgba(235,229,255,0)',
@@ -48,14 +48,6 @@ function initializeHeatmap() {
     'rgba(82,25,255,1)',
     'rgba(63,0,255,1)'
   ]
-  heatmap = new google.maps.visualization.HeatmapLayer({
-    data: pointArray
-  });
-  heatmap.set('gradient', gradientPos);
-  // heatmap.setMap(map);
-
-  pointArrayNeg = new google.maps.MVCArray(dataNeg);
-
   var gradientNeg = [
     'rgba(255,255,255,0)',
     'rgba(255,229,229,0)',
@@ -69,11 +61,14 @@ function initializeHeatmap() {
     'rgba(255,25,29,1)',
     'rgba(255,0,0,1)'
   ]
+  heatmap = new google.maps.visualization.HeatmapLayer({
+    data: pointArray
+  });
   heatmapNeg = new google.maps.visualization.HeatmapLayer({
     data: pointArrayNeg
   });
+  heatmap.set('gradient', gradientPos);
   heatmapNeg.set('gradient', gradientNeg);
-  // heatmapNeg.setMap(map);
 }
 
 // Should call every second
@@ -98,15 +93,20 @@ function gc() {
 }
 
 function initializeSocket() {
-    var socket = io.connect(hostname);
-    
-    // Initialize rate counter
-    window.setInterval(updateRate, 1000);
+    if ('undefined' !== typeof io) {
+      var socket = io.connect(hostname);
+      
+      // Initialize rate counter
+      window.setInterval(updateRate, 1000);
 
-    // Initialize garbage collection
-    window.setInterval(gc, 5000);
+      // Initialize garbage collection
+      window.setInterval(gc, 5000);
 
-    socket.on("newPoint", addPoint);
+      socket.on("newPoint", addPoint);
+      socket.on("newPoints", addPoints);
+    } else {
+      $('#error-messages').append('<div class="alert alert-danger">Error! Cannot connect to server. Please try again.</div>');
+    }
 }
 
 function addPoint(data) {
@@ -159,6 +159,17 @@ function addPoint(data) {
         }
       }
     }
+}
+
+function addPoints(data) {
+  console.log(data);
+  if (!data) {
+    return;
+  }
+
+  for (var i = 0; i < data.length; i++) {
+    addPoint(data[i]);
+  }
 }
 
 function changeTopic(topicName) {
@@ -251,7 +262,7 @@ $(document).ready(function() {
   initializeMap();
   initializeHeatmap();
   initializeSocket();
-  switchModeCurrent();
+  switchModeAverage();
 
   $("#standard_heatmap_btn").on("click", function () {
     HeatmapMode();

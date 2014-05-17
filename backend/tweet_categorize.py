@@ -74,8 +74,7 @@ def main():
                 pass
 
             coordinates = tweet['geo']['coordinates']
-            times = tweet['created_at']
-            times = parser.parse(times).strftime("%s")
+            times = time.time()
 
             sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
             if sentiment == "positive":
@@ -112,8 +111,7 @@ def main():
                 continue
 
             coordinates = tweet['geo']['coordinates']
-            times = tweet['created_at']
-            times = parser.parse(times).strftime("%s")
+            times = time.time()
 
             '''
             sentiment = TextBlob(tweet['text']).sentiment.polarity
