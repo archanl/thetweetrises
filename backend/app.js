@@ -35,6 +35,13 @@ function ten_second_emitter() {
 
   // Emit sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", now, lt, function(err, reply) {
+    console.log("ten_second_emitter : sentiment_stream ::");
+    console.log(reply);
+
+    if (!reply) {
+      return;
+    }
+
     for (var j = 0; j < trend_reply; j++) {
       point = trend_reply[j];
 
@@ -45,13 +52,27 @@ function ten_second_emitter() {
 
   // Emit trending topics
   redis_client.zrange("trending_keys", 0, -10, function(err, keys_reply) {
+    console.log("ten_second_emitter : trending-keys ::");
+    console.log(keys_reply);
+
+    if (!keys_reply) {
+      return;
+    }
+
     var trend, point;
-    
+
     // For each trending topic
     for (var i=0; i < keys_reply.length; i++) {
       trend = keys_reply[i];
 
       redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
+        console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
+        console.log(trend_reply);
+
+        if (!trend_reply) {
+          return;
+        }
+
         for (var j = 0; j < trend_reply; j++) {
           point = trend_reply[j];
 
@@ -73,6 +94,9 @@ io.sockets.on('connection', function (socket) {
 
   // Emit initial points for sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", now - 10, now - 600, function(err, reply) {
+    console.log("initial_emission : sentiment_stream ::");
+    console.log(reply);
+
     if (reply) {
       socket.emit('newPoints', reply);
     }
@@ -80,6 +104,9 @@ io.sockets.on('connection', function (socket) {
 
   // Emit initial points for trending topics
   redis_client.zrange("trending_keys", 0, -10, function(err, keys_reply) {
+    console.log("initial_emission : trending-keys ::");
+    console.log(keys_reply);
+
     if (!keys_reply) {
       return;
     }
@@ -91,6 +118,9 @@ io.sockets.on('connection', function (socket) {
       trend = keys_reply[i];
 
       redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
+        console.log("initial_emission : trending-keys : trending:" + trend + " ::");
+        console.log(trend_reply);
+
         if (trend_reply) {
           socket.emit('newPoints', trend_reply);
         }
