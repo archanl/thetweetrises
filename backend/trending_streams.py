@@ -39,10 +39,6 @@ def main():
     while True:
         try:
             if int(time.time()) % UPDATE_INT == 0:
-                # Exhaust current request
-                while (tw = next_tweet(t)):
-                    r.lpush(QUEUE_KEY, tw)
-
                 t.close()
 
                 # Update the trends
