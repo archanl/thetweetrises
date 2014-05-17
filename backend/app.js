@@ -30,7 +30,7 @@ var last_time = new Date().getTime();
 function ten_second_emitter() {
   // Update last_time
   var lt = last_time;
-  var now = new Date().getTime());
+  var now = new Date().getTime();
   last_time = now;
 
   // Emit sentiment_stream
