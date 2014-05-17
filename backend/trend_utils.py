@@ -1,7 +1,7 @@
 import ast
 def getTrends(r):
     result = []
-    topics = r.zrevrangebyscore("trending_keys", "+inf", "-inf", start=0, num=11)
+    topics = r.zrevrange("trending_keys", 0, 11)
     for topic in topics:
         result.append(topic)
     return result
