@@ -25,12 +25,12 @@ app.use(express.static(__dirname + '/public'));
 //////////////////////////////////////////////////////////////////////////////
 // Global 10 second emitter
 ///////////////////////////
-var last_time = new Date().getTime();
+var last_time = Math.floor((new Date().getTime()) / 1000);
 
 function ten_second_emitter() {
   // Update last_time
   var lt = last_time;
-  var now = new Date().getTime();
+  var now = Math.floor((new Date().getTime()) / 1000);
   last_time = now;
 
   // Emit sentiment_stream
@@ -60,7 +60,7 @@ function ten_second_emitter() {
       var trend = keys_reply[i];
       console.log('trend is ' + trend);
 
-      !function(trend, now) {
+      !function(trend, lt, now) {
         redis_client.zrangebyscore("trending:" + trend, lt, now, function(err, trend_reply) {
           console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
@@ -76,7 +76,7 @@ function ten_second_emitter() {
             io.sockets.emit('newPoint', point);
           }
         });
-      }(trend, now);
+      }(trend, lt, now);
     }
   });
 }
@@ -87,10 +87,12 @@ var ten_second_interval = setInterval(ten_second_emitter, 10000);
 // Socket connection handler
 ////////////////////////////
 io.sockets.on('connection', function (socket) {
-  var now = new Date().getTime();
+  var now = Math.floor((new Date().getTime()) / 1000);
+  var begTime = now - 600;
+  var endTime = now - 15;
 
   // Emit initial points for sentiment_stream
-  redis_client.zrangebyscore("sentiment_stream", now - 600000, now - 10000, function(err, reply) {
+  redis_client.zrangebyscore("sentiment_stream", begTime, endTime, function(err, reply) {
     console.log("initial_emission : sentiment_stream ::");
     console.log(reply);
 
@@ -114,8 +116,8 @@ io.sockets.on('connection', function (socket) {
       var trend = keys_reply[i];
       console.log('trend is ' + trend);
 
-      !function(trend, now) {
-        redis_client.zrangebyscore("trending:" + trend, now - 600000, now - 10000, function(err, trend_reply) {
+      !function(trend, begTime, endTime) {
+        redis_client.zrangebyscore("trending:" + trend, begTime, endTime, function(err, trend_reply) {
           console.log("initial_emission : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
 
@@ -129,7 +131,7 @@ io.sockets.on('connection', function (socket) {
             io.sockets.emit('newPoint', point);
           }
         });
-      }(trend, now);
+      }(trend, begTime, endTime);
     }
   });
 });
