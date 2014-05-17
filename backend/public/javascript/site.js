@@ -73,8 +73,9 @@ function initializeHeatmap() {
 
 // Should call every second
 var numTotalReceivedPoints = 0;
+var uppdateRateRate = 2; // seconds
 function updateRate() {
-  $('#rateText').text("Data download rate: " + numTotalReceivedPoints + " points/second.");
+  $('#rateText').text("Data download rate: " + Math.floor(numTotalReceivedPoints / uppdateRateRate) + " points/second.");
   numTotalReceivedPoints = 0;
 }
 
@@ -97,7 +98,7 @@ function initializeSocket() {
       var socket = io.connect(hostname);
       
       // Initialize rate counter
-      window.setInterval(updateRate, 1000);
+      window.setInterval(updateRate, uppdateRateRate * 1000);
 
       // Initialize garbage collection
       window.setInterval(gc, 5000);
@@ -110,12 +111,11 @@ function initializeSocket() {
 }
 
 function addPoint(data) {
-  console.log(data);
     if (data) {
-
       storeAllStatePoints(data, 100);
 
       if (data.topic){
+        console.log('point has topic: ' + data.topic);
         if (topicPoints[data.topic]){
           topicPoints[data.topic].push(data);
         }
@@ -162,10 +162,12 @@ function addPoint(data) {
 }
 
 function addPoints(data) {
-  console.log(data);
   if (!data) {
     return;
   }
+
+  console.log('addpoints() data length:');
+  console.log(data.length);
 
   for (var i = 0; i < data.length; i++) {
     addPoint(data[i]);
