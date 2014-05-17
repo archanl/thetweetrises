@@ -81,14 +81,14 @@ function ten_second_emitter() {
   });
 }
 
-var ten_second_interval = setInterval(ten_second_emitter, 10000);
+var ten_second_interval = setInterval(ten_second_emitter, 2000);
 
 //////////////////////////////////////////////////////////////////////////////
 // Socket connection handler
 ////////////////////////////
 io.sockets.on('connection', function (socket) {
   var now = Math.floor((new Date().getTime()) / 1000);
-  var begTime = now - 600;
+  var begTime = now - 35;
   var endTime = now - 15;
 
   // Emit initial points for sentiment_stream
@@ -140,3 +140,4 @@ io.sockets.on('connection', function (socket) {
 // Start server
 ///////////////
 server.listen(80);
+
