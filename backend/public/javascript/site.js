@@ -103,6 +103,7 @@ function initializeSocket() {
       window.setInterval(gc, 5000);
 
       socket.on("newPoint", addPoint);
+      socket.on("newPoints", addPoints);
     } else {
       $('#error-messages').append('<div class="alert alert-danger">Error! Cannot connect to server. Please try again.</div>');
     }
@@ -158,6 +159,17 @@ function addPoint(data) {
         }
       }
     }
+}
+
+function addPoints(data) {
+  console.log(data);
+  if (!data) {
+    return;
+  }
+
+  for (var i = 0; i < data.length; i++) {
+    addPoint(data[i]);
+  }
 }
 
 function changeTopic(topicName) {
