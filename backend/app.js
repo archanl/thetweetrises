@@ -60,7 +60,7 @@ function ten_second_emitter() {
       var trend = keys_reply[i];
       console.log('trend is ' + trend);
 
-      !function(j) {
+      !function(trend) {
         redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
           console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
@@ -76,7 +76,7 @@ function ten_second_emitter() {
             io.sockets.emit('newPoint', point);
           }
         });
-      }(j);
+      }(trend);
     }
   });
 }
@@ -113,7 +113,8 @@ io.sockets.on('connection', function (socket) {
       console.log("getting trend " + i);
       var trend = keys_reply[i];
       console.log('trend is ' + trend);
-      !function(j) {
+
+      !function(trend) {
         redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
           console.log("initial_emission : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
@@ -128,7 +129,7 @@ io.sockets.on('connection', function (socket) {
             io.sockets.emit('newPoint', point);
           }
         });
-      }(j);
+      }(trend);
     }
   });
 });
