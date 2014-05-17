@@ -34,7 +34,7 @@ function ten_second_emitter() {
   last_time = now;
 
   // Emit sentiment_stream
-  redis_client.zrangebyscore("sentiment_stream", now, lt, function(err, reply) {
+  redis_client.zrangebyscore("sentiment_stream", lt, now, function(err, reply) {
     console.log("ten_second_emitter : sentiment_stream ::");
     console.log(reply);
 
@@ -61,7 +61,7 @@ function ten_second_emitter() {
       console.log('trend is ' + trend);
 
       !function(trend) {
-        redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
+        redis_client.zrangebyscore("trending:" + trend, lt, now, function(err, trend_reply) {
           console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
 
@@ -90,7 +90,7 @@ io.sockets.on('connection', function (socket) {
   var now = ((new Date()).getTime() / 1000);
 
   // Emit initial points for sentiment_stream
-  redis_client.zrangebyscore("sentiment_stream", now - 10, now - 600, function(err, reply) {
+  redis_client.zrangebyscore("sentiment_stream", now - 600, now - 10, function(err, reply) {
     console.log("initial_emission : sentiment_stream ::");
     console.log(reply);
 
@@ -115,7 +115,7 @@ io.sockets.on('connection', function (socket) {
       console.log('trend is ' + trend);
 
       !function(trend) {
-        redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
+        redis_client.zrangebyscore("trending:" + trend, now - 600, now - 10, function(err, trend_reply) {
           console.log("initial_emission : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
 

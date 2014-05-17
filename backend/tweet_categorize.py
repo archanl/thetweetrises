@@ -72,6 +72,8 @@ def main():
             if tweet['geo'] is None:
                 # No geo data? IGNORE!
                 pass
+            print "trendingtweet:"
+            print tweet
 
             coordinates = tweet['geo']['coordinates']
             times = tweet['created_at']
