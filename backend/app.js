@@ -25,12 +25,12 @@ app.use(express.static(__dirname + '/public'));
 //////////////////////////////////////////////////////////////////////////////
 // Global 10 second emitter
 ///////////////////////////
-var last_time = new Date()).getTime();
+var last_time = new Date().getTime();
 
 function ten_second_emitter() {
   // Update last_time
   var lt = last_time;
-  var now = new Date()).getTime());
+  var now = new Date().getTime());
   last_time = now;
 
   // Emit sentiment_stream
@@ -87,7 +87,7 @@ var ten_second_interval = setInterval(ten_second_emitter, 10000);
 // Socket connection handler
 ////////////////////////////
 io.sockets.on('connection', function (socket) {
-  var now = new Date()).getTime();
+  var now = new Date().getTime();
 
   // Emit initial points for sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", now - 600000, now - 10000, function(err, reply) {
