@@ -42,12 +42,7 @@ function ten_second_emitter() {
       return;
     }
 
-    for (var j = 0; j < trend_reply; j++) {
-      point = trend_reply[j];
-
-      point.topic = trend;
-      io.sockets.emit('newPoint', point);
-    }
+    io.sockets.emit('newPoints', reply);
   });
 
   // Emit trending topics
@@ -73,7 +68,7 @@ function ten_second_emitter() {
           return;
         }
 
-        for (var j = 0; j < trend_reply; j++) {
+        for (var j = 0; j < trend_reply.length; j++) {
           point = trend_reply[j];
 
           point.topic = trend;
