@@ -76,7 +76,7 @@ def main():
             coordinates = tweet['geo']['coordinates']
             times = time.time()
 
-            sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
+            sentiment = p.classify(tweet, "naive_bayes", 0.5)
             if sentiment == "positive":
                 sentiment = 1
             elif sentiment == "negative":
