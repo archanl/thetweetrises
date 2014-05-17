@@ -26,35 +26,40 @@ app.use(express.static(__dirname + '/public'));
 // Global 10 second emitter
 ///////////////////////////
 var last_time = (new Date()).getTime() / 1000;
+
 function ten_second_emitter() {
+  // Update last_time
   var lt = last_time;
   var now = ((new Date()).getTime() / 1000);
   last_time = now;
 
+  // Emit sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", now, lt, function(err, reply) {
-    console.log('ten second sentiment stream:');
-    console.log(reply);
+    for (var j = 0; j < trend_reply; j++) {
+      point = trend_reply[j];
+
+      point.topic = trend;
+      io.sockets.emit('newPoint', point);
+    }
   });
 
+  // Emit trending topics
   redis_client.zrange("trending_keys", 0, -10, function(err, keys_reply) {
     var trend, point;
-    console.log('retrieving 10 trending keys:');
-    console.log(keys_reply);
+    
+    // For each trending topic
+    for (var i=0; i < keys_reply.length; i++) {
+      trend = keys_reply[i];
 
-    // for (var i=0; i < keys_reply.length; i++) {
-    //   trend = keys_reply[i];
+      redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
+        for (var j = 0; j < trend_reply; j++) {
+          point = trend_reply[j];
 
-    //   redis_client.zrangebyscore("trending:" + trend, now, lt, function(err, trend_reply) {
-    //     for (var j = 0; j < trend_reply.length; j++) {
-    //       point = JSON.parse(reply);
-    //       point.topic = trend;
-    //       socket.emit
-    //     }
-    //     socket.
-    //         point.topic = trend;
-    //         socket.volatile.emit('initialPoints', point);
-    //     });
-    // }
+          point.topic = trend;
+          io.sockets.emit('newPoint', point);
+        }
+      });
+    }
   });
 }
 
@@ -64,59 +69,37 @@ var ten_second_interval = setInterval(ten_second_emitter, 10000);
 // Socket connection handler
 ////////////////////////////
 io.sockets.on('connection', function (socket) {
+  var now = ((new Date()).getTime() / 1000);
 
+  // Emit initial points for sentiment_stream
+  redis_client.zrangebyscore("sentiment_stream", now - 10, now - 600, function(err, reply) {
+    if (reply) {
+      socket.emit('newPoints', reply);
+    }
+  });
 
-  // var redis_emitter = function() {
-  //   // TODO: Check this, emitting very rarely
-  //   redis_client.zrevrange("sentiment_stream", 0, 0, function(err, reply) {
-  //     var point = JSON.parse(reply);
-  //     point.topic = null;
-  //     // Only emit if different from last message
-  //     if (last_emitted.latitude !== point.latitude) {
-  //         last_emitted = point;
-  //         socket.volatile.emit('newPoint', point);
-  //     }
+  // Emit initial points for trending topics
+  redis_client.zrange("trending_keys", 0, -10, function(err, keys_reply) {
+    if (!keys_reply) {
+      return;
+    }
 
-  //     // Emit a single tweet from all trends
-  //     redis_client.zrange("trending_keys", 0, -10, function(err, reply) {
-        
-  //         for (var i=0; i < reply.length; i++) {
-  //             var trend = reply[i];
-  //             redis_client.zrevrange("trending:".concat(trend), 0, 0, function(err, reply) {
-  //                   // TODO: This is not parsing, no idea why
-  //                 var point = JSON.parse(reply);
-  //                 point.topic = trend;
-  //                 socket.volatile.emit('initialPoints', point);
-  //             });
-  //         }
-  //   });
+    var trend, point;
+    
+    // For each trending topic
+    for (var i=0; i < keys_reply.length; i++) {
+      trend = keys_reply[i];
 
-  //   });
-  // };
-
-  // // Initial emits
-  // var initial_emit = function() {
-  //     var d = new Date();
-  //     var now = d.getTime();
-  //     redis_client.zrange("sentiment_stream", now, now - 600, function(err, reply) {
-  //         var point = JSON.parse(reply);
-  //         point.topic = null;
-  //         socket.volatile.emit('initialPoints', point);
-      
-  //     });
-
-      
-  //     redis_client.zrange("trending_keys", 0, -10, function(err, reply) {
-        
-  //         // Emit last 600 secs from each trend
-  //         for (var i=0; i < reply.length; i++) {
-  //             var trend = reply[i];
-  //             redis_client.zrange("trending:".concat(trend), 0, -200, function(err, reply) {
-  //                 var point = JSON.parse(reply);
-  //                 point.topic = trend;
-  //                 socket.volatile.emit('initialPoints', point);
-  //             });
-  //         }
-  //   });
-  // };
+      redis_client.zrangebyscore("trending:" + trend, now, now - 600, function(err, trend_reply) {
+        if (trend_reply) {
+          socket.emit('newPoints', trend_reply);
+        }
+      });
+    }
+  });
 });
+
+//////////////////////////////////////////////////////////////////////////////
+// Start server
+///////////////
+server.listen(80);
