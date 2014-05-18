@@ -6,6 +6,7 @@ import logging
 import signal
 import time
 from trend_utils import getTrends, classifyTrending
+import json
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
@@ -53,8 +54,8 @@ def main():
             tweet = next_tweet(t)
     #             while "delete" in tweet[:10]:
     #                 tweet = next_tweet(t)
-
-            r.lpush(QUEUE_KEY, tweet)
+            if json.loads(tweet)['geo'] is not None:
+                r.lpush(QUEUE_KEY, tweet)
 
         except Exception, e:
             logging.debug(e)
