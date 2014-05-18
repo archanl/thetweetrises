@@ -82,6 +82,11 @@ HeatmapView.prototype.hide = function() {
     this.negativeHeatmap.setMap(null);
 }
 
+HeatmapView.prototype.switchTopic = function(topic) {
+    console.log('heatmap switching to topic: ' + topic);
+    // TODO
+}
+
 /*
 HeatmapView.prototype.garbageCollector = function() {
     if (this.positivePoints.length > this.maxPoints) {

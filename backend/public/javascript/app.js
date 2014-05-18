@@ -51,7 +51,8 @@ TweetRisesApp.prototype.switchView = function(view) {
 };
 
 TweetRisesApp.prototype.switchTopic = function(topic) {
-    console.log('switching to topic: ' + topic);
+    this.heatmap.switchTopic(topic);
+    // this.statesmap.switchTopic(topic);
 };
 
 TweetRisesApp.prototype.addPoint = function(data) {
