@@ -4022,7 +4022,7 @@ StatemapView.prototype.showAll = function(){
 // The function is used to disable statemode
 StatemapView.prototype.hide = function() {
   for (i = 0; i< this.allStateOutlines2.length; i++){
-    this.addPoint[i][0].setMap(null);
+    this.allStateOutlines2[i][0].setMap(null);
   }
 };
 
