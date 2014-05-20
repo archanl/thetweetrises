@@ -3976,13 +3976,10 @@ var StatemapView = function(map, options) {
 
     this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
     this.storeAllPoints = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
-
+    this.averages = 10;
     if (options) {
         if (options.averages) {
           this.averages = options.averages;
-        }
-        else {
-          this.averages = 10;
         }
     }
 };
@@ -4032,18 +4029,20 @@ StatemapView.prototype.show = function(){
   for (i = 0; i < this.allStateOutlines2.length; i++){
     var actualState = this.allStateOutlines2[i][0];
     if(this.averages){
-      if (this.allStateOutlines2[i][1].length != 0)
+      if (this.allStateOutlines2[i][1].length > 0)
       {
-        var positive = 0;
-        var total = 0;
         var allOtherPoints = this.allStateOutlines2[i][1];
 
-        for (i = 0; (i < this.averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
-            if (allOtherPoints[allOtherPoints.length - i - 1] > 0) {
-                positive = positive + 1;
-            }
-            total = total + 1;
+        var total = 0;
+        var positive = 0;
+
+        for (j = 0; ((j < this.averages) && ((allOtherPoints.length - j - 1) >= 0)); j++) {
+          if (allOtherPoints[allOtherPoints.length - j - 1] > 0) {
+              positive = positive + 1;
+          }
+          total = total + 1;
         }
+
         var positiveColor = Math.ceil(255 * (positive / total));
         var negativeColor = 255 - positiveColor;
         var colorString = 'rgb(' + String(negativeColor) + ',0,' + String(positiveColor) + ')';
@@ -4052,7 +4051,6 @@ StatemapView.prototype.show = function(){
       else{
         actualState.setOptions({fillColor: '#000000'});
       }
-
     }
     else{
       actualState.setOptions({fillColor: '#000000'});
@@ -4077,24 +4075,25 @@ StatemapView.prototype.addPoint = function(pnt){
       var actualState = this.allStateOutlines2[i][0];
       var allOtherPoints = this.allStateOutlines2[i][1];
       allOtherPoints.push(emotionState);
-      var total = 0, positive = 0;
 
-      for (i = 0; (i < this.averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
-          if (allOtherPoints[allOtherPoints.length - i - 1] > 0) {
-              positive = positive + 1;
-          }
-          total = total + 1;
+      var total = 0;
+      var positive = 0;
+
+      for (i = 0; ((i < this.averages) && ((allOtherPoints.length - i - 1) >= 0)); i++) {
+        if (allOtherPoints[allOtherPoints.length - i - 1] > 0) {
+            positive = positive + 1;
+        }
+        total = total + 1;
       }
 
       if (allOtherPoints.length > 250) {
-          allOtherPoints.splice(0, 1);
+        allOtherPoints.splice(0, 1);
       }
 
-        var positiveColor = Math.ceil(255 * (positive / total));
-        var negativeColor = 255 - positiveColor;
-        var colorString = 'rgb(' + String(negativeColor) + ',0,' + String(positiveColor) + ')';
-        actualState.setOptions({fillColor: colorString});
- 
+      var positiveColor = Math.ceil(255 * (positive / total));
+      var negativeColor = 255 - positiveColor;
+      var colorString = 'rgb(' + String(negativeColor) + ',0,' + String(positiveColor) + ')';
+      actualState.setOptions({fillColor: colorString});
       break;
     }
   }
