@@ -3979,50 +3979,66 @@ var StatemapView = function(map, options) {
 
     if (options) {
         if (options.averages) {
-            this.averages = options.averages;
+          this.averages = options.averages;
+        }
+        else {
+          this.averages = 10;
         }
     }
-}
+};
 
-// The function is used to clear every state color and reset it to black
-StatemapView.prototype.reset = function(){
+// We have a function which can change the average
+StatemapView.prototype.changeAverage = function(average){
+  this.averages = average;
+};
+
+// The function is used to clear every state color and reset it to black, and then
+// apply the topic 
+StatemapView.prototype.switchTopic = function(topic){
   this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
   
   for (i = 0; i< this.allStateOutlines2.length; i++){
     this.allStateOutlines2[i][0].setOptions({fillColor: '#000000'});
   }
 
-}
-
-// The function is used to switch back to showing every point 
-StatemapView.prototype.showAll = function(averages){
-  for (i = 0; i < this.storeAllPoints.length; i++){
+  for (i = 0; i< this.storeAllPoints.length; i++){
     for(j = 0; j < this.storeAllPoints[i][1].length; j++){
-      this.addStatePoints2(this.storeAllPoints[i][1][j], averages);
+      if (this.storeAllPoints[i][1][j].topic == topic){
+        this.addStatePoints2(this.storeAllPoints[i][1][j]);
+      }
     }
   }
-}
+};
+
+// The function is used to switch back to showing every point 
+StatemapView.prototype.showAll = function(){
+  for (i = 0; i < this.storeAllPoints.length; i++){
+    for(j = 0; j < this.storeAllPoints[i][1].length; j++){
+      this.addStatePoints2(this.storeAllPoints[i][1][j]);
+    }
+  }
+};
 
 // The function is used to disable statemode
-HeatmapView.prototype.hide = function() {
+StatemapView.prototype.hide = function() {
   for (i = 0; i< this.allStateOutlines2.length; i++){
-    allStateOutlines2[i][0].setMap(null);
+    this.allStateOutlines2[i][0].setMap(null);
   }
-}
+};
 
 // The function is used to correctly display a state's colors when state mode has
 // ben re-enabled.
-StatemapView.prototype.show = function(averages){
+StatemapView.prototype.show = function(){
   for (i = 0; i < this.allStateOutlines2.length; i++){
     var actualState = this.allStateOutlines2[i][0];
-    if(averages){
+    if(this.averages){
       if (this.allStateOutlines2[i][1].length != 0)
       {
         var positive = 0;
         var total = 0;
         var allOtherPoints = this.allStateOutlines2[i][1];
 
-        for (i = 0; (i < averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
+        for (i = 0; (i < this.averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
             if (allOtherPoints[allOtherPoints.length - i - 1] > 0) {
                 positive = positive + 1;
             }
@@ -4043,10 +4059,10 @@ StatemapView.prototype.show = function(averages){
     }
     actualState.setMap(this.map);
   }
-}
+};
 
 // The function is used to correctly add points
-StatemapView.prototype.addPoint = function(pnt, averages){
+StatemapView.prototype.addPoint = function(pnt){
   for (i = 0; i < this.allStateOutlines2.length; i++){
     var emotionState = pnt.sentiment > 0 ? 1 : 0;
     var latState = pnt.latitude;
@@ -4063,7 +4079,7 @@ StatemapView.prototype.addPoint = function(pnt, averages){
       allOtherPoints.push(emotionState);
       var total = 0, positive = 0;
 
-      for (i = 0; (i < averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
+      for (i = 0; (i < this.averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
           if (allOtherPoints[allOtherPoints.length - i - 1] > 0) {
               positive = positive + 1;
           }
@@ -4082,7 +4098,7 @@ StatemapView.prototype.addPoint = function(pnt, averages){
       break;
     }
   }
-}
+};
 
 // The function is used to maintain all points (in case we need to reset
 // anything)
@@ -4102,13 +4118,10 @@ StatemapView.prototype.storeAllStatePoints = function(pnt, toStore){
         }
       }
     }
-}
-
-
+};
 
 
 /*
-
 
 function enableStatesMode(averages){
   for (i = 0; i< allStateOutlines.length; i++){

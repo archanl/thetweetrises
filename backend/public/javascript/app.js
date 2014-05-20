@@ -3,7 +3,7 @@ function TweetRisesApp(options) {
 
     this.heatmap = new HeatmapView(this.map);
     // this.heatmap.startGarbageCollector(); // functionality now removed
-    // this.statesmap = new StatesMapView(this.map);
+    this.statesmap = new StatemapView(this.map);
 
     this.topics = [];
     this.currentView = this.heatmap;
@@ -46,13 +46,19 @@ TweetRisesApp.prototype.switchView = function(view) {
         this.currentView.show();
     } else if (view === 'states') {
         this.currentView.hide();
-        // TODO
+        this.currentView = this.statesmap;
+        this.currentView.show();
     }
 };
 
 TweetRisesApp.prototype.switchTopic = function(topic) {
     this.heatmap.switchTopic(topic);
-    // this.statesmap.switchTopic(topic);
+    if (topic){
+        this.statesmap.switchTopic(topic);
+    }
+    else{
+        this.statesmap.showAll();
+    }
 };
 
 TweetRisesApp.prototype.addPoint = function(data) {
@@ -81,7 +87,8 @@ TweetRisesApp.prototype.addPoint = function(data) {
     }
 
     this.heatmap.addPoint(pnt);
-    // this.statesmap.addPoint(pnt);
+    this.statesmap.addPoint(pnt);
+    this.statesmap.storeAllStatePoints(pnt, 250);
 };
 
 TweetRisesApp.prototype.addPoints = function(data) {
