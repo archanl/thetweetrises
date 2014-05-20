@@ -4014,7 +4014,7 @@ StatemapView.prototype.switchTopic = function(topic){
 StatemapView.prototype.showAll = function(){
   for (i = 0; i < this.storeAllPoints.length; i++){
     for(j = 0; j < this.storeAllPoints[i][1].length; j++){
-      this.prototype.addPoint(this.storeAllPoints[i][1][j]);
+      this.addPoint(this.storeAllPoints[i][1][j]);
     }
   }
 };
@@ -4022,7 +4022,7 @@ StatemapView.prototype.showAll = function(){
 // The function is used to disable statemode
 StatemapView.prototype.hide = function() {
   for (i = 0; i< this.allStateOutlines2.length; i++){
-    this.prototype.addPoint[i][0].setMap(null);
+    this.addPoint[i][0].setMap(null);
   }
 };
 
