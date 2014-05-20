@@ -1,3 +1,5 @@
+// Constants
+
 var Alabama
  
 var AlabamaOutline = [ 
@@ -3968,19 +3970,145 @@ Wyoming = new google.maps.Polygon({
   fillOpacity: 0.50 
 }); 
 
-var allStateOutlines = new Array([California, 0, 0], [NewYork, 0, 0], [Alabama, 0, 0], [Arizona, 0, 0], [Arkansas, 0, 0], [Colorado, 0, 0], [Connecticut, 0, 0], [Delaware, 0, 0], [Florida, 0, 0], [Georgia, 0, 0], [Idaho, 0, 0], [Illinois, 0, 0], [Indiana, 0, 0], [Iowa, 0, 0], [Kansas, 0, 0], [Kentucky, 0, 0], [Louisiana, 0, 0], [Maine, 0, 0], [Maryland, 0, 0], [Massachusetts, 0, 0], [Michigan, 0, 0], [Minnesota, 0, 0], [Mississippi, 0, 0], [Missouri, 0, 0], [Montana, 0, 0], [Nebraska, 0, 0], [Nevada, 0, 0], [NewHampshire, 0, 0], [NewJersey, 0, 0], [NewMexico, 0, 0], [NorthCarolina, 0, 0], [NorthDakota, 0, 0], [Ohio, 0, 0], [Oklahoma, 0, 0], [Oregon, 0, 0], [Pennsylvania, 0, 0], [RhodeIsland, 0, 0], [SouthCarolina, 0, 0], [SouthDakota, 0, 0], [Tennessee, 0, 0], [Texas, 0, 0], [Utah, 0, 0], [Vermont, 0, 0], [Virginia, 0, 0], [Washington, 0, 0], [WestVirginia, 0, 0], [Wisconsin, 0, 0], [Wyoming, 0, 0]);
+// StateMapView definition
+var StatemapView = function(map, options) {
+    this.map = map;
 
-var allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+    this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+    this.storeAllPoints = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
 
-var storeAllPoints = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+    if (options) {
+        if (options.averages) {
+            this.averages = options.averages;
+        }
+    }
+}
 
+// The function is used to clear every state color and reset it to black
+StatemapView.prototype.reset = function(){
+  this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+  
+  for (i = 0; i< this.allStateOutlines2.length; i++){
+    this.allStateOutlines2[i][0].setOptions({fillColor: '#000000'});
+  }
 
-function clearStateLists(){
-  allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
-  for (i = 0; i< allStateOutlines2.length; i++){
-    allStateOutlines2[i][0].setOptions({fillColor: '#000000'});
+}
+
+// The function is used to switch back to showing every point 
+StatemapView.prototype.showAll = function(averages){
+  for (i = 0; i < this.storeAllPoints.length; i++){
+    for(j = 0; j < this.storeAllPoints[i][1].length; j++){
+      this.addStatePoints2(this.storeAllPoints[i][1][j], averages);
+    }
   }
 }
+
+// The function is used to disable statemode
+HeatmapView.prototype.hide = function() {
+  for (i = 0; i< this.allStateOutlines2.length; i++){
+    allStateOutlines2[i][0].setMap(null);
+  }
+}
+
+// The function is used to correctly display a state's colors when state mode has
+// ben re-enabled.
+StatemapView.prototype.show = function(averages){
+  for (i = 0; i < this.allStateOutlines2.length; i++){
+    var actualState = this.allStateOutlines2[i][0];
+    if(averages){
+      if (this.allStateOutlines2[i][1].length != 0)
+      {
+        var positive = 0;
+        var total = 0;
+        var allOtherPoints = this.allStateOutlines2[i][1];
+
+        for (i = 0; (i < averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
+            if (allOtherPoints[allOtherPoints.length - i - 1] > 0) {
+                positive = positive + 1;
+            }
+            total = total + 1;
+        }
+        var positiveColor = Math.ceil(255 * (positive / total));
+        var negativeColor = 255 - positiveColor;
+        var colorString = 'rgb(' + String(negativeColor) + ',0,' + String(positiveColor) + ')';
+        actualState.setOptions({fillColor: colorString});
+      }
+      else{
+        actualState.setOptions({fillColor: '#000000'});
+      }
+
+    }
+    else{
+      actualState.setOptions({fillColor: '#000000'});
+    }
+    actualState.setMap(this.map);
+  }
+}
+
+// The function is used to correctly add points
+StatemapView.prototype.addPoint = function(pnt, averages){
+  for (i = 0; i < this.allStateOutlines2.length; i++){
+    var emotionState = pnt.sentiment > 0 ? 1 : 0;
+    var latState = pnt.latitude;
+    var lngState = pnt.longitude;
+    var latlngState = new google.maps.LatLng(latState,lngState);
+    // Actual Twitter time
+    // var tweetTimeOriginal = pnt.timestamp;
+    // var tweetTImeConverted = moment(tweetTimeOriginal, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en');
+    var insideState = google.maps.geometry.poly.containsLocation(latlngState, this.allStateOutlines2[i][0]);
+    if (insideState){
+
+      var actualState = this.allStateOutlines2[i][0];
+      var allOtherPoints = this.allStateOutlines2[i][1];
+      allOtherPoints.push(emotionState);
+      var total = 0, positive = 0;
+
+      for (i = 0; (i < averages) && ((allOtherPoints.length - i - 1) >= 0); i++) {
+          if (allOtherPoints[allOtherPoints.length - i - 1] > 0) {
+              positive = positive + 1;
+          }
+          total = total + 1;
+      }
+
+      if (allOtherPoints.length > 250) {
+          allOtherPoints.splice(0, 1);
+      }
+
+        var positiveColor = Math.ceil(255 * (positive / total));
+        var negativeColor = 255 - positiveColor;
+        var colorString = 'rgb(' + String(negativeColor) + ',0,' + String(positiveColor) + ')';
+        actualState.setOptions({fillColor: colorString});
+ 
+      break;
+    }
+  }
+}
+
+// The function is used to maintain all points (in case we need to reset
+// anything)
+StatemapView.prototype.storeAllStatePoints = function(pnt, toStore){
+    var latState = pnt.latitude;
+    var lngState = pnt.longitude;
+    var latlngState = new google.maps.LatLng(latState,lngState);
+    for (i = 0; i < this.storeAllPoints.length; i++){
+      var insideState = google.maps.geometry.poly.containsLocation(latlngState, this.storeAllPoints[i][0]);
+      if (insideState){
+        if (this.storeAllPoints[i][1].length > toStore){
+          this.storeAllPoints[i][1].push(pnt);
+          this.storeAllPoints[i][1].splice(0, 1);
+        }
+        else{
+          this.storeAllPoints[i][1].push(pnt);
+        }
+      }
+    }
+}
+
+
+
+
+/*
+
 
 function enableStatesMode(averages){
   for (i = 0; i< allStateOutlines.length; i++){
@@ -4000,106 +4128,6 @@ function enableStatesMode(averages){
       actualState.setOptions({fillColor: '#000000'});
     }
     actualState.setMap(map);
-  }
-}
-
-function disableStatesMode(){
-  for (i = 0; i< allStateOutlines.length; i++){
-    allStateOutlines[i][0].setMap(null);
-  }
-}
-
-function test_add_state_points(num) {
-    addStatePoints2({
-            sentiment: 1,
-            latitude:40,
-            longitude:-110,
-        }, num);
-}
-
-function test_add_state_points2(num) {
-    addStatePoints2({
-            sentiment: 0,
-            latitude:40,
-            longitude:-110,
-        }, num);
-}
-
-function do_the_fake_test() {
-    setInterval(function() {
-            console.log("fake test");
-            if (Math.random() > .5) {
-                test_add_state_points2(5);
-            }
-            else {
-                test_add_state_points(5);
-            }
-        }, 1000);
-}
-
-function storeAllStatePoints(data, totalToStore){
-    var latState = data.latitude;
-    var lngState = data.longitude;
-    var latlngState = new google.maps.LatLng(latState,lngState);
-    for (i = 0; i< storeAllPoints.length; i++){
-      var insideState = google.maps.geometry.poly.containsLocation(latlngState, storeAllPoints[i][0]);
-      if (insideState){
-        if (storeAllPoints[i][1].length > totalToStore){
-          storeAllPoints[i][1] = storeAllPoints[i][1].slice(1);
-          storeAllPoints[i][1].push(data);
-        }
-        else{
-          storeAllPoints[i][1].push(data);
-        }
-      }
-    }
-}
-
-function showAllPointsAgain(numberToAverage){
-  for (i = 0; i < storeAllPoints.length; i++){
-    for(j = 0; j < storeAllPoints[i][1].length; j++){
-      addStatePoints2(storeAllPoints[i][1][j], numberToAverage);
-    }
-  }
-}
-
-function addStatePoints2(data, numToAverage){
-  //console.log("addStatePoints2 called");
-  for (i = 0; i< allStateOutlines2.length; i++){
-    var emotionState = data.sentiment > 0 ? 1 : 0;
-    var latState = data.latitude;
-    var lngState = data.longitude;
-    var latlngState = new google.maps.LatLng(latState,lngState);
-    // Actual Twitter time
-    // var tweetTimeOriginal = data.timestamp;
-    // var tweetTImeConverted = moment(tweetTimeOriginal, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en');
-    var insideState = google.maps.geometry.poly.containsLocation(latlngState, allStateOutlines2[i][0]);
-    if (insideState){
-      // console.log("--- Actual state found");
-      var actualState = allStateOutlines2[i][0];
-      var history = allStateOutlines2[i][1];
-      history.push(emotionState);
-      var total = 0, positive = 0;
-      for (i = 0; (i < numToAverage) && ((history.length - i - 1) >= 0); i++) {
-          if (history[history.length - i - 1]) {
-              positive = positive + 1;
-          }
-          total = total + 1;
-      }
-      if (history.length > 30) {
-          history.splice(0, 1);
-      }
-      //console.log("--- total");
-      //console.log("--- " + String(total));
-      //console.log("--- positive");
-      //console.log("--- " + String(positive));
-        var positiveNumber = Math.ceil(255 * (positive / total));
-        var negativeNumber = 255 - positiveNumber;
-        var colorString = 'rgb(' + String(negativeNumber) + ',0,' + String(positiveNumber) + ')';
-        actualState.setOptions({fillColor: colorString});
- 
-      break;
-    }
   }
 }
 
@@ -4146,4 +4174,35 @@ function addStatePoints(data, averages){
     }
   }
 }
+
+function test_add_state_points(num) {
+    addStatePoints2({
+            sentiment: 1,
+            latitude:40,
+            longitude:-110,
+        }, num);
+}
+
+function test_add_state_points2(num) {
+    addStatePoints2({
+            sentiment: 0,
+            latitude:40,
+            longitude:-110,
+        }, num);
+}
+
+function do_the_fake_test() {
+    setInterval(function() {
+            console.log("fake test");
+            if (Math.random() > .5) {
+                test_add_state_points2(5);
+            }
+            else {
+                test_add_state_points(5);
+            }
+        }, 1000);
+}
+
+*/
+
 
