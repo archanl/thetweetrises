@@ -11,6 +11,9 @@ function TweetRisesApp(options) {
     // Point count data
     this.numTotalReceivedPoints = 0;
     this.updateRateRate = 2; // seconds
+    this.lastZero = false;
+    this.zeroSince = Math.floor((new Date()).getTime() / 1000);
+    this.timeOutAppended = false;
 
     // Event handlers
     this.newTopicHandler = options.newTopicHandler;
@@ -36,6 +39,31 @@ TweetRisesApp.prototype.connect = function(hostname) {
 
 TweetRisesApp.prototype.updateRate = function() {
     this.newRateHandler(Math.floor(this.numTotalReceivedPoints / this.updateRateRate));
+
+    if (this.numTotalReceivedPoints > 0) {
+        this.lastZero = false;
+        if (this.timeOutAppended) {
+            $('#server-no-points-alert').remove();
+        }
+    } else {
+        if (this.lastZero) {
+            var now = Math.floor((new Date()).getTime() / 1000);
+            if (!this.timeOutAppended && now - this.zeroSince > 10) {
+                $('#error-messages').append(
+                    '<div id="server-no-points-alert" class="alert alert-warning alert-dismissable">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        '<strong>Something is wrong!</strong> The server is not be sending any points.' +
+                    '</div>'
+                );
+
+                this.timeOutAppended = true;
+            }
+        } else {
+            this.zeroSince = Math.floor((new Date()).getTime() / 1000);
+        }
+
+        this.lastZero = true;
+    }
     this.numTotalReceivedPoints = 0;
 };
 
