@@ -1,18 +1,33 @@
 body {
   background-color: #fefffe;
-  background-image:url('../images/stripe.png');
   background-repeat: repeat;
 }
 
 #wrapper {
-  width: 768px;
+  width: 978px;
   margin: 0 auto 0 auto;
   transition: all 0.4s ease 0s;
 }
 
-#page-content-wrapper {
+#content-sidebar-wrapper {
   margin-top: -1px;
   width: 100%;
+}
+
+#page-content {
+  float: left;
+  width: 768px;
+}
+
+#page-sidebar {
+  position:relative;
+  float:right;
+  width: 200px;
+}
+
+#page-footer {
+  clear: both;
+  padding-top: 20px;
 }
 
 #map-canvas-wrapper {
@@ -55,10 +70,6 @@ body.fullscreen {
   outline: none !important;
 }
 
-#about {
-  margin-top: 20px;
-}
-
 
 
 
@@ -73,8 +84,11 @@ body.fullscreen {
   padding: 0;
   margin: 5px 10px;
 }
+.site-navigation .navbar-brand:hover {
+  color: #66757f;
+}
 
-a.selected-map-view {
+.site-navigation a.selected-map-view {
   text-decoration: underline;
 }
 .site-navigation .navbar-nav a {
@@ -87,32 +101,21 @@ a.selected-map-view {
 
 .site-navigation .navbar-nav a:hover {
   color: #4484f2;
-  background-color: #fff;
+  background-color: transparent;
 }
 
 .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
-  background-color: #fff;
+  background-color: transparent;
 }
 
-
-
-
-#topic-menu a {
-  margin: 10px 10px 0 10px;
-}
-#topic-menu a:first-of-type {
-  margin-top: 1px;
-  margin-bottom: 2px;
-}
-
-#topic-menu a.unclicked {
-  font-weight: 600 !important;
-}
-#topic-menu a.selected-channel {
-  color: #ff0000 !important;
-}
 
 #topic-menu .topic-rating-bars {
   height: 3px;
   margin-bottom: 0 !important;
+}
+
+#rateText {
+  width: 100%;
+  text-align: center;
+  margin-top:10px;
 }

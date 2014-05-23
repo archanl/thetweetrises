@@ -29,9 +29,9 @@
 <body>
 <div id="wrapper">
     <!-- Main content -->
-    <div id="page-content-wrapper">
+    <div id="content-sidebar-wrapper">
 
-        <nav class="navbar site-navigation" role="navigation">
+        <nav id="page-navbar" class="navbar site-navigation" role="navigation">
           <div class="container-fluid">
             <a class="navbar-brand" href="/">The Tweet Rises</a>
 
@@ -40,33 +40,35 @@
               <ul class="nav navbar-nav">
                 <li><a id="states-mode-btn" class="selected-map-view" href="#">States</a></li>
                 <li><a id="heatmap-mode-btn" href="#">Heatmap</a></li>
-
-                <li id="topics-dropdown" class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Topics <span id="new-topics-badge" class="badge"></span> <b class="caret"></b></a>
-
-                    <ul id="topic-menu" class="dropdown-menu">
-                        <li><a id="default-map-link" class="channelLink selected-channel" href="#">None (default)</a></li>
-                    </ul>
-                </li>
               </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container-fluid -->
         </nav>
 
-        <div class="page-content">
-            <div id="error-messages"></div>
+        <div id="error-messages"></div>
+
+        <div id="page-content">
             <div id="map-canvas-wrapper">
                 <button id="fullscreen-button" type="button" class="btn btn-primary btn-xs">Fullscreen</button>
                 <div id="map-canvas"></div>
-                <div id="rateText"></div>
             </div>
+        </div>
+
+        <div id="page-sidebar">
+            <ul id="topic-menu" class="nav nav-pills nav-stacked">
+                <li id="no-topic-topic-item" class="topic-item active"><a href="#">All Points</a></li>
+            </ul>
+
+            <div id="rateText"></div>
         </div>
     </div>
 
-    <div id="about" class="panel panel-info">
-        <div class="panel-heading">About</div>
-        <div class="panel-body">
-            This <a href="https://github.com/archanl/thetweetrises">project</a> originated from a class at the <a href="http://www.caltech.edu/">California Institute of Technology</a> called CS 145: Projects in Networking. It was developed by Aleksander Bello, Alex Cioc, Victor Duan, Archan Luhar, and Louis O&#39;Bryan. We would like to thank Professor <a href="http://users.cms.caltech.edu/~adamw/">Adam Wierman</a> for his advice and guidance.
+    <div id="page-footer">
+        <div id="about" class="panel panel-info">
+            <div class="panel-heading">About</div>
+            <div class="panel-body">
+                This <a href="https://github.com/archanl/thetweetrises">project</a> originated from a class at the <a href="http://www.caltech.edu/">California Institute of Technology</a> called CS 145: Projects in Networking. It was developed by Aleksander Bello, Alex Cioc, Victor Duan, Archan Luhar, and Louis O&#39;Bryan. We would like to thank Professor <a href="http://users.cms.caltech.edu/~adamw/">Adam Wierman</a> for his advice and guidance.
+            </div>
         </div>
     </div>
 </div>
