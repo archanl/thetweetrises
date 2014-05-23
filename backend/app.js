@@ -88,8 +88,10 @@ var ten_second_interval = setInterval(ten_second_emitter, 2000);
 ////////////////////////////
 io.sockets.on('connection', function (socket) {
   var now = Math.floor((new Date().getTime()) / 1000);
-  var begTime = now - 35;
-  var endTime = now - 15;
+  var begTime_all = now - 35;
+  var endTime_all = now - 10;
+  var begTime_trending = now - 120;
+  var endTime_trending = now - 10;
 
   // Emit initial points for sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", begTime, endTime, function(err, reply) {
@@ -117,7 +119,7 @@ io.sockets.on('connection', function (socket) {
       console.log('trend is ' + trend);
 
       !function(trend, begTime, endTime) {
-        redis_client.zrangebyscore("trending:" + trend, begTime, endTime, function(err, trend_reply) {
+        redis_client.zrangebyscore("trending:" + trend, begTime_trending, endTime_trending, function(err, trend_reply) {
           console.log("initial_emission : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
 
