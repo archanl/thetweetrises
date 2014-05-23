@@ -37,9 +37,12 @@ def main():
     t = generateRequest(trends)
 
 
+    last_updated = time.time()
+
     while True:
         try:
-            if int(time.time()) % UPDATE_INT == 0:
+            if time.time() - last_updated > UPDATE_INT:
+                last_updated = time.time()
                 t.close()
 
                 # Update the trends
