@@ -97,7 +97,7 @@ TweetRisesApp.prototype.addPoint = function(data) {
         this.topicViewHandler(pnt);
     }
 
-    if (pnt.latitude && pnt.longitude)
+    if (pnt.latitude && pnt.longitude) {
         this.heatmap.addPoint(pnt);
         this.statesmap.addPoint(pnt);
         this.statesmap.storeAllStatePoints(pnt, 250);

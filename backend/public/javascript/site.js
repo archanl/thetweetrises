@@ -11,7 +11,7 @@ $(document).ready(function() {
 
         // Update topic rating view
         if (window.topicInfo[topic]) {
-            if (window.topicPoint.sentiment > 0) {
+            if (topicPoint.sentiment > 0) {
                 window.topicInfo[topic].numPositive++;
             }
             window.topicInfo[topic].numTotal++;
