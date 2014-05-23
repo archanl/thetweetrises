@@ -98,6 +98,9 @@ TweetRisesApp.prototype.addPoint = function(data) {
     }
 
     if (pnt.latitude && pnt.longitude) {
+        if (pnt.topic) {
+            console.log('POINT HAS TOPIC ['+ pnt.topic +'] AND GEO [' + pnt.latitude + ', ' + pnt.longitude + '] ');
+        }
         this.heatmap.addPoint(pnt);
         this.statesmap.addPoint(pnt);
         this.statesmap.storeAllStatePoints(pnt, 250);
