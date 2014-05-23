@@ -88,10 +88,10 @@ var ten_second_interval = setInterval(ten_second_emitter, 2000);
 ////////////////////////////
 io.sockets.on('connection', function (socket) {
   var now = Math.floor((new Date().getTime()) / 1000);
-  var begTime_all = now - 35;
-  var endTime_all = now - 10;
-  var begTime_trending = now - 120;
-  var endTime_trending = now - 10;
+  var begTime_all = now - 300; // 5 mins ago
+  var endTime_all = now - 10; // 10 seconds ago
+  var begTime_trending = now - 1800; // 30 mins ago
+  var endTime_trending = now - 10; // 10 seconds ago
 
   // Emit initial points for sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", begTime_all, endTime_all, function(err, reply) {
