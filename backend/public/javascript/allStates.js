@@ -3991,9 +3991,13 @@ StatemapView.prototype.changeAverage = function(average){
 
 // The function is used to clear every state color and reset it to black, and then
 // apply the topic 
-StatemapView.prototype.switchTopic = function(topic){
-  this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+StatemapView.prototype.switchTopic = function(topic) {
+  if (!topic) {
+    this.showAll();
+    return;
+  }
   
+  this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
   for (i = 0; i< this.allStateOutlines2.length; i++){
     this.allStateOutlines2[i][0].setOptions({fillColor: '#000000'});
   }

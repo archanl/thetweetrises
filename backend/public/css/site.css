@@ -8,10 +8,6 @@ body {
   transition: all 0.4s ease 0s;
 }
 
-a {
-  transition: all 0.4s ease 0s;
-}
-
 #page-content-wrapper {
   margin-top: -1px;
   width: 100%;
@@ -53,6 +49,10 @@ body.fullscreen {
   z-index: 500;
 }
 
+#fullscreen-button:focus, #fullscreen-button:active:focus, #fullscreen-button.active:focus {
+  outline: none !important;
+}
+
 #about {
   margin-top: 20px;
 }
@@ -90,7 +90,7 @@ body.fullscreen {
   background-color: #fff;
 }
 
-a.unseen {
+a.unclicked {
   font-weight: 600 !important;
   font-style: italic;
 }

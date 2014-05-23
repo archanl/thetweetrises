@@ -2,26 +2,30 @@
 // dependencies: app.js
 
 $(document).ready(function() {
+    window.newTopicsCount = 0;
+
     // App evet handlers
     var newTopic = function(topic, changeTopicHandler) {
         var $li = $('<li></li>');
-        var $a = $('<a href="#" class="channelLink unseen">' + topic + '</a>');
-
+        var $a = $('<a href="#" class="channelLink unclicked">' + topic + '</a>');
         $('#topic-menu').append($li);
         $li.append($a);
+        $a.on('click', function() {
+            console.log('changing Topic, calling handler');
+            changeTopicHandler();
+            $('.channelLink').removeClass("selected-channel");
+            $(this).removeClass('unclicked');
+            $(this).addClass("selected-channel");
+        });
 
-        /*var f = function(x) {
-            return function() {
-                window.app.changeTopic(x);
-            };
-        };*/
-        $channelLink.find('a').on('click', changeHandler);
+        window.newTopicsCount += 1;
+        $('#new-topics-badge').text(window.newTopicsCount);
+        $('#new-topics-badge').show();
     };
 
     var newRate = function(rate) {
         $('#rateText').text("Data download rate: " + rate + " points/second.");
     };
-
 
     // App initialization
 
@@ -36,10 +40,16 @@ $(document).ready(function() {
         }
     });
 
-    window.app.connect("http://162.243.150.138");
+    window.app.connect("http://162.243.150.138")
 
+    // App view event bindings
 
-    // App interaction hooks
+    $("#default-map-link").on("click", function() {
+        window.app.switchTopic('');
+        $('.channelLink').removeClass("selected-channel");
+        $(this).removeClass('unclicked');
+        $(this).addClass("selected-channel");
+    });
 
     $("#heatmap-mode-btn").on("click", function () {
         window.app.switchView('heatmap');
@@ -50,20 +60,9 @@ $(document).ready(function() {
     }); 
   
     $("#topics-dropdown").click(function () {
-        var g = function(x) {
-            return function() {
-                window.app.newTopicsCount -= x;
-                $('#new-topics-badge').text(newTopicsCount > 0 ? newTopicsCount : '');
-                $('.unseen').removeClass("unseen");
-            };
-        };
-        setTimeout(g(window.app.newTopicsCount), 2500);
-    });
-  
-    $('.dropdown').on('click', '.channelLink', function () {
-        $('.channelLink').removeClass("selected-channel");
-        $(this).removeClass("unseen");
-        $(this).addClass("selected-channel");
+        $('#new-topics-badge').text('');
+        $('#new-topics-badge').hide();
+        window.newTopicsCount = 0;
     });
   
     $('.navbar-nav').on('click', 'a', function(e) {
@@ -71,6 +70,7 @@ $(document).ready(function() {
     });
 
     $('#fullscreen-button').click(function() {
+        var center = window.app.map.getCenter();
         var $b = $('body');
         var $btn = $('#fullscreen-button');
         if ($b.hasClass('fullscreen')) {
@@ -84,5 +84,7 @@ $(document).ready(function() {
             $btn.addClass('btn-danger');
             $btn.removeClass('btn-primary');
         }
+        google.maps.event.trigger(window.app.map, "resize");
+        window.app.map.setCenter(center);
     });
 });
