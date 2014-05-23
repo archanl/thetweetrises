@@ -100,3 +100,7 @@ a.selected-channel {
 a.selected-channel:after {
   content:" *";
 }
+
+.topic-rating-bars {
+  height: 3px;
+}

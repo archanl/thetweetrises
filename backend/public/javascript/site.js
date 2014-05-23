@@ -16,15 +16,12 @@ $(document).ready(function() {
             }
             window.topicInfo[topic].numTotal++;
 
-            window.topicInfo[topic].$positiveBar.width(window.topicInfo[topic].numPositive / window.topicInfo[topic].numTotal * 100 + "%");
-            window.topicInfo[topic].$negativeBar.width((window.topicInfo[topic].numTotal - window.topicInfo[topic].numPositive) / window.topicInfo[topic].numTotal * 100 + "%");
-
         } else {
             var $li = $('<li></li>');
             var $a = $('<a href="#" class="channelLink unclicked">' + topic + '</a>');
-            var $progressBar = $('<div class="topic-rating-bars progress"></div>');
-            var $positiveBar = $('<div class="topic-rating-bar-positive progress-bar progress-bar-success" style="width: 0%"></div>');
-            var $negativeBar = $('<div class="topic-rating-bar-negative progress-bar progress-bar-danger" style="width: 0%"></div>');
+            var $progressBar = $('<div class="progress topic-rating-bars"></div>');
+            var $positiveBar = $('<div class="progress-bar progress-bar-success" style="width: 0%"></div>');
+            var $negativeBar = $('<div class="progress-bar progress-bar-danger" style="width: 0%"></div>');
 
             window.topicInfo[topic] = {};
             window.topicInfo[topic].numPositive = topic.sentiment > 0 ? 1 : 0;
@@ -54,6 +51,10 @@ $(document).ready(function() {
             $('#new-topics-badge').text(window.newTopicsCount);
             $('#new-topics-badge').show();
         }
+
+        // Update topic's sentiment meter
+        window.topicInfo[topic].$positiveBar.width(window.topicInfo[topic].numPositive / window.topicInfo[topic].numTotal * 100 + "%");
+        window.topicInfo[topic].$negativeBar.width((window.topicInfo[topic].numTotal - window.topicInfo[topic].numPositive) / window.topicInfo[topic].numTotal * 100 + "%");
     };
 
     var newRate = function(rate) {
@@ -77,7 +78,7 @@ $(document).ready(function() {
 
     if (window.app.connect("http://162.243.150.138")) {
         $("#default-map-link").on("click", function() {
-            window.app.switchTopic('');
+            window.app.switchTopic();
             $('.channelLink').removeClass("selected-channel");
             $(this).removeClass('unclicked');
             $(this).addClass("selected-channel");
