@@ -70,7 +70,7 @@ def main():
             # Categorize and store trending topics
             tmp = r.rpop(TRENDING_KEY)
             if tmp != None:
-                tweet = json.loads(tmp)['text']
+                tweet = json.loads(tmp)
                 if tweet['geo'] is not None:
                     coordinates = tweet['geo']['coordinates']
                 else:
@@ -108,7 +108,7 @@ def main():
 
             tmp = r.rpop(QUEUE_KEY)
             if tmp != None:
-                tweet = json.loads(tmp)['text']
+                tweet = json.loads(tmp)
 
                 if tweet['geo'] is None:
                     # No geo data? IGNORE!
