@@ -4008,7 +4008,7 @@ StatemapView.prototype.switchTopic = function(topic) {
   }
   
   this.filterTopic = true;
-  this.currentTopic = topic;
+  this.currentTopic = topic.replace("#", "%23");;
 
   for (m = 0; m < this.storeAllPoints.length; m++){
     for(n = 0; n < this.storeAllPoints[m][1].length; n++){
@@ -4135,7 +4135,12 @@ StatemapView.prototype.storeAllStatePoints = function(pnt, toStore){
       if (insideState){
         if (this.storeAllPoints[i][1].length > toStore){
           this.storeAllPoints[i][1].push(pnt);
-          this.storeAllPoints[i][1].splice(0, 1);
+          var hasTopic = 0;
+          while((this.storeAllPoints[i][1][hasTopic].topic) && (hasTopic < this.storeAllPoints[i][1].length - 1)){
+
+            hasTopic = hasTopic + 1;
+          }
+          this.storeAllPoints[i][1].splice(hasTopic, hasTopic+1);
         }
         else{
           this.storeAllPoints[i][1].push(pnt);
