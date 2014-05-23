@@ -48,7 +48,7 @@ class classifier_wrapper:
         return
         '''
 
-        '''
+        
         print "starting accuracy tests..."
 
         file1 = open(PLOT_TIME_MAXENT_FILE, 'w')
@@ -89,8 +89,8 @@ class classifier_wrapper:
         file4.close()
 
         print "done with accuracy tests"
-        assert 0 == 1
-        '''
+        
+        
 
         '''
         # Naive Bayes trials over the whole data set
@@ -110,7 +110,7 @@ class classifier_wrapper:
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
-        assert 0 == 1
+        
 
         '''
         '''
@@ -132,7 +132,7 @@ class classifier_wrapper:
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
-        assert 0 == 1
+        
         '''
         '''
         file1 = open(PLOT_L1_SGD, 'w')
@@ -153,7 +153,7 @@ class classifier_wrapper:
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
-        assert 0 == 1
+        
         '''
 
         '''
@@ -199,9 +199,10 @@ class classifier_wrapper:
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
-        assert 0 == 1
+        
         '''
 
+        '''
         file1 = open(PLOT_SGD_ITERATIONS, 'w')
         #for i in range(50, 200, 10):
         for i in range(100, 101):
@@ -220,7 +221,7 @@ class classifier_wrapper:
             # Print the results to a file
             self.print_alpha_results(results, file1)
         file1.close()
-
+        '''
 
 
 
@@ -259,7 +260,7 @@ class classifier_wrapper:
         percent_correct = float(num_correct) / float(len(tweets))
         results[algorithm] = percent_correct
         #print results
-        #assert 0 == 1
+        #
         return results
     
 
@@ -289,7 +290,7 @@ class classifier_wrapper:
         percent_correct = float(num_correct) / float(len(tweets))
         results[algorithm] = percent_correct
         #print results
-        #assert 0 == 1
+        #
         return results
 
 
@@ -306,7 +307,7 @@ class classifier_wrapper:
         percent_correct = float(num_correct) / float(len(tweets))
         results[algorithm] = percent_correct
         #print results
-        #assert 0 == 1
+        #
         return results
 
 
@@ -325,7 +326,7 @@ class classifier_wrapper:
             #print "percent correct: ", percent_correct
             results[algorithm] = percent_correct
         #print results
-        #assert 0 == 1
+        #
         return results
 
 
