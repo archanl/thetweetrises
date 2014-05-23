@@ -1,3 +1,8 @@
+
+library(ggplot2)
+library(reshape)
+
+
 # The first column is the number of input tweets
 # the second column is the percent correct
 base_directory = "C:\\Users\\Louis\\thetweetrises\\NLP\\Plots\\"
@@ -8,6 +13,22 @@ svm = as.matrix(read.csv(paste(base_directory, "svm_file_1.txt", sep=""), header
 
 max_accuracy = max(max(naive_bayes[,3]),max(max_ent[,3]), max(sgd[,3]), max(svm[,3]))
 min_accuracy = min(min(naive_bayes[,3]), min(max_ent[,3]), min(sgd[,3]), min(svm[,3]))
+
+# Combined data
+cd = data.frame(naive_bayes[,1], naive_bayes[,3], max_ent[,3], sgd[,3], svm[,3])
+m = melt(cd, c(1))
+qplot(m[,1], m[,3], color=m[,2], xlab="Number of Training Tweets",
+      ylab="Percent Correct") +
+  theme(legend.title = element_text(colour="black", size=30), 
+        plot.title = element_text(size=36, face="bold"),
+        axis.title = element_text(size=27),
+        legend.text = element_text(size=27)) +
+  scale_color_manual(values = c("red1", "blueviolet", "seagreen4", "yellow3"),
+    labels = c("Naive Bayes", "Maximum Entropy", "Stochastic Gradient Descent",
+                                "Support Vector Machines"), name="Algorithm") +
+  labs(title="NLP Performance")
+
+
 plot(naive_bayes[,1], naive_bayes[,3], xlab="Number of Trial Tweets", ylab="Accuracy", 
      type="p", col="red", yaxt='n', ylim=c(min_accuracy, max_accuracy))
 par(new=TRUE)
@@ -50,6 +71,17 @@ title("Algorithm Run Time by Number of Tweets")
 # Plot the Naive Bayes algoritm over the whole data set
 
 full_naive_bayes = as.matrix(read.csv(paste(base_directory, "naive_bayes_whole_dataset.txt", sep=""), header=FALSE))
+
+
+qplot(full_naive_bayes[,1], full_naive_bayes[,3], xlab="Number of Training Tweets",
+      ylab="Percent Correct", color=c("blue"), guide=FALSE) +
+  theme(legend.title = element_text(colour="black", size=30), 
+        plot.title = element_text(size=36, face="bold"),
+        axis.title = element_text(size=27),
+        legend.text = element_text(size=27),
+        legend.position = "none") +
+  labs(title="Naive Bayes over Whole Training Set")
+
 
 plot(full_naive_bayes[,1], full_naive_bayes[,3], xlab="Number of Trial Tweets", 
      ylab="Accuracy", type="p", col="blue")
@@ -116,8 +148,9 @@ title("Accuracy of SVM Kernels by Number of Tweets")
 # of iterations
 
 maxent_iterations = as.matrix(read.csv(paste(base_directory, "maxent_iterations.txt", sep=""), header=FALSE))
-
+lo <- smooth.spline( maxent_iterations[,3], maxent_iterations[,4], spar=0.35)
 plot(maxent_iterations[,3], maxent_iterations[,4], xlab="Iterations", 
-     ylab="Accuracy", type="p", col="blue")
+     ylab="Accuracy", type="p")
+lines(lo)
 
-title("Maximum Entropy Accuracy By Number of Iterations (1000 Trail Tweets)")
+title("Iteration Accuracy for MaxEnt")
