@@ -54,8 +54,7 @@ def main():
             tweet = next_tweet(t)
     #             while "delete" in tweet[:10]:
     #                 tweet = next_tweet(t)
-            if json.loads(tweet)['geo'] is not None:
-                r.lpush(QUEUE_KEY, tweet)
+            r.lpush(QUEUE_KEY, tweet)
 
         except Exception, e:
             logging.debug(e)

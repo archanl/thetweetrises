@@ -70,34 +70,36 @@ def main():
             # Categorize and store trending topics
             tweet = json.loads(r.brpop(TRENDING_KEY)[1])
             if tweet['geo'] is not None:
-
                 coordinates = tweet['geo']['coordinates']
-                times = time.time()
+            else:
+                coordinates = [None, None]
 
-                sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
-                if sentiment == "positive":
-                    sentiment = 1
-                elif sentiment == "negative":
-                    sentiment = -1
-                elif sentiment == "neutral":
-                    sentiment = 0
-                if sentiment != 0:
-                    # Jsonify tweet with sentiment and store in redis
-                    d = {'sentiment' : sentiment, \
-                         'latitude' : coordinates[0], \
-                         'longitude' : coordinates[1], \
-                         'timestamp' : times }
-                    logging.debug("data from categorizer: ")
-                    logging.debug(d)
-                    j = json.dumps(d)
+            times = time.time()
 
-                    key = classifyTrending(str(tweet), trends)
+            sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
+            if sentiment == "positive":
+                sentiment = 1
+            elif sentiment == "negative":
+                sentiment = -1
+            elif sentiment == "neutral":
+                sentiment = 0
+            if sentiment != 0:
+                # Jsonify tweet with sentiment and store in redis
+                d = {'sentiment' : sentiment, \
+                     'latitude' : coordinates[0], \
+                     'longitude' : coordinates[1], \
+                     'timestamp' : times }
+                logging.debug("data from categorizer: ")
+                logging.debug(d)
+                j = json.dumps(d)
 
-                    # TODO: Fix none keys
-                    if key != None:
-                        r.zadd("trending:" + key, str(j), times)
-                    else:
-                        logging.exception("Key for tweet: " + str(tweet) + " with text: " + tweet['text'] + "was none." + "Trends: " + ", ".join(trends))
+                key = classifyTrending(str(tweet), trends)
+
+                # TODO: Fix none keys
+                if key != None:
+                    r.zadd("trending:" + key, str(j), times)
+                else:
+                    logging.exception("Key for tweet: " + str(tweet) + " with text: " + tweet['text'] + "was none." + "Trends: " + ", ".join(trends))
 
 
                 
