@@ -83,7 +83,7 @@ HeatmapView.prototype.hide = function() {
 }
 
 HeatmapView.prototype.switchTopic = function(topic) {
-    console.log('heatmap switching to topic: ' + topic);
+    console.log('Heatmap switching to topic: ' + topic);
     // TODO
 }
 

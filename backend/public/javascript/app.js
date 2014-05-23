@@ -2,7 +2,6 @@ function TweetRisesApp(options) {
     this.map = new google.maps.Map(document.getElementById(options.mapCanvasId), options.mapOptions);
 
     this.heatmap = new HeatmapView(this.map);
-    // this.heatmap.startGarbageCollector(); // functionality now removed
     this.statesmap = new StatemapView(this.map);
 
     this.topics = [];
@@ -31,8 +30,8 @@ TweetRisesApp.prototype.connect = function(hostname) {
         socket.on("newPoints", _.bind(this.addPoints, this));
 
         this.currentView.show();
+        return true;
     } else {
-        $('#error-messages').append('<div class="alert alert-danger">Error! Cannot connect to server. Please try again.</div>');
         return false;
     }
 };
@@ -80,13 +79,9 @@ TweetRisesApp.prototype.switchView = function(view) {
 };
 
 TweetRisesApp.prototype.switchTopic = function(topic) {
+    console.log('App switching to topic: ' + topic);
     this.heatmap.switchTopic(topic);
-    if (topic){
-        this.statesmap.switchTopic(topic);
-    }
-    else{
-        this.statesmap.showAll();
-    }
+    this.statesmap.switchTopic(topic);
 };
 
 TweetRisesApp.prototype.addPoint = function(data) {
@@ -109,6 +104,7 @@ TweetRisesApp.prototype.addPoint = function(data) {
             this.topics.push(topic);
 
             this.newTopicHandler(topic, function() {
+                console.log('trying to switch topic');
                 that.switchTopic(topic);
             });
         }
