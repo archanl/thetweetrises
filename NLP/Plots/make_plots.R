@@ -15,7 +15,7 @@ max_accuracy = max(max(naive_bayes[,3]),max(max_ent[,3]), max(sgd[,3]), max(svm[
 min_accuracy = min(min(naive_bayes[,3]), min(max_ent[,3]), min(sgd[,3]), min(svm[,3]))
 
 # Combined data
-cd = data.frame(naive_bayes[,1], naive_bayes[,3], max_ent[,3], sgd[,3], svm[,3])
+cd = data.frame(naive_bayes[,1], naive_bayes[,3], max_ent[,3], svm[,3])
 m = melt(cd, c(1))
 qplot(m[,1], m[,3], color=m[,2], xlab="Number of Training Tweets",
       ylab="Percent Correct") +
@@ -23,8 +23,8 @@ qplot(m[,1], m[,3], color=m[,2], xlab="Number of Training Tweets",
         plot.title = element_text(size=36, face="bold"),
         axis.title = element_text(size=27),
         legend.text = element_text(size=27)) +
-  scale_color_manual(values = c("red1", "blueviolet", "seagreen4", "yellow3"),
-    labels = c("Naive Bayes", "Maximum Entropy", "Stochastic Gradient Descent",
+  scale_color_manual(values = c("red1", "blueviolet", "blue"),
+    labels = c("Naive Bayes", "Maximum Entropy",
                                 "Support Vector Machines"), name="Algorithm") +
   labs(title="NLP Performance")
 
@@ -74,13 +74,14 @@ full_naive_bayes = as.matrix(read.csv(paste(base_directory, "naive_bayes_whole_d
 
 
 qplot(full_naive_bayes[,1], full_naive_bayes[,3], xlab="Number of Training Tweets",
-      ylab="Percent Correct", color=c("blue"), guide=FALSE) +
+      ylab="Percent Correct", guide=FALSE) +
   theme(legend.title = element_text(colour="black", size=30), 
         plot.title = element_text(size=36, face="bold"),
         axis.title = element_text(size=27),
         legend.text = element_text(size=27),
         legend.position = "none") +
-  labs(title="Naive Bayes over Whole Training Set")
+  labs(title="Naive Bayes over Whole Training Set")  + 
+  geom_point(fill="blue", colour="blue")
 
 
 plot(full_naive_bayes[,1], full_naive_bayes[,3], xlab="Number of Trial Tweets", 
