@@ -118,7 +118,7 @@ io.sockets.on('connection', function (socket) {
       var trend = keys_reply[i];
       console.log('trend is ' + trend);
 
-      !function(trend, begTime, endTime) {
+      !function(trend, begTime_trending, endTime_trending) {
         redis_client.zrangebyscore("trending:" + trend, begTime_trending, endTime_trending, function(err, trend_reply) {
           console.log("initial_emission : trending-keys : trending:" + trend + " ::");
           console.log(trend_reply);
@@ -133,7 +133,7 @@ io.sockets.on('connection', function (socket) {
             io.sockets.emit('newPoint', point);
           }
         });
-      }(trend, begTime, endTime);
+      }(trend, begTime_trending, endTime_trending);
     }
   });
 });
