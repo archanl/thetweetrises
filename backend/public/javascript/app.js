@@ -5,7 +5,7 @@ function TweetRisesApp(options) {
     this.statesmap = new StatemapView(this.map);
 
     this.topics = [];
-    this.currentView = this.heatmap;
+    this.currentView = this.statesmap;
 
     // Point count data
     this.numTotalReceivedPoints = 0;

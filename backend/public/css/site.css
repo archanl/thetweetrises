@@ -92,13 +92,13 @@ body.fullscreen {
 
 a.unclicked {
   font-weight: 600 !important;
-  font-style: italic;
 }
 a.selected-channel {
   color: #ff0000 !important;
 }
-a.selected-channel:after {
-  content:" *";
+
+a.selected-map-view {
+  font-weight: 600 !important;
 }
 
 .topic-rating-bars {

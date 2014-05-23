@@ -85,10 +85,14 @@ $(document).ready(function() {
         });
 
         $("#heatmap-mode-btn").on("click", function () {
+            $("#states-mode-btn").removeClass('selected-map-view');
+            $("#heatmap-mode-btn").addClass('selected-map-view');
             window.app.switchView('heatmap');
         }); 
       
         $("#states-mode-btn").on("click", function () {
+            $("#heatmap-mode-btn").removeClass('selected-map-view');
+            $("#states-mode-btn").addClass('selected-map-view');
             window.app.switchView('states');
         }); 
     } else {
