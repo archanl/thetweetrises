@@ -70,10 +70,10 @@ function ten_second_emitter() {
           }
 
           for (var j = 0; j < trend_reply.length; j++) {
-            var point = trend_reply[j];
+            var point = JSON.parse(trend_reply[j]);
 
             point.topic = trend;
-            io.sockets.emit('newPoint', point);
+            io.sockets.emit('newPoint', JSON.stringify(point));
           }
         });
       }(trend, lt, now);
@@ -128,9 +128,9 @@ io.sockets.on('connection', function (socket) {
           }
 
           for (var j = 0; j < trend_reply.length; j++) {
-            var point = trend_reply[j];
+            var point = JSON.parse(trend_reply[j]);
             point.topic = trend;
-            io.sockets.emit('newPoint', point);
+            io.sockets.emit('newPoint', JSON.stringify(point));
           }
         });
       }(trend, begTime_trending, endTime_trending);
