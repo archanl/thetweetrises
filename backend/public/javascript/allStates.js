@@ -4008,7 +4008,7 @@ StatemapView.prototype.switchTopic = function(topic) {
   }
   
   this.filterTopic = true;
-  this.currentTopic = topic.replace("#", "%23");;
+  this.currentTopic = topic;
 
   for (m = 0; m < this.storeAllPoints.length; m++){
     for(n = 0; n < this.storeAllPoints[m][1].length; n++){

@@ -79,7 +79,6 @@ TweetRisesApp.prototype.switchView = function(view) {
 };
 
 TweetRisesApp.prototype.switchTopic = function(topic) {
-    console.log('App switching to topic: ' + topic);
     this.heatmap.switchTopic(topic);
     this.statesmap.switchTopic(topic);
 };
@@ -94,16 +93,16 @@ TweetRisesApp.prototype.addPoint = function(data) {
     var pnt = JSON.parse(data);
 
     if (pnt.topic) {
+        pnt.topic = decodeURIComponent(pnt.topic);
         this.topicViewHandler(pnt);
     }
 
     if (pnt.latitude && pnt.longitude) {
-        if (pnt.topic) {
-            console.log('POINT HAS TOPIC ['+ pnt.topic +'] AND GEO [' + pnt.latitude + ', ' + pnt.longitude + '] ');
+        if ((pnt.latitude > 24.9493 || pnt.latitude < 49.5904) && (pnt.longitude > -125.0011 || pnt.longitude < -66.9326)) {
+            this.heatmap.addPoint(pnt);
+            this.statesmap.addPoint(pnt);
+            this.statesmap.storeAllStatePoints(pnt, 250);
         }
-        this.heatmap.addPoint(pnt);
-        this.statesmap.addPoint(pnt);
-        this.statesmap.storeAllStatePoints(pnt, 250);
     }
 };
 

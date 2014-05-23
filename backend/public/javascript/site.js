@@ -7,7 +7,7 @@ $(document).ready(function() {
 
     // App evet handlers
     var topicHandler = function(topicPoint) {
-        var topic = decodeURIComponent(topicPoint.topic);
+        var topic = topicPoint.topic;
 
         // Update topic rating view
         if (window.topicInfo[topic]) {
@@ -79,7 +79,10 @@ $(document).ready(function() {
         $("#no-topic-topic-item").on("click", function() {
             window.app.switchTopic();
             $('.topic-item').removeClass("active");
-            $(this).addClass("selected-channel");
+            $(this).addClass("active");
+        });
+        $("#no-topic-topic-item a").on("click", function() {
+            e.preventDefault();
         });
 
         $("#heatmap-mode-btn").on("click", function (e) {
