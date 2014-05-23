@@ -57,6 +57,9 @@ body.fullscreen {
   margin-top: 20px;
 }
 
+
+
+
 .site-navigation {
   height: auto;
   min-height: none;
@@ -69,16 +72,15 @@ body.fullscreen {
   margin: 5px 10px;
 }
 
+a.selected-map-view {
+  text-decoration: underline;
+}
 .site-navigation .navbar-nav a {
   color: #000000;
   font-weight: 500;
   padding: 0;
   margin: 5px 10px;
   height: auto;
-}
-
-.site-navigation .navbar-nav .dropdown-menu a {
-  margin: 5px 10px;
 }
 
 .site-navigation .navbar-nav a:hover {
@@ -90,17 +92,25 @@ body.fullscreen {
   background-color: #fff;
 }
 
-a.unclicked {
+
+
+
+#topic-menu a {
+  margin: 10px 10px 0 10px;
+}
+#topic-menu a:first-of-type {
+  margin-top: 1px;
+  margin-bottom: 2px;
+}
+
+#topic-menu a.unclicked {
   font-weight: 600 !important;
 }
-a.selected-channel {
+#topic-menu a.selected-channel {
   color: #ff0000 !important;
 }
 
-a.selected-map-view {
-  font-weight: 600 !important;
-}
-
-.topic-rating-bars {
+#topic-menu .topic-rating-bars {
   height: 3px;
+  margin-bottom: 0 !important;
 }
