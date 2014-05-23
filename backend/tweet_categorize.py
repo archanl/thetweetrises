@@ -69,11 +69,11 @@ def main():
 
             # Categorize and store trending topics
             tweet = json.loads(r.brpop(TRENDING_KEY)[1])
-            if tweet['geo'] is None:
-                # No geo data? IGNORE!
-                pass
+            if tweet['geo'] is not None:
+                coordinates = tweet['geo']['coordinates']
+            else:
+                coordinates = [None, None]
 
-            coordinates = tweet['geo']['coordinates']
             times = time.time()
 
             sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)

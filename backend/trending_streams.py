@@ -54,8 +54,7 @@ def main():
             tweet = next_tweet(t)
     #             while "delete" in tweet[:10]:
     #                 tweet = next_tweet(t)
-            if json.loads(tweet)['geo'] is not None:
-                r.lpush(QUEUE_KEY, tweet)
+            r.lpush(QUEUE_KEY, tweet)
 
         except Exception, e:
             logging.debug(e)
@@ -70,7 +69,7 @@ def generateRequest(trends):
     # language: English
     # location bounding box: USA
     trends = ",".join(trends)
-    t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?language=en&locations=-125.0011,24.9493,-66.9326,49.5904&track=' + trends,
+    t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?language=en&track=' + trends,
                      auth=oauth, stream=True)
     return t
 
