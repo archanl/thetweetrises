@@ -68,7 +68,7 @@ def main():
             # TODO: DRY this
 
             # Categorize and store trending topics
-            tmp = r.brpop(TRENDING_KEY)[1]
+            tmp = r.rpop(TRENDING_KEY)[1]
             if tmp != None:
                 tweet = json.loads(tmp)
                 if tweet['geo'] is not None:
@@ -106,7 +106,7 @@ def main():
 
                 
 
-            tmp = r.brpop(QUEUE_KEY)[1]
+            tmp = r.rpop(QUEUE_KEY)[1]
             if tmp != None:
                 tweet = json.loads(tmp)
 
