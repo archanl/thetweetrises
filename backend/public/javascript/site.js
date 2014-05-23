@@ -3,24 +3,57 @@
 
 $(document).ready(function() {
     window.newTopicsCount = 0;
+    window.topicInfo = {};
 
     // App evet handlers
-    var newTopic = function(topic, changeTopicHandler) {
-        var $li = $('<li></li>');
-        var $a = $('<a href="#" class="channelLink unclicked">' + topic + '</a>');
-        $('#topic-menu').append($li);
-        $li.append($a);
-        $a.on('click', function() {
-            console.log('changing Topic, calling handler');
-            changeTopicHandler();
-            $('.channelLink').removeClass("selected-channel");
-            $(this).removeClass('unclicked');
-            $(this).addClass("selected-channel");
-        });
+    var topicHandler = function(topicPoint) {
+        var topic = decodeURIComponent(topicPoint.topic);
 
-        window.newTopicsCount += 1;
-        $('#new-topics-badge').text(window.newTopicsCount);
-        $('#new-topics-badge').show();
+        // Update topic rating view
+        if (window.topicInfo[topic]) {
+            if (window.topicPoint.sentiment > 0) {
+                window.topicInfo[topic].numPositive++;
+            }
+            window.topicInfo[topic].numTotal++;
+
+            window.topicInfo[topic].$positiveBar.width(window.topicInfo[topic].numPositive / window.topicInfo[topic].numTotal * 100 + "%");
+            window.topicInfo[topic].$negativeBar.width((window.topicInfo[topic].numTotal - window.topicInfo[topic].numPositive) / window.topicInfo[topic].numTotal * 100 + "%");
+
+        } else {
+            var $li = $('<li></li>');
+            var $a = $('<a href="#" class="channelLink unclicked">' + topic + '</a>');
+            var $progressBar = $('<div class="topic-rating-bars progress"></div>');
+            var $positiveBar = $('<div class="topic-rating-bar-positive progress-bar progress-bar-success" style="width: 0%"></div>');
+            var $negativeBar = $('<div class="topic-rating-bar-negative progress-bar progress-bar-danger" style="width: 0%"></div>');
+
+            window.topicInfo[topic] = {};
+            window.topicInfo[topic].numPositive = topic.sentiment > 0 ? 1 : 0;
+            window.topicInfo[topic].numTotal = 1;
+            window.topicInfo[topic].$li = $li;
+            window.topicInfo[topic].$a = $a;
+            window.topicInfo[topic].$positiveBar = $positiveBar;
+            window.topicInfo[topic].$negativeBar = $negativeBar;
+
+            $('#topic-menu').append($li);
+            $li.append($a);
+            $li.append($progressBar);
+            $progressBar.append($positiveBar);
+            $progressBar.append($negativeBar);
+
+            $a.on('click', function(topic, $a) {
+                return function() {
+                    window.app.switchTopic(topic);
+                    $('.channelLink').removeClass("selected-channel");
+                    $a.removeClass('unclicked');
+                    $a.addClass("selected-channel");
+                };
+            }(topic, $a));
+
+            // update new topic count
+            window.newTopicsCount += 1;
+            $('#new-topics-badge').text(window.newTopicsCount);
+            $('#new-topics-badge').show();
+        }
     };
 
     var newRate = function(rate) {
@@ -31,7 +64,7 @@ $(document).ready(function() {
 
     window.app = new TweetRisesApp({
         mapCanvasId: 'map-canvas',
-        newTopicHandler: newTopic,
+        topicViewHandler: topicHandler,
         newRateHandler: newRate,
         mapOptions: {
             zoom: 4,

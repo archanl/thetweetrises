@@ -88,9 +88,9 @@ var ten_second_interval = setInterval(ten_second_emitter, 2000);
 ////////////////////////////
 io.sockets.on('connection', function (socket) {
   var now = Math.floor((new Date().getTime()) / 1000);
-  var begTime_all = now - 300; // 5 mins ago
+  var begTime_all = now - 60; // 1 min ago
   var endTime_all = now - 10; // 10 seconds ago
-  var begTime_trending = now - 1800; // 30 mins ago
+  var begTime_trending = now - 1200; // 20 mins ago
   var endTime_trending = now - 10; // 10 seconds ago
 
   // Emit initial points for sentiment_stream

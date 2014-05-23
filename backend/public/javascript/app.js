@@ -15,7 +15,7 @@ function TweetRisesApp(options) {
     this.timeOutAppended = false;
 
     // Event handlers
-    this.newTopicHandler = options.newTopicHandler;
+    this.topicViewHandler = options.topicViewHandler;
     this.newRateHandler = options.newRateHandler;
 }
 
@@ -94,25 +94,14 @@ TweetRisesApp.prototype.addPoint = function(data) {
     var pnt = JSON.parse(data);
 
     if (pnt.topic) {
-        var topic = decodeURIComponent(pnt.topic);
-
-        console.log("point has topic: " + topic);
-
-        if (_.indexOf(this.topics, topic) === -1) {
-            var that = this;
-
-            this.topics.push(topic);
-
-            this.newTopicHandler(topic, function() {
-                console.log('trying to switch topic');
-                that.switchTopic(topic);
-            });
-        }
+        this.topicViewHandler(pnt);
     }
 
-    this.heatmap.addPoint(pnt);
-    this.statesmap.addPoint(pnt);
-    this.statesmap.storeAllStatePoints(pnt, 250);
+    if (pnt.latitude && pnt.longitude)
+        this.heatmap.addPoint(pnt);
+        this.statesmap.addPoint(pnt);
+        this.statesmap.storeAllStatePoints(pnt, 250);
+    }
 };
 
 TweetRisesApp.prototype.addPoints = function(data) {
