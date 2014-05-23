@@ -30,8 +30,8 @@ TweetRisesApp.prototype.connect = function(hostname) {
         socket.on("newPoints", _.bind(this.addPoints, this));
 
         this.currentView.show();
+        return true;
     } else {
-        $('#error-messages').append('<div class="alert alert-danger">Error! Cannot connect to server. Please try again.</div>');
         return false;
     }
 };

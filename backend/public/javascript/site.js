@@ -40,34 +40,39 @@ $(document).ready(function() {
         }
     });
 
-    window.app.connect("http://162.243.150.138")
+    // App view hooks that depend on connection
 
-    // App view event bindings
+    if (window.app.connect("http://162.243.150.138")) {
+        $("#default-map-link").on("click", function() {
+            window.app.switchTopic('');
+            $('.channelLink').removeClass("selected-channel");
+            $(this).removeClass('unclicked');
+            $(this).addClass("selected-channel");
+        });
 
-    $("#default-map-link").on("click", function() {
-        window.app.switchTopic('');
-        $('.channelLink').removeClass("selected-channel");
-        $(this).removeClass('unclicked');
-        $(this).addClass("selected-channel");
+        $("#heatmap-mode-btn").on("click", function () {
+            window.app.switchView('heatmap');
+        }); 
+      
+        $("#states-mode-btn").on("click", function () {
+            window.app.switchView('states');
+        }); 
+    } else {
+        $('#error-messages').append('<div class="alert alert-danger">Error! Cannot connect to server. Please try again.</div>');
+    }
+
+    // App view event bindings that don't depend on connection
+  
+    $('.navbar-nav').on('click', 'a', function(e) {
+        e.preventDefault();
     });
 
-    $("#heatmap-mode-btn").on("click", function () {
-        window.app.switchView('heatmap');
-    }); 
-  
-    $("#states-mode-btn").on("click", function () {
-        window.app.switchView('states');
-    }); 
-  
     $("#topics-dropdown").click(function () {
         $('#new-topics-badge').text('');
         $('#new-topics-badge').hide();
         window.newTopicsCount = 0;
     });
   
-    $('.navbar-nav').on('click', 'a', function(e) {
-        e.preventDefault();
-    });
 
     $('#fullscreen-button').click(function() {
         var center = window.app.map.getCenter();
