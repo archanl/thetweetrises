@@ -68,82 +68,86 @@ def main():
             # TODO: DRY this
 
             # Categorize and store trending topics
-            tweet = json.loads(r.brpop(TRENDING_KEY)[1])
-            if tweet['geo'] is not None:
-                coordinates = tweet['geo']['coordinates']
-            else:
-                coordinates = [None, None]
-
-            times = time.time()
-
-            sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
-            if sentiment == "positive":
-                sentiment = 1
-            elif sentiment == "negative":
-                sentiment = -1
-            elif sentiment == "neutral":
-                sentiment = 0
-            if sentiment != 0:
-                # Jsonify tweet with sentiment and store in redis
-                d = {'sentiment' : sentiment, \
-                     'latitude' : coordinates[0], \
-                     'longitude' : coordinates[1], \
-                     'timestamp' : times }
-                logging.debug("data from categorizer: ")
-                logging.debug(d)
-                j = json.dumps(d)
-
-                key = classifyTrending(str(tweet), trends)
-
-                # TODO: Fix none keys
-                if key != None:
-                    r.zadd("trending:" + key, str(j), times)
+            tmp = r.brpop(TRENDING_KEY)[1]
+            if tmp != None:
+                tweet = json.loads(tmp)
+                if tweet['geo'] is not None:
+                    coordinates = tweet['geo']['coordinates']
                 else:
-                    logging.exception("Key for tweet: " + str(tweet) + " with text: " + tweet['text'] + "was none." + "Trends: " + ", ".join(trends))
+                    coordinates = [None, None]
+
+                times = time.time()
+
+                sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
+                if sentiment == "positive":
+                    sentiment = 1
+                elif sentiment == "negative":
+                    sentiment = -1
+                elif sentiment == "neutral":
+                    sentiment = 0
+                if sentiment != 0:
+                    # Jsonify tweet with sentiment and store in redis
+                    d = {'sentiment' : sentiment, \
+                         'latitude' : coordinates[0], \
+                         'longitude' : coordinates[1], \
+                         'timestamp' : times }
+                    logging.debug("data from categorizer: ")
+                    logging.debug(d)
+                    j = json.dumps(d)
+
+                    key = classifyTrending(str(tweet), trends)
+
+                    # TODO: Fix none keys
+                    if key != None:
+                        r.zadd("trending:" + key, str(j), times)
+                    else:
+                        logging.exception("Not able to categorize")
 
 
                 
 
-            tweet = json.loads(r.brpop(QUEUE_KEY)[1])
+            tmp = r.brpop(QUEUE_KEY)[1]
+            if tmp != None:
+                tweet = json.loads(tmp)
 
-            if tweet['geo'] is None:
-                # No geo data? IGNORE!
-                continue
+                if tweet['geo'] is None:
+                    # No geo data? IGNORE!
+                    continue
 
-            coordinates = tweet['geo']['coordinates']
-            times = time.time()
+                coordinates = tweet['geo']['coordinates']
+                times = time.time()
 
-            '''
-            sentiment = TextBlob(tweet['text']).sentiment.polarity
-            if sentiment != 0:
-                # Jsonify tweet with sentiment and store in redis
-                d = {'sentiment' : sentiment, \
-                     'latitude' : coordinates[0], \
-                     'longitude' : coordinates[1] }
-                logging.debug("data from categorizer: ")
-                logging.debug(d)
-                j = json.dumps(d)
-
-                r.lpush(SENTIMENT_KEY, str(j))
                 '''
-            sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
-            if sentiment == "positive":
-                sentiment = 1
-            elif sentiment == "negative":
-                sentiment = -1
-            elif sentiment == "neutral":
-                sentiment = 0
-            if sentiment != 0:
-                # Jsonify tweet with sentiment and store in redis
-                d = {'sentiment' : sentiment, \
-                     'latitude' : coordinates[0], \
-                     'longitude' : coordinates[1], \
-                     'timestamp' : times }
-                logging.debug("data from categorizer: ")
-                logging.debug(d)
-                j = json.dumps(d)
+                sentiment = TextBlob(tweet['text']).sentiment.polarity
+                if sentiment != 0:
+                    # Jsonify tweet with sentiment and store in redis
+                    d = {'sentiment' : sentiment, \
+                         'latitude' : coordinates[0], \
+                         'longitude' : coordinates[1] }
+                    logging.debug("data from categorizer: ")
+                    logging.debug(d)
+                    j = json.dumps(d)
 
-                r.zadd(SENTIMENT_KEY, str(j), times)
+                    r.lpush(SENTIMENT_KEY, str(j))
+                    '''
+                sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
+                if sentiment == "positive":
+                    sentiment = 1
+                elif sentiment == "negative":
+                    sentiment = -1
+                elif sentiment == "neutral":
+                    sentiment = 0
+                if sentiment != 0:
+                    # Jsonify tweet with sentiment and store in redis
+                    d = {'sentiment' : sentiment, \
+                         'latitude' : coordinates[0], \
+                         'longitude' : coordinates[1], \
+                         'timestamp' : times }
+                    logging.debug("data from categorizer: ")
+                    logging.debug(d)
+                    j = json.dumps(d)
+
+                    r.zadd(SENTIMENT_KEY, str(j), times)
         except Exception as e:
             logging.exception("Something awful happened!")
 
