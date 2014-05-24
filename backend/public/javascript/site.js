@@ -81,7 +81,7 @@ $(document).ready(function() {
             $('.topic-item').removeClass("active");
             $(this).addClass("active");
         });
-        $("#no-topic-topic-item a").on("click", function() {
+        $("#no-topic-topic-item a").on("click", function(e) {
             e.preventDefault();
         });
 
