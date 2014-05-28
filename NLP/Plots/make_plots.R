@@ -15,18 +15,22 @@ max_accuracy = max(max(naive_bayes[,3]),max(max_ent[,3]), max(sgd[,3]), max(svm[
 min_accuracy = min(min(naive_bayes[,3]), min(max_ent[,3]), min(sgd[,3]), min(svm[,3]))
 
 # Combined data
-cd = data.frame(naive_bayes[,1], naive_bayes[,3], max_ent[,3], svm[,3])
+cd = data.frame(naive_bayes[,1], naive_bayes[,3], max_ent[,3], sgd[,3])
 m = melt(cd, c(1))
 qplot(m[,1], m[,3], color=m[,2], xlab="Number of Training Tweets",
-      ylab="Percent Correct") +
-  theme(legend.title = element_text(colour="black", size=30), 
-        plot.title = element_text(size=36, face="bold"),
-        axis.title = element_text(size=27),
-        legend.text = element_text(size=27)) +
-  scale_color_manual(values = c("red1", "blueviolet", "blue"),
+      ylab="Percent Correct", size=I(4)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+          panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        
+        axis.title = element_text(colour="grey20",size=28,face="plain"),
+        title = element_text(colour="grey20",size=32,hjust=.5,vjust=.5,face="plain"),
+        axis.text = element_text(colour="black",size=12,hjust=.5,vjust=.5,face="plain"),
+        legend.title = element_text(colour="grey20",size=28,hjust=.5,vjust=.5,face="plain"),
+        legend.text = element_text(colour="grey20",size=24,hjust=.5,vjust=.5,face="plain")) +
+  scale_color_manual(values = c("red1", "orange", "blue"),
     labels = c("Naive Bayes", "Maximum Entropy",
                                 "Support Vector Machines"), name="Algorithm") +
-  labs(title="NLP Performance")
+  labs(title="Classification Performance")
 
 
 plot(naive_bayes[,1], naive_bayes[,3], xlab="Number of Trial Tweets", ylab="Accuracy", 
@@ -74,12 +78,11 @@ full_naive_bayes = as.matrix(read.csv(paste(base_directory, "naive_bayes_whole_d
 
 
 qplot(full_naive_bayes[,1], full_naive_bayes[,3], xlab="Number of Training Tweets",
-      ylab="Percent Correct", guide=FALSE) +
+      ylab="Percent Correct") +
   theme(legend.title = element_text(colour="black", size=30), 
         plot.title = element_text(size=36, face="bold"),
         axis.title = element_text(size=27),
-        legend.text = element_text(size=27),
-        legend.position = "none") +
+        legend.text = element_text(size=27)) +
   labs(title="Naive Bayes over Whole Training Set")  + 
   geom_point(fill="blue", colour="blue")
 
