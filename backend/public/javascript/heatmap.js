@@ -42,11 +42,12 @@ var HeatmapView = function(map, options) {
 
     this.positiveHeatmap = new google.maps.visualization.HeatmapLayer({
         data: this.positivePoints,
-        gradient: HEATMAP_GRADIENT_POS
+        gradient: HEATMAP_GRADIENT_POS,
     });
     this.negativeHeatmap = new google.maps.visualization.HeatmapLayer({
         data: this.negativePoints,
-        gradient: HEATMAP_GRADIENT_NEG
+        gradient: HEATMAP_GRADIENT_NEG,
+        opacity: 0.5
     });
 
     if (options) {
