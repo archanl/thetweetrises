@@ -91,7 +91,7 @@ io.sockets.on('connection', function (socket) {
   var endTime_topics = now - 10; // 10 seconds ago
 
   // Emit initial points for sentiment_stream
-  redis_client.zrangebyscore("sentiment_stream", begTime_all, endTime_all, function(err, reply) {
+  redis_client.zrangebyscore("sentiment_stream", begTime_all, endTime_all, "limit", 1, 1000, function(err, reply) {
     if (reply) {
       socket.emit('newPoints', reply);
     }
