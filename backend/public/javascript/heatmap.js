@@ -37,18 +37,11 @@ var HeatmapView = function(map, options) {
     this.maxPoints = 1000;
     // this.garbageCollectorInterval = 5000;
 
-    this.positivePoints = new google.maps.MVCArray();
-    this.negativePoints = new google.maps.MVCArray();
+    this.manymaps = {};
+    this.initMap("_allpoints");
 
-    this.positiveHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: this.positivePoints,
-        gradient: HEATMAP_GRADIENT_POS,
-    });
-    this.negativeHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: this.negativePoints,
-        gradient: HEATMAP_GRADIENT_NEG,
-        opacity: 0.5
-    });
+    this.currentMap = "_allpoints";
+    this.hidden = true;
 
     if (options) {
         if (options.maxPoints) {
@@ -57,57 +50,60 @@ var HeatmapView = function(map, options) {
     }
 }
 
+HeatmapView.prototype.initMap = function(topic) {
+    this.manymaps[topic] = {};
+    this.manymaps[topic].positivePoints = new google.maps.MVCArray();
+    this.manymaps[topic].negativePoints = new google.maps.MVCArray();
+    this.manymaps[topic].positiveHeatmap = new google.maps.visualization.HeatmapLayer({
+        data: this.manymaps[topic].positivePoints,
+        gradient: HEATMAP_GRADIENT_POS,
+    });
+    this.manymaps[topic].negativeHeatmap = new google.maps.visualization.HeatmapLayer({
+        data: this.manymaps[topic].negativePoints,
+        gradient: HEATMAP_GRADIENT_NEG,
+        opacity: 0.5
+    });
+}
+
 HeatmapView.prototype.addPoint = function(pnt) {
+    var topic = pnt.topic ? pnt.topic : "_allpoints";
     var latlng = new google.maps.LatLng(pnt.latitude, pnt.longitude);
 
+    if (!this.manymaps[topic]) {
+        this.initMap(topic);
+    }
+
     if (pnt.sentiment > 0) {
-        if (this.positivePoints.length > this.maxPoints) {
-            this.positivePoints.removeAt(0);
+        if (this.manymaps[topic].positivePoints.length > this.maxPoints) {
+            this.manymaps[topic].positivePoints.removeAt(0);
         }
-        this.positivePoints.push(latlng);
+        this.manymaps[topic].positivePoints.push(latlng);
     } else {
-        if (this.negativePoints.length > this.maxPoints) {
-            this.negativePoints.removeAt(0);
+        if (this.manymaps[topic].negativePoints.length > this.maxPoints) {
+            this.manymaps[topic].negativePoints.removeAt(0);
         }
-        this.negativePoints.push(latlng);
+        this.manymaps[topic].negativePoints.push(latlng);
     }
 }
 
 HeatmapView.prototype.show = function() {
-    this.positiveHeatmap.setMap(this.map);
-    this.negativeHeatmap.setMap(this.map);
+    this.hidden = false;
+    this.manymaps[this.currentMap].positiveHeatmap.setMap(this.map);
+    this.manymaps[this.currentMap].negativeHeatmap.setMap(this.map);
 }
 
 HeatmapView.prototype.hide = function() {
-    this.positiveHeatmap.setMap(null);
-    this.negativeHeatmap.setMap(null);
+    this.hidden = true;
+    this.manymaps[this.currentMap].positiveHeatmap.setMap(null);
+    this.manymaps[this.currentMap].negativeHeatmap.setMap(null);
 }
 
 HeatmapView.prototype.switchTopic = function(topic) {
-    console.log('Heatmap switching to topic: ' + topic);
-    // TODO
-}
-
-/*
-HeatmapView.prototype.garbageCollector = function() {
-    if (this.positivePoints.length > this.maxPoints) {
-        this.positivePoints.splice(0, this.positivePoints.length - this.maxPoints);
-    }
-    if (this.negativePoints.length > this.maxPoints) {
-        this.negativePoints.splice(0, this.negativePoints.length - this.maxPoints);
+    if (this.hidden) {
+        this.currentMap = topic ? topic : "_allpoints";
+    } else {
+        this.hide();
+        this.currentMap = topic ? topic : "_allpoints";
+        this.show();
     }
 }
-
-HeatmapView.prototype.startGarbageCollector = function() {
-    if (this.garbageCollectorInterval) {
-        clearInterval(this.garbageCollectorInterval);
-    }
-    this.garbageCollectorInterval = setInterval(_.bind(this.garbageCollector, this), 5000);
-}
-
-HeatmapView.prototype.stopGarbageCollector = function() {
-    if (this.garbageCollectorInterval) {
-        clearInterval(this.garbageCollectorInterval);
-    }
-}
-*/
