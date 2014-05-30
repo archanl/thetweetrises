@@ -40,22 +40,21 @@ def main():
     t = None
 
     while True:
-#        try:
-        #if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
-        if last_updated is None or time.time() - last_updated > 40:
-            last_updated = time.time()
-            if t:
-                t.close()
-            t = generateRequest(r, oauth)
+        try:
+            if last_updated is None or time.time() - last_updated > 40:
+                last_updated = time.time()
+                if t:
+                    t.close()
+                t = generateRequest(r, oauth)
 
-        tweet = next_tweet(t)
-        while "delete" in tweet[:10]:
             tweet = next_tweet(t)
+            while "delete" in tweet[:10]:
+                tweet = next_tweet(t)
 
-        r.lpush(QUEUE_KEY, tweet)
+            r.lpush(QUEUE_KEY, tweet)
 
-#        except Exception as e:
-#            logging.debug("Something awful happened!")
+        except Exception as e:
+            logging.debug("Something awful happened!")
 
 def generateRequest(r, oauth):
     print "GENERATING REQUEST!!!!!!!!!!!"
