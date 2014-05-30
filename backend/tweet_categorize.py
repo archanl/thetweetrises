@@ -23,10 +23,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 QUEUE_KEY = 'tweet_queue'
 SENTIMENT_KEY = 'sentiment_stream'
-NUM_PROCESSES = 1
+TOPIC_KEY_PREFIX = 'topic_sentiment_stream:'
+
 MAX_SENTIMENTS = 10000
-UPDATE_INT = 4 # Update interval for trending topics
-TRENDING_KEY = "trending_raw"
+UPDATE_INT = 40 # seconds. Update interval for trending topics
 
 def signal_handler(signum = None, frame = None):
     logging.debug("Recieved signal " + str(signum))
@@ -44,110 +44,89 @@ def main():
 
     r = redis.Redis('localhost')
     
-    # p = Pool(NUM_PROCESSES)
-    # p.map(consume, [r for i in range(NUM_PROCESSES)])
-    
-
-
-# def consume(r):
     f = open("../NLP/Wrapper/test.txt", 'rb')
     p = cPickle.load(f)
     f.close()
-    trends = getTrends(r)
+
+    last_updated = None
+
+    sentiment_queue_size = r.zcard(SENTIMENT_KEY)
 
     while True:
         try:
-            if int(time.time()) % UPDATE_INT == 0:
-                trends = getTrends(r)
-
-            if r.zcard(SENTIMENT_KEY) >= MAX_SENTIMENTS:
-                r.zremrangebyrank(SENTIMENT_KEY, 0, 0)
-                continue
-
-
-            # TODO: DRY this
-
-            # Categorize and store trending topics
-            tmp = r.rpop(TRENDING_KEY)
-            if tmp != None:
-                tweet = json.loads(tmp)
-                if tweet['geo'] is not None:
-                    coordinates = tweet['geo']['coordinates']
+            # Update topics and trends every UPDATE_INT seconds
+            if last_updated is None or time.time() - last_updated > UPDATE_INT:
+                permanent_topics_json = r.zrevrange("permanent_topics", 0, 11)
+                if permanent_topics_json:
+                    permanent_topics = json.loads(permanent_topics_json)
                 else:
-                    coordinates = [None, None]
+                    permanent_topics = []
+                trending_keywords = r.zrevrange("trending_keys", 0, 11)
 
-                times = time.time()
-
-                sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
-                if sentiment == "positive":
-                    sentiment = 1
-                elif sentiment == "negative":
-                    sentiment = -1
-                elif sentiment == "neutral":
-                    sentiment = 0
-                if sentiment != 0:
-                    # Jsonify tweet with sentiment and store in redis
-                    d = {'sentiment' : sentiment, \
-                         'latitude' : coordinates[0], \
-                         'longitude' : coordinates[1], \
-                         'timestamp' : times }
-                    logging.debug("data from categorizer: ")
-                    logging.debug(d)
-                    j = json.dumps(d)
-
-                    key = classifyTrending(str(tweet), trends)
-
-                    # TODO: Fix none keys
-                    if key != None:
-                        r.zadd("trending:" + key, str(j), times)
-                    else:
-                        logging.exception("Not able to categorize")
+                last_updated = time.time()
 
 
-                
+            # Get tweet
+            tweet = json.loads(r.rpop(QUEUE_KEY))
 
-            tmp = r.rpop(QUEUE_KEY)
-            if tmp != None:
-                tweet = json.loads(tmp)
 
-                if tweet['geo'] is None:
-                    # No geo data? IGNORE!
-                    continue
+            # Get Sentiment
+            sentiment_classification = p.classify(tweet['text'], "naive_bayes", 0.5)
+            if sentiment_classification == "positive":
+                sentiment = 1
+            elif sentiment_classification == "negative":
+                sentiment = -1
+            else:
+                sentiment = 0
 
-                coordinates = tweet['geo']['coordinates']
-                times = time.time()
 
-                '''
-                sentiment = TextBlob(tweet['text']).sentiment.polarity
-                if sentiment != 0:
-                    # Jsonify tweet with sentiment and store in redis
-                    d = {'sentiment' : sentiment, \
-                         'latitude' : coordinates[0], \
-                         'longitude' : coordinates[1] }
-                    logging.debug("data from categorizer: ")
-                    logging.debug(d)
-                    j = json.dumps(d)
+            # Format sentiment point correctly and put into correct queue
+            if sentiment != 0:
+                # Get coordinates
+                if tweet['geo'] is not None:
+                    latitude, longitude = tweet['geo']['coordinates']
+                else:
+                    latitude, longitude = None, None
 
-                    r.lpush(SENTIMENT_KEY, str(j))
-                    '''
-                sentiment = p.classify(tweet['text'], "naive_bayes", 0.5)
-                if sentiment == "positive":
-                    sentiment = 1
-                elif sentiment == "negative":
-                    sentiment = -1
-                elif sentiment == "neutral":
-                    sentiment = 0
-                if sentiment != 0:
-                    # Jsonify tweet with sentiment and store in redis
-                    d = {'sentiment' : sentiment, \
-                         'latitude' : coordinates[0], \
-                         'longitude' : coordinates[1], \
-                         'timestamp' : times }
-                    logging.debug("data from categorizer: ")
-                    logging.debug(d)
-                    j = json.dumps(d)
 
-                    r.zadd(SENTIMENT_KEY, str(j), times)
+                # Get topic
+                topics = None
+
+                for trend in trending_keywords:
+                    trend_decoded = urllib.unquote(trend).decode('utf8')
+                    if (trend in tweet['text']) or (trend_decoded in tweet['text']):
+                        if topics is None:
+                            topics = []
+                        topics.append(trend_decoded)
+
+                for topic in permanent_topics:
+                    for topic_keyword in permanent_topics[topic]:
+                        topic_keyword_decoded = urllib.unquote(topic_keyword).decode('utf8')
+                        if (topic_keyword in tweet['text']) or (topic_keyword_decoded in tweet['text']):
+                            if topics is None:
+                                topics = []
+                            topics.append(topic_keyword_decoded)
+                            break
+
+                # Format sentiment point
+                sentiment_point_timestamp = time.time()
+                sentiment_point = {'topic': None, 'latitude': latitude, 'longitude', longitude, 'sentiment': sentiment, 'timestamp': sentiment_point_timestamp}
+
+                # Put into general sentiment queue
+                if sentiment_queue_size >= MAX_SENTIMENTS:
+                    r.zremrangebyrank(SENTIMENT_KEY, 0, 0)
+                    sentiment_queue_size -= 1
+
+                r.zadd(SENTIMENT_KEY, json.dumps(sentiment_point), sentiment_point_timestamp)
+                sentiment_queue_size += 1
+
+
+                # Belongs to topics? Put into correct queue
+                if topics is not None:
+                    for topic in topics:
+                        sentiment_point['topic'] = topic
+                        r.zadd(TOPIC_KEY_PREFIX + topic, json.dumps(sentiment_point), sentiment_point_timestamp)
+
         except Exception as e:
             logging.exception("Something awful happened!")
 

@@ -10,7 +10,6 @@ import datetime
 logging.basicConfig(level=logging.DEBUG)
 
 MAXQUEUESIZE = 10000
-MAX_TWEET_CACHE = 1
 QUEUE_KEY = 'tweet_queue'
 
 def signal_handler(signum = None, frame = None):
@@ -36,25 +35,38 @@ def main():
 
     # language: English
     # location bounding box: USA
-    t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?language=en&locations=-125.0011,24.9493,-66.9326,49.5904',
-                     auth=oauth, stream=True)
+    t = generateRequest(oauth)
 
-    tweet_cache = []
     while True:
         try:
-            if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
+            #if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
+            tweet = next_tweet(t)
+            while "delete" in tweet[:10]:
                 tweet = next_tweet(t)
-                while "delete" in tweet[:10]:
-                    tweet = next_tweet(t)
 
-                tweet_cache.append(tweet)
-
-                if len(tweet_cache) > MAX_TWEET_CACHE:
-                    r.lpush(QUEUE_KEY, *tweet_cache)
-                    tweet_cache = []
+            r.lpush(QUEUE_KEY, tweet)
 
         except Exception as e:
             logging.debug("Something awful happened!")
+
+def generateRequest(oauth):
+    permanent_topics_json = r.zrevrange("permanent_topics", 0, 11)
+    if permanent_topics_json:
+        permanent_keywords = json.loads(permanent_topics_json).values()
+    else:
+        permanent_keywords = []
+
+    trending_keywords = r.zrevrange("trending_keys", 0, 11)
+
+    keywords = ",".join(permanent_keywords + trending_keywords)
+
+    t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?' + \
+                     'language=en&' + \
+                     'locations=-125.0011,24.9493,-66.9326,49.5904&' + \
+                     'track=' + keywords, \
+                     auth=oauth, \
+                     stream=True)
+    return t
 
 def next_tweet(t):
     tweet = ""

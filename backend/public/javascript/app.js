@@ -97,6 +97,7 @@ TweetRisesApp.prototype.addPoint = function(data) {
         this.topicViewHandler(pnt);
     }
 
+    // If in bounding box, add to map
     if (pnt.latitude && pnt.longitude) {
         if (pnt.latitude > 24.9493 && pnt.latitude < 49.5904 && pnt.longitude > -125.0011 && pnt.longitude < -66.9326) {
             this.heatmap.addPoint(pnt);

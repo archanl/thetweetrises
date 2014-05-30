@@ -35,48 +35,45 @@ function ten_second_emitter() {
 
   // Emit sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", lt, now, function(err, reply) {
-    console.log("ten_second_emitter : sentiment_stream ::");
-    console.log(reply);
-
-    if (!reply) {
-      return;
+    if (reply) {
+      io.sockets.volatile.emit('newPoints', reply);
     }
-
-    io.sockets.emit('newPoints', reply);
   });
 
   // Emit trending topics
   redis_client.zrevrange("trending_keys", 0, 10, function(err, keys_reply) {
-    console.log("ten_second_emitter : trending-keys ::");
-    console.log(keys_reply);
-
     if (!keys_reply) {
       return;
     }
 
     // For each trending topic
     for (var i=0; i < keys_reply.length; i++) {
-      console.log("getting trend " + i);
       var trend = keys_reply[i];
-      console.log('trend is ' + trend);
 
       !function(trend, lt, now) {
-        redis_client.zrangebyscore("trending:" + trend, lt, now, function(err, trend_reply) {
-          console.log("ten_second_emitter : trending-keys : trending:" + trend + " ::");
-          console.log(trend_reply);
-
-          if (!trend_reply) {
-            return;
-          }
-
-          for (var j = 0; j < trend_reply.length; j++) {
-            var point = JSON.parse(trend_reply[j]);
-
-            point.topic = trend;
-            io.sockets.emit('newPoint', JSON.stringify(point));
+        redis_client.zrangebyscore("topic_sentiment_stream:" + trend, lt, now, function(err, reply) {
+          if (reply) {
+            io.sockets.emit('newPoints', reply);
           }
         });
       }(trend, lt, now);
+    }
+  });
+
+  // Emit permanent topics
+  redis_client.get("permanent_topics", function(err, permanent_topics_json) {
+    if (!permanent_topics_json) {
+      return;
+    }
+
+    for (topic in JSON.parse(permanent_topics_json)) {
+      !function(topic, lt, now) {
+        redis_client.zrangebyscore("topic_sentiment_stream:" + topic, lt, now, function(err, reply) {
+          if (reply) {
+            io.sockets.emit('newPoints', reply);
+          }
+        });
+      }(topic, lt, now);
     }
   });
 }
@@ -90,14 +87,11 @@ io.sockets.on('connection', function (socket) {
   var now = Math.floor((new Date().getTime()) / 1000);
   var begTime_all = now - 60; // 1 min ago
   var endTime_all = now - 10; // 10 seconds ago
-  var begTime_trending = now - 1200; // 20 mins ago
-  var endTime_trending = now - 10; // 10 seconds ago
+  var begTime_topics = now - 86400; // 24 hours ago
+  var endTime_topics = now - 10; // 10 seconds ago
 
   // Emit initial points for sentiment_stream
   redis_client.zrangebyscore("sentiment_stream", begTime_all, endTime_all, function(err, reply) {
-    console.log("initial_emission : sentiment_stream ::");
-    console.log(reply);
-
     if (reply) {
       socket.emit('newPoints', reply);
     }
@@ -105,35 +99,38 @@ io.sockets.on('connection', function (socket) {
 
   // Emit initial points for trending topics
   redis_client.zrevrange("trending_keys", 0, 10, function(err, keys_reply) {
-    console.log("initial_emission : trending-keys ::");
-    console.log(keys_reply);
-
     if (!keys_reply) {
       return;
     }
     
     // For each trending topic
     for (var i = 0; i < keys_reply.length; i++) {
-      console.log("getting trend " + i);
       var trend = keys_reply[i];
-      console.log('trend is ' + trend);
 
-      !function(trend, begTime_trending, endTime_trending) {
-        redis_client.zrangebyscore("trending:" + trend, begTime_trending, endTime_trending, function(err, trend_reply) {
-          console.log("initial_emission : trending-keys : trending:" + trend + " ::");
-          console.log(trend_reply);
-
-          if (!trend_reply) {
-            return;
-          }
-
-          for (var j = 0; j < trend_reply.length; j++) {
-            var point = JSON.parse(trend_reply[j]);
-            point.topic = trend;
-            io.sockets.emit('newPoint', JSON.stringify(point));
+      !function(trend, begTime_topics, endTime_topics) {
+        redis_client.zrangebyscore("topic_sentiment_stream:" + trend, begTime_topics, endTime_topics, function(err, reply) {
+          if (reply) {
+            socket.emit('newPoints', reply);
           }
         });
-      }(trend, begTime_trending, endTime_trending);
+      }(trend, begTime_topics, endTime_topics);
+    }
+  });
+
+  // Emit initial points for permanent topics
+  redis_client.get("permanent_topics", function(err, permanent_topics_json) {
+    if (!permanent_topics_json) {
+      return;
+    }
+
+    for (topic in JSON.parse(permanent_topics_json)) {
+      !function(topic, begTime_topics, endTime_topics) {
+        redis_client.zrangebyscore("topic_sentiment_stream:" + topic, begTime_topics, endTime_topics, function(err, reply) {
+          if (reply) {
+            socket.emit('newPoints', reply);
+          }
+        });
+      }(topic, begTime_topics, endTime_topics);
     }
   });
 });
