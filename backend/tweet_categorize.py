@@ -128,7 +128,6 @@ def main():
 
                 # Belongs to topics? Put into correct queue
                 if topics is not None:
-                    print topics
                     for topic in topics:
                         sentiment_point['topic'] = topic
                         r.zadd(TOPIC_KEY_PREFIX + topic, json.dumps(sentiment_point), sentiment_point_timestamp)

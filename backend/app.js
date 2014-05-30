@@ -108,7 +108,7 @@ io.sockets.on('connection', function (socket) {
       var trend = keys_reply[i];
 
       !function(trend, begTime_topics, endTime_topics) {
-        redis_client.zrangebyscore("topic_sentiment_stream:" + trend, begTime_topics, endTime_topics, function(err, reply) {
+        redis_client.zrangebyscore("topic_sentiment_stream:" + trend, begTime_topics, endTime_topics, "limit", 1, 3000, function(err, reply) {
           if (reply) {
             socket.emit('newPoints', reply);
           }
@@ -122,14 +122,11 @@ io.sockets.on('connection', function (socket) {
     if (!permanent_topics_json) {
       return;
     }
-   console.log("permanent topic json: ");
-   console.log(permanent_topics_json);
+
     for (topic in JSON.parse(permanent_topics_json)) {
-      console.log("trying to find points in topic " + topic);
       !function(topic, begTime_topics, endTime_topics) {
-        redis_client.zrangebyscore("topic_sentiment_stream:" + topic, begTime_topics, endTime_topics, function(err, reply) {
+        redis_client.zrangebyscore("topic_sentiment_stream:" + topic, begTime_topics, endTime_topics, "limit", 1, 5000, function(err, reply) {
           if (reply) {
-            console.log(reply);
             socket.emit('newPoints', reply);
           }
         });
