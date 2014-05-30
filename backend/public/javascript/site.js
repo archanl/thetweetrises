@@ -14,10 +14,33 @@ $(document).ready(function() {
             if (topicPoint.sentiment > 0) {
                 window.topicInfo[topic].numPositive++;
             }
+
             window.topicInfo[topic].numTotal++;
 
+            // If in USA bounding box
+            if (topicPoint.latitude && topicPoint.longitude) {
+                if (topicPoint.latitude > 24.9493 && topicPoint.latitude < 49.5904 && topicPoint.longitude > -125.0011 && topicPoint.longitude < -66.9326) {
+                    window.topicInfo[topic].numInBoudingBox++;
+
+                    if (!window.topicInfo[topic].clickEnabled && window.topicInfo[topic].numInBoudingBox > 2) {
+                        window.topicInfo[topic].clickEnabled = true;
+                        window.topicInfo[topic].$li.removeClass('click-disabled');
+
+                        window.topicInfo[topic].$a.on('click', function(topic, $li) {
+                            return function(e) {
+                                window.app.switchTopic(topic);
+                                $('.topic-title').text(' - ' + topic);
+                                $('.topic-item').removeClass("active");
+                                $li.addClass("active");
+                                e.preventDefault();
+                            };
+                        }(topic, window.topicInfo[topic].$li));
+                    }
+                }
+            }
+
         } else {
-            var $li = $('<li class="topic-item"></li>');
+            var $li = $('<li class="topic-item click-disabled"></li>');
             var $a = $('<a href="#">' + topic + '</a>');
             var $progressBar = $('<div class="progress topic-rating-bars"></div>');
             var $positiveBar = $('<div class="progress-bar progress-bar-success" style="width: 0%"></div>');
@@ -27,8 +50,11 @@ $(document).ready(function() {
             window.topicInfo[topic].numPositive = topic.sentiment > 0 ? 1 : 0;
             window.topicInfo[topic].numTotal = 1;
             window.topicInfo[topic].$li = $li;
+            window.topicInfo[topic].$a = $a;
             window.topicInfo[topic].$positiveBar = $positiveBar;
             window.topicInfo[topic].$negativeBar = $negativeBar;
+            window.topicInfo[topic].clickEnabled = false;
+            window.topicInfo[topic].numInBoudingBox = 0;
 
             $('#topic-menu').append($li);
             $li.append($a);
@@ -36,14 +62,12 @@ $(document).ready(function() {
             $progressBar.append($positiveBar);
             $progressBar.append($negativeBar);
 
-            $a.on('click', function(topic, $li) {
-                return function(e) {
-                    window.app.switchTopic(topic);
-                    $('.topic-item').removeClass("active");
-                    $li.addClass("active");
-                    e.preventDefault();
-                };
-            }(topic, $li));
+            // If in USA bounding box
+            if (topicPoint.latitude && topicPoint.longitude) {
+                if (topicPoint.latitude > 24.9493 && topicPoint.latitude < 49.5904 && topicPoint.longitude > -125.0011 && topicPoint.longitude < -66.9326) {
+                    window.topicInfo[topic].numInBoudingBox++;
+                }
+            }
 
             // update new topic count
             window.newTopicsCount += 1;
@@ -78,6 +102,7 @@ $(document).ready(function() {
     if (window.app.connect("http://162.243.150.138")) {
         $("#no-topic-topic-item").on("click", function() {
             window.app.switchTopic();
+            $('.topic-title').text('');
             $('.topic-item').removeClass("active");
             $(this).addClass("active");
         });

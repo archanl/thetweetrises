@@ -23,6 +23,8 @@ body {
   position:relative;
   float:right;
   width: 200px;
+  max-height: 420px;
+  overflow: auto;
 }
 
 #page-footer {
@@ -119,4 +121,15 @@ body.fullscreen {
   width: 100%;
   text-align: center;
   margin-top:10px;
+}
+
+.topic-item a {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  overflow-wrap: inherit;
+}
+
+.click-disabled {
+  pointer-events: none;
+  opacity: 0.3;
 }
