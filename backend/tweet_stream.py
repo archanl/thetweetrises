@@ -35,7 +35,7 @@ def main():
 
     # language: English
     # location bounding box: USA
-    t = generateRequest(oauth)
+    t = generateRequest(r, oauth)
 
     while True:
         try:
@@ -49,7 +49,7 @@ def main():
         except Exception as e:
             logging.debug("Something awful happened!")
 
-def generateRequest(oauth):
+def generateRequest(r, oauth):
     permanent_topics_json = r.zrevrange("permanent_topics", 0, 11)
     if permanent_topics_json:
         permanent_keywords = json.loads(permanent_topics_json).values()
