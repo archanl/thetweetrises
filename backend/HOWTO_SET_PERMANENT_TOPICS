@@ -1,0 +1,8 @@
+Run redis-cli on server.
+
+Get the permanent topics json like this:
+get permanent_topics
+
+Set the permanent topics json like this:
+
+set permanent_topics '{"OKC": ["OKC", "ThunderUP", "WeAreThunder", "Oklahoma City Thunder", "Thunder", "ThunderPlayoffs", "okcthunder"], "SAS": ["GoSpursGo", "Spurs", "San Antonio Spurs", "SAS", "SpursPlayoffs"], "IND": ["Indiana Pacers", "Pacers", "PacersPlayoffs"], "MIA": ["Miami Heat", "HEATplayoffs", "MiamiHeat"], "Caltech": ["Caltech", "JPL"], "Republicans": ["Republicans", "Republican", "RNC", "GOP", "Sarah Palin", "Conservatism", "Conservative", "Chris Christie", "Rand Paul", "Ted Cruz", "Scott Walker", "Jeb Bush", "Marco Rubio", "Bobby Jindal", "John Kasich", "Paul Ryan", "Mike Pence"], "Democrats": ["Democrats", "Democrat", "Obama", "DNC", "Liberalism", "Liberal", "BarackObama", "Hillary Clinton", "Barack Obama", "Hillary2016", "Joe Biden", "Andrew Cuomo", "Beau Biden", "Deval Patrick", "Biden", "Michelle Obama", "Cory Booker", "Elizabeth Warren", "Antonio Villaraigosa"], "NBA": ["NBA", "NBAPlayoffs", "OKC", "ThunderUP", "WeAreThunder", "Oklahoma City Thunder", "Thunder", "ThunderPlayoffs", "okcthunder", "GoSpursGo", "Spurs", "San Antonio Spurs", "SAS", "SpursPlayoffs", "Indiana Pacers", "Pacers", "PacersPlayoffs", "Miami Heat", "HEATplayoffs", "MiamiHeat"]}'
