@@ -40,7 +40,7 @@ def main():
     epoch = epoch.strftime("%s")
 
     for trend in j[0]['trends']:
-        r.zadd(TRENDING_KEY, trend['query'], epoch)
+        r.zadd(TRENDING_KEY, trend['name'], epoch)
 
     r.set('trending_json', j_str)
 

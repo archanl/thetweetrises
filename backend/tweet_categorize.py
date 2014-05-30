@@ -17,6 +17,7 @@ from wrapper import classifier_wrapper, tweetclass
 from trend_utils import getTrends, classifyTrending
 import time
 from dateutil import parser
+import urllib
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
@@ -67,7 +68,11 @@ def main():
 
 
             # Get tweet
-            tweet = json.loads(r.rpop(QUEUE_KEY))
+            tweet_json = r.rpop(QUEUE_KEY)
+            if not tweet_json:
+                time.sleep(1)
+                continue
+            tweet = json.loads(tweet_json)
 
 
             # Get Sentiment
@@ -105,12 +110,12 @@ def main():
                         if (topic_keyword in tweet['text']) or (topic_keyword_decoded in tweet['text']):
                             if topics is None:
                                 topics = []
-                            topics.append(topic_keyword_decoded)
+                            topics.append(topic)
                             break
 
                 # Format sentiment point
                 sentiment_point_timestamp = time.time()
-                sentiment_point = {'topic': None, 'latitude': latitude, 'longitude', longitude, 'sentiment': sentiment, 'timestamp': sentiment_point_timestamp}
+                sentiment_point = {'topic': None, 'latitude': latitude, 'longitude': longitude, 'sentiment': sentiment, 'timestamp': sentiment_point_timestamp}
 
                 # Put into general sentiment queue
                 if sentiment_queue_size >= MAX_SENTIMENTS:
@@ -123,6 +128,7 @@ def main():
 
                 # Belongs to topics? Put into correct queue
                 if topics is not None:
+                    print topics
                     for topic in topics:
                         sentiment_point['topic'] = topic
                         r.zadd(TOPIC_KEY_PREFIX + topic, json.dumps(sentiment_point), sentiment_point_timestamp)
