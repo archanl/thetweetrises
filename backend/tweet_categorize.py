@@ -56,7 +56,7 @@ def main():
         try:
             # Update topics and trends every UPDATE_INT seconds
             if last_updated is None or time.time() - last_updated > UPDATE_INT:
-                permanent_topics_json = r.get("permanent_topics", 0, 11)
+                permanent_topics_json = r.get("permanent_topics")
                 if permanent_topics_json:
                     permanent_topics = json.loads(permanent_topics_json)
                 else:

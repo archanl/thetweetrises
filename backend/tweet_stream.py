@@ -50,7 +50,7 @@ def main():
             logging.debug("Something awful happened!")
 
 def generateRequest(r, oauth):
-    permanent_topics_json = r.get("permanent_topics", 0, 11)
+    permanent_topics_json = r.get("permanent_topics")
     if permanent_topics_json:
         permanent_keywords = json.loads(permanent_topics_json).values()
     else:
