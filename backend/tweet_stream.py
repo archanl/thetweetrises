@@ -6,6 +6,8 @@ import logging
 import signal
 import datetime
 import json
+import urllib
+import time
 
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
@@ -34,31 +36,38 @@ def main():
                    '16635628-QBipfEYkp3d0TBODdnNMHHM0cLYovy3OjcmsHIvNp',    # Access token
                    '3jMS4f7jbWVDxoq5Gl8sXISEZutCWXrv6rmMUeJe2nPTS')         # Access token secret
 
-    # language: English
-    # location bounding box: USA
-    t = generateRequest(r, oauth)
+    last_updated = None
+    t = None
 
     while True:
-        try:
-            #if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
+#        try:
+        #if r.llen(QUEUE_KEY) < MAXQUEUESIZE:
+        if last_updated is None or time.time() - last_updated > 40:
+            last_updated = time.time()
+            if t:
+                t.close()
+            t = generateRequest(r, oauth)
+
+        tweet = next_tweet(t)
+        while "delete" in tweet[:10]:
             tweet = next_tweet(t)
-            while "delete" in tweet[:10]:
-                tweet = next_tweet(t)
 
-            r.lpush(QUEUE_KEY, tweet)
+        r.lpush(QUEUE_KEY, tweet)
 
-        except Exception as e:
-            logging.debug("Something awful happened!")
+#        except Exception as e:
+#            logging.debug("Something awful happened!")
 
 def generateRequest(r, oauth):
+    print "GENERATING REQUEST!!!!!!!!!!!"
     permanent_topics_json = r.get("permanent_topics")
+    print permanent_topics_json
     if permanent_topics_json:
-        permanent_keywords = json.loads(permanent_topics_json).values()
+        permanent_keywords = [urllib.quote(item) for sublist in json.loads(permanent_topics_json).values() for item in sublist]
     else:
         permanent_keywords = []
 
     trending_keywords = r.zrevrange("trending_keys", 0, 11)
-
+    print trending_keywords
     keywords = ",".join(permanent_keywords + trending_keywords)
 
     t = requests.get('https://stream.twitter.com/1.1/statuses/filter.json?' + \
