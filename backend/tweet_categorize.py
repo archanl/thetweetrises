@@ -22,9 +22,11 @@ import urllib
 # Log everything, and send it to stderr.
 logging.basicConfig(level=logging.DEBUG)
 
-QUEUE_KEY = 'tweet_queue'
-SENTIMENT_KEY = 'sentiment_stream'
-TOPIC_KEY_PREFIX = 'topic_sentiment_stream:'
+TWEET_QUEUE_KEY = 'tweet_queue'
+TRENDING_TOPICS_KEY = 'trending_keys'
+ALL_SENTIMENTS_KEY = 'sentiment_stream'
+PERMANENT_TOPICS_KEY = 'permanent_topics'
+TOPIC_SENTIMENTS_KEY_PREFIX = 'topic_sentiment_stream:'
 
 MAX_SENTIMENTS = 10000
 UPDATE_INT = 40 # seconds. Update interval for trending topics
@@ -51,24 +53,29 @@ def main():
 
     last_updated = None
 
-    sentiment_queue_size = r.zcard(SENTIMENT_KEY)
+    sentiment_queue_size = r.zcard(ALL_SENTIMENTS_KEY)
 
     while True:
         try:
             # Update topics and trends every UPDATE_INT seconds
             if last_updated is None or time.time() - last_updated > UPDATE_INT:
-                permanent_topics_json = r.get("permanent_topics")
+                permanent_topics_json = r.get(PERMANENT_TOPICS_KEY)
                 if permanent_topics_json:
                     permanent_topics = json.loads(permanent_topics_json)
                 else:
                     permanent_topics = []
-                trending_keywords = r.zrevrange("trending_keys", 0, 11)
+                trending_keywords = r.zrevrange(TRENDING_TOPICS_KEY, 0, 11)
 
                 last_updated = time.time()
 
+                for topic in permanent_topics:
+                    r.zremrangebyscore(TOPIC_KEY_PREFIX + topic, "-inf", last_updated - 86400)
+                for topic in trending_keywords:
+                    r.zremrangebyscore(TOPIC_KEY_PREFIX + topic, "-inf", last_updated - 86400)
+
 
             # Get tweet
-            tweet_json = r.rpop(QUEUE_KEY)
+            tweet_json = r.rpop(TWEET_QUEUE_KEY)
             if not tweet_json:
                 time.sleep(1)
                 continue
@@ -119,10 +126,10 @@ def main():
 
                 # Put into general sentiment queue
                 if sentiment_queue_size >= MAX_SENTIMENTS:
-                    r.zremrangebyrank(SENTIMENT_KEY, 0, 0)
+                    r.zremrangebyrank(ALL_SENTIMENTS_KEY, 0, 0)
                     sentiment_queue_size -= 1
 
-                r.zadd(SENTIMENT_KEY, json.dumps(sentiment_point), sentiment_point_timestamp)
+                r.zadd(ALL_SENTIMENTS_KEY, json.dumps(sentiment_point), sentiment_point_timestamp)
                 sentiment_queue_size += 1
 
 
@@ -130,7 +137,7 @@ def main():
                 if topics is not None:
                     for topic in topics:
                         sentiment_point['topic'] = topic
-                        r.zadd(TOPIC_KEY_PREFIX + topic, json.dumps(sentiment_point), sentiment_point_timestamp)
+                        r.zadd(TOPIC_SENTIMENTS_KEY_PREFIX + topic, json.dumps(sentiment_point), sentiment_point_timestamp)
 
         except Exception as e:
             logging.exception("Something awful happened!")
