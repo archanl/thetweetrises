@@ -69,9 +69,9 @@ def main():
                 last_updated = time.time()
 
                 for topic in permanent_topics:
-                    r.zremrangebyscore(TOPIC_KEY_PREFIX + topic, "-inf", last_updated - 86400)
+                    r.zremrangebyscore(TOPIC_SENTIMENTS_KEY_PREFIX + topic, "-inf", last_updated - 86400)
                 for topic in trending_keywords:
-                    r.zremrangebyscore(TOPIC_KEY_PREFIX + topic, "-inf", last_updated - 86400)
+                    r.zremrangebyscore(TOPIC_SENTIMENTS_KEY_PREFIX + topic, "-inf", last_updated - 86400)
 
 
             # Get tweet
