@@ -64,7 +64,11 @@ def main():
                     permanent_topics = json.loads(permanent_topics_json)
                 else:
                     permanent_topics = []
-                trending_keywords = r.zrevrange(TRENDING_TOPICS_KEY, 0, 11)
+
+                all_trending_keywords = r.zrange(TRENDING_TOPICS_KEY, 0, -1)
+                trending_keywords = all_trending_keywords[-12:]
+                removing_trending_keywords = all_trending_keywords[:-12]
+                r.delete(*[TOPIC_SENTIMENTS_KEY_PREFIX + topic for topic in removing_trending_keywords])
 
                 last_updated = time.time()
 
@@ -72,6 +76,7 @@ def main():
                     r.zremrangebyscore(TOPIC_SENTIMENTS_KEY_PREFIX + topic, "-inf", last_updated - 86400)
                 for topic in trending_keywords:
                     r.zremrangebyscore(TOPIC_SENTIMENTS_KEY_PREFIX + topic, "-inf", last_updated - 86400)
+
 
 
             # Get tweet
