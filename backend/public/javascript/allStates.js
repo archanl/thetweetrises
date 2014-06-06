@@ -3971,19 +3971,23 @@ Wyoming = new google.maps.Polygon({
 }); 
 
 // StateMapView definition
-var StatemapView = function(map, options) {
+var StatemapView = function(map, options, name) {
     this.map = map;
 
-    this.filterTopic = false;
+    this.filterTopic = true;
     this.currentTopic = null;
 
     this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
-    this.storeAllPoints = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
+    // this.storeAllPoints = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
     this.averages = 10;
     if (options) {
         if (options.averages) {
           this.averages = options.averages;
         }
+    }
+
+    if(name){
+      this.currentTopic = name;
     }
 };
 
@@ -3994,6 +3998,7 @@ StatemapView.prototype.changeAverage = function(average){
 
 // The function is used to clear every state color and reset it to black, and then
 // apply the topic 
+/*
 StatemapView.prototype.switchTopic = function(topic) {
   this.allStateOutlines2 = new Array([California, []], [NewYork, []], [Alabama, []], [Arizona, []], [Arkansas, []], [Colorado, []], [Connecticut, []], [Delaware, []], [Florida, []], [Georgia, []], [Idaho, []], [Illinois, []], [Indiana, []], [Iowa, []], [Kansas, []], [Kentucky, []], [Louisiana, []], [Maine, []], [Maryland, []], [Massachusetts, []], [Michigan, []], [Minnesota, []], [Mississippi, []], [Missouri, []], [Montana, []], [Nebraska, []], [Nevada, []], [NewHampshire, []], [NewJersey, []], [NewMexico, []], [NorthCarolina, []], [NorthDakota, []], [Ohio, []], [Oklahoma, []], [Oregon, []], [Pennsylvania, []], [RhodeIsland, []], [SouthCarolina, []], [SouthDakota, []], [Tennessee, []], [Texas, []], [Utah, []], [Vermont, []], [Virginia, []], [Washington, []], [WestVirginia, []], [Wisconsin, []], [Wyoming, []]);
   
@@ -4028,6 +4033,8 @@ StatemapView.prototype.showAll = function(){
     }
   }
 };
+
+*/
 
 // The function is used to disable statemode
 StatemapView.prototype.hide = function() {
@@ -4074,16 +4081,16 @@ StatemapView.prototype.show = function(){
 
 // The function is used to correctly add points
 StatemapView.prototype.addPoint = function(pnt){
-  if (this.filterTopic == true){
+ if (this.filterTopic == true){
     if (pnt.topic){
       if (pnt.topic == this.currentTopic){
         this.showNewPoint(pnt);
       }
     }
   }
-  else{
+ else{
     this.showNewPoint(pnt);
-  }
+ }
 };
 
 StatemapView.prototype.showNewPoint = function(pnt){
@@ -4123,7 +4130,7 @@ StatemapView.prototype.showNewPoint = function(pnt){
     }
   }
 };
-
+/*
 // The function is used to maintain all points (in case we need to reset
 // anything)
 StatemapView.prototype.storeAllStatePoints = function(pnt, toStore){
@@ -4148,7 +4155,7 @@ StatemapView.prototype.storeAllStatePoints = function(pnt, toStore){
       }
     }
 };
-
+*/
 
 /*
 
