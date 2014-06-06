@@ -2,12 +2,10 @@ function TweetRisesApp(options) {
     this.map = new google.maps.Map(document.getElementById(options.mapCanvasId), options.mapOptions);
 
     this.heatmap = new HeatmapView(this.map);
+    this.statesmap = new StatemapView(this.map);
 
     this.topics = [];
-    this.seenTopic = {};
-    this.seenTopic[null] = new StatemapView(this.map, 1, null);
-
-    this.currentView = this.seenTopic[null];
+    this.currentView = this.statesmap;
 
     // Point count data
     this.numTotalReceivedPoints = 0;
@@ -75,27 +73,14 @@ TweetRisesApp.prototype.switchView = function(view) {
         this.currentView.show();
     } else if (view === 'states') {
         this.currentView.hide();
-        this.currentView = this.seenTopic[null];
+        this.currentView = this.statesmap;
         this.currentView.show();
     }
 };
 
 TweetRisesApp.prototype.switchTopic = function(topic) {
     this.heatmap.switchTopic(topic);
-    if(topic){
-        var convertedTopic = decodeURIComponent(topic);
-        if (this.seenTopic[convertedTopic]){
-            this.currentView.hide();
-            this.currentView = this.seenTopic[convertedTopic];
-            this.currentView.show();
-        }
-    }
-    else{
-        this.currentView.hide();
-        this.currentView = this.seenTopic[null];
-        this.currentView.show();
-    }
-    // this.statesmap.switchTopic(topic);
+    this.statesmap.switchTopic(topic);
 };
 
 TweetRisesApp.prototype.addPoint = function(data) {
@@ -110,25 +95,15 @@ TweetRisesApp.prototype.addPoint = function(data) {
     if (pnt.topic) {
         pnt.topic = decodeURIComponent(pnt.topic);
         this.topicViewHandler(pnt);
-
-        if (!this.seenTopic[pnt.topic]){
-            var newTopic  = new StatemapView(this.map, 1, pnt.topic);
-            this.seenTopic[pnt.topic] = newTopic;
-        }
-        this.seenTopic[pnt.topic].addPoint(pnt);
-
     }
+
     // If in bounding box, add to map
     if (pnt.latitude && pnt.longitude) {
         if (pnt.latitude > 24.9493 && pnt.latitude < 49.5904 && pnt.longitude > -125.0011 && pnt.longitude < -66.9326) {
             this.heatmap.addPoint(pnt);
-            this.seenTopic[null].addPoint(pnt);
-            // this.statesmap.storeAllStatePoints(pnt, 250);
+            this.statesmap.addPoint(pnt);
+            this.statesmap.storeAllStatePoints(pnt, 250);
         }
-    }
-    console.log(this.currentView.currentTopic);
-    if (this.currentView.currentTopic == pnt.topic){
-        console.log("YES");
     }
 };
 
